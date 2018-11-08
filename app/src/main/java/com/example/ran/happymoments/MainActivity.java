@@ -19,7 +19,7 @@ public class MainActivity extends Activity {
     private final String subscriptionKey = "subscriptionKey";
 
     private final FaceServiceClient faceServiceClient = new FaceServiceRestClient(apiEndpoint, subscriptionKey);
-
+    private final int test = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
