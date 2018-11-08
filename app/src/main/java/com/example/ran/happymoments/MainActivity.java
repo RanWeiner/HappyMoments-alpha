@@ -1,162 +1,185 @@
 package com.example.ran.happymoments;
-import com.microsoft.projectoxford.face.*;
-import com.microsoft.projectoxford.face.contract.*;
-import java.io.*;
-import android.app.*;
-import android.content.*;
-import android.net.*;
-import android.os.*;
-import android.view.*;
-import android.graphics.*;
-import android.widget.*;
-import android.provider.*;
 
-public class MainActivity extends Activity {
-    private final int PICK_IMAGE = 1;
-    private ProgressDialog detectionProgressDialog;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PointF;
+import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.SparseArray;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.Toast;
 
-    private final String apiEndpoint = "apiEndpoint";
-    private final String subscriptionKey = "subscriptionKey";
+import com.example.ran.happymoments.R;
+import com.google.android.gms.vision.Frame;
+import com.google.android.gms.vision.face.Face;
+import com.google.android.gms.vision.face.FaceDetector;
+import com.google.android.gms.vision.face.Landmark;
 
-    private final FaceServiceClient faceServiceClient = new FaceServiceRestClient(apiEndpoint, subscriptionKey);
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 
+
+
+public class MainActivity extends AppCompatActivity {
+
+    private static final int RQS_LOADIMAGE = 1;
+    private Button btnLoad, btnDetFace;
+    private ImageView imgView;
+    private Bitmap myBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Button button1 = (Button)findViewById(R.id.button1);
-        button1.setOnClickListener(new View.OnClickListener() {
+
+        btnLoad = (Button)findViewById(R.id.btnLoad);
+        btnDetFace = (Button)findViewById(R.id.btnDetectFace);
+        imgView = (ImageView)findViewById(R.id.imgview);
+
+        btnLoad.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                Intent intent = new Intent();
                 intent.setType("image/*");
-                startActivityForResult(Intent.createChooser(
-                        intent, "Select Picture"), PICK_IMAGE);
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                startActivityForResult(intent, RQS_LOADIMAGE);
             }
         });
 
-        detectionProgressDialog = new ProgressDialog(this);
-    }
+        btnDetFace.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if(myBitmap == null){
+                    Toast.makeText(MainActivity.this,
+                            "myBitmap == null",
+                            Toast.LENGTH_LONG).show();
+                }else{
+                    detectFace();
 
-
-    // Detect faces by uploading a face image.
-// Frame faces after detection.
-    private void detectAndFrame(final Bitmap imageBitmap) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-        ByteArrayInputStream inputStream =
-                new ByteArrayInputStream(outputStream.toByteArray());
-
-        AsyncTask<InputStream, String, Face[]> detectTask =
-                new AsyncTask<InputStream, String, Face[]>() {
-                    String exceptionMessage = "";
-
-                    @Override
-                    protected Face[] doInBackground(InputStream... params) {
-                        try {
-                            publishProgress("Detecting...");
-                            Face[] result = faceServiceClient.detect(
-                                    params[0],
-                                    true,         // returnFaceId
-                                    false,        // returnFaceLandmarks
-                                    null          // returnFaceAttributes:
-                                /* new FaceServiceClient.FaceAttributeType[] {
-                                    FaceServiceClient.FaceAttributeType.Age,
-                                    FaceServiceClient.FaceAttributeType.Gender }
-                                */
-                            );
-                            if (result == null){
-                                publishProgress(
-                                        "Detection Finished. Nothing detected");
-                                return null;
-                            }
-                            publishProgress(String.format(
-                                    "Detection Finished. %d face(s) detected",
-                                    result.length));
-                            return result;
-                        } catch (Exception e) {
-                            exceptionMessage = String.format(
-                                    "Detection failed: %s", e.getMessage());
-                            return null;
-                        }
-                    }
-
-                    @Override
-                    protected void onPreExecute() {
-                        detectionProgressDialog.show();
-                    }
-                    @Override
-                    protected void onProgressUpdate(String... progress) {
-                        detectionProgressDialog.setMessage(progress[0]);
-                    }
-                    @Override
-                    protected void onPostExecute(Face[] result) {
-                        detectionProgressDialog.dismiss();
-                        if(!exceptionMessage.equals("")){
-                            showError(exceptionMessage);
-                        }
-                        if (result == null) return;
-                        ImageView imageView = findViewById(R.id.imageView1);
-                        imageView.setImageBitmap(
-                                drawFaceRectanglesOnBitmap(imageBitmap, result));
-                        imageBitmap.recycle();
-                    }
-                };
-
-        detectTask.execute(inputStream);
-    }
-
-    private void showError(String message) {
-        new AlertDialog.Builder(this)
-                .setTitle("Error")
-                .setMessage(message)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                    }})
-                .create().show();
-    }
-
-    private static Bitmap drawFaceRectanglesOnBitmap(
-            Bitmap originalBitmap, Face[] faces) {
-        Bitmap bitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true);
-        Canvas canvas = new Canvas(bitmap);
-        Paint paint = new Paint();
-        paint.setAntiAlias(true);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setColor(Color.RED);
-        paint.setStrokeWidth(10);
-        if (faces != null) {
-            for (Face face : faces) {
-                FaceRectangle faceRectangle = face.faceRectangle;
-                canvas.drawRect(
-                        faceRectangle.left,
-                        faceRectangle.top,
-                        faceRectangle.left + faceRectangle.width,
-                        faceRectangle.top + faceRectangle.height,
-                        paint);
+                }
             }
-        }
-        return bitmap;
+        });
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE && resultCode == RESULT_OK &&
-                data != null && data.getData() != null) {
-            Uri uri = data.getData();
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-                ImageView imageView = (ImageView) findViewById(R.id.imageView1);
-                imageView.setImageBitmap(bitmap);
+        if (requestCode == RQS_LOADIMAGE
+                && resultCode == RESULT_OK){
 
-                // Uncomment
-                detectAndFrame(bitmap);
+            if(myBitmap != null){
+                myBitmap.recycle();
+            }
+
+            try {
+                InputStream inputStream =
+                        getContentResolver().openInputStream(data.getData());
+                myBitmap = BitmapFactory.decodeStream(inputStream);
+                inputStream.close();
+                imgView.setImageBitmap(myBitmap);
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
         }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    /*
+    reference:
+    https://search-codelabs.appspot.com/codelabs/face-detection
+     */
+    private void detectFace(){
+
+        //Create a Paint object for drawing with
+        Paint myRectPaint = new Paint();
+        myRectPaint.setStrokeWidth(5);
+        myRectPaint.setColor(Color.GREEN);
+        myRectPaint.setStyle(Paint.Style.STROKE);
+
+        Paint landmarksPaint = new Paint();
+        landmarksPaint.setStrokeWidth(10);
+        landmarksPaint.setColor(Color.RED);
+        landmarksPaint.setStyle(Paint.Style.STROKE);
+
+        Paint smilingPaint = new Paint();
+        smilingPaint.setStrokeWidth(4);
+        smilingPaint.setColor(Color.YELLOW);
+        smilingPaint.setStyle(Paint.Style.STROKE);
+
+        boolean somebodySmiling = false;
+
+        //Create a Canvas object for drawing on
+        Bitmap tempBitmap = Bitmap.createBitmap(myBitmap.getWidth(), myBitmap.getHeight(), Bitmap.Config.RGB_565);
+        Canvas tempCanvas = new Canvas(tempBitmap);
+        tempCanvas.drawBitmap(myBitmap, 0, 0, null);
+
+        //Detect the Faces
+
+        //!!!
+        //Cannot resolve method setTrackingEnabled(boolean)
+        //FaceDetector faceDetector = new FaceDetector.Builder(getApplicationContext()).build();
+        //faceDetector.setTrackingEnabled(false);
+
+        FaceDetector faceDetector =
+                new FaceDetector.Builder(getApplicationContext())
+                        .setTrackingEnabled(false)
+                        .setLandmarkType(FaceDetector.ALL_LANDMARKS)
+                        .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
+                        .build();
+
+        Frame frame = new Frame.Builder().setBitmap(myBitmap).build();
+        SparseArray<Face> faces = faceDetector.detect(frame);
+
+        //Draw Rectangles on the Faces
+        for(int i=0; i<faces.size(); i++) {
+            Face thisFace = faces.valueAt(i);
+            float x1 = thisFace.getPosition().x;
+            float y1 = thisFace.getPosition().y;
+            float x2 = x1 + thisFace.getWidth();
+            float y2 = y1 + thisFace.getHeight();
+            tempCanvas.drawRoundRect(new RectF(x1, y1, x2, y2), 2, 2, myRectPaint);
+
+            //get Landmarks for the first face
+            List<Landmark> landmarks = thisFace.getLandmarks();
+            for(int l=0; l<landmarks.size(); l++){
+                PointF pos = landmarks.get(l).getPosition();
+                tempCanvas.drawPoint(pos.x, pos.y, landmarksPaint);
+            }
+
+            //check if this face is Smiling
+            final float smilingAcceptProbability = 0.5f;
+            float smilingProbability = thisFace.getIsSmilingProbability();
+            if(smilingProbability > smilingAcceptProbability){
+                tempCanvas.drawOval(new RectF(x1, y1, x2, y2), smilingPaint);
+                somebodySmiling = true;
+            }
+        }
+
+        imgView.setImageDrawable(new BitmapDrawable(getResources(), tempBitmap));
+
+        if(somebodySmiling){
+            Toast.makeText(MainActivity.this,
+                    "Done - somebody is Smiling",
+                    Toast.LENGTH_LONG).show();
+        }else{
+            Toast.makeText(MainActivity.this,
+                    "Done - nobody is Smiling",
+                    Toast.LENGTH_LONG).show();
+        }
+
     }
 }
