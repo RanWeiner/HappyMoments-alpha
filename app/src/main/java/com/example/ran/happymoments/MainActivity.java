@@ -23,6 +23,8 @@ import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
 import com.google.android.gms.vision.face.Landmark;
 
+
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnLoad, btnDetFace;
     private ImageView imgView;
     private Bitmap myBitmap;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
