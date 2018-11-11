@@ -1,27 +1,14 @@
 package com.example.ran.happymoments;
 
-import android.content.res.AssetManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
 import android.util.Log;
 
-import org.opencv.android.BaseLoaderCallback;
-import org.opencv.android.LoaderCallbackInterface;
-import org.opencv.android.OpenCVLoader;
-import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfFloat;
 import org.opencv.core.MatOfInt;
-import org.opencv.core.MatOfKeyPoint;
-import org.opencv.features2d.DescriptorExtractor;
-import org.opencv.features2d.DescriptorMatcher;
-import org.opencv.features2d.FeatureDetector;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -30,21 +17,13 @@ import java.util.Date;
 import static android.support.constraint.Constraints.TAG;
 
 public class PhotoFeatures {
-
+    private final double HISTOGRAM_THRESHOLD = 70;
     private Date dateTime;
     private PhotoLocation photoLocation;
     private Mat histogram;
     private String orientation;
 
 
-
-//
-//    static {
-//        if (!OpenCVLoader.initDebug())
-//            Log.d("ERROR", "Unable to load OpenCV");
-//        else
-//            Log.d("SUCCESS", "OpenCV loaded");
-//    }
 
 
     public PhotoFeatures(String imagePath,  ExifInterface exifInterface) {
@@ -120,5 +99,21 @@ public class PhotoFeatures {
 
 
 
+    public boolean compareFeatures(PhotoFeatures otherPhotoFeatures) {
 
+        if (!compareHist(otherPhotoFeatures.getHistogram()))
+            return false;
+
+        return true;
+    }
+
+    public boolean compareHist(Mat otherHist){
+        //Computes the correlation between the two histograms.
+        double res = Imgproc.compareHist(this.histogram, otherHist, Imgproc.CV_COMP_CORREL);
+        Double d = new Double(res * 100);
+
+        if (d >= HISTOGRAM_THRESHOLD)
+            return true;
+        return false;
+    }
 }

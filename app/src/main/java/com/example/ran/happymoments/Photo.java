@@ -5,16 +5,23 @@ import android.media.ExifInterface;
 import java.io.IOException;
 
 public class Photo {
-
+    private String mPath;
     private PhotoFeatures photoFeatures;
     private ExifInterface exifInterface;
 
 
     public Photo(String path){
-
+        this.mPath = path;
         setExifInterface(path);
         setPhotoFeatures(path);
+
     }
+
+    public String getPath() {
+        return this.mPath;
+    }
+
+
 
     private void setPhotoFeatures(String path) {
         if (hasExifData()){
@@ -22,7 +29,7 @@ public class Photo {
         }
     }
 
-    private boolean hasExifData() {
+    public boolean hasExifData() {
         if (this.exifInterface != null){
             return true;
         }
