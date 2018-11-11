@@ -9,18 +9,32 @@ public class Photo {
     private PhotoFeatures photoFeatures;
     private ExifInterface exifInterface;
 
-    public Photo(){
 
+    public Photo(String path){
+
+        setExifInterface(path);
+        setPhotoFeatures(path);
     }
+
+    private void setPhotoFeatures(String path) {
+        if (hasExifData()){
+            photoFeatures = new PhotoFeatures(path , exifInterface);
+        }
+    }
+
+    private boolean hasExifData() {
+        if (this.exifInterface != null){
+            return true;
+        }
+        return false;
+    }
+
+
 
 
     public PhotoFeatures getPhotoFeatures() {
         return photoFeatures;
     }
-
-//    public void setPhotoFeatures(PhotoFeatures photoFeatures) {
-//        this.photoFeatures = photoFeatures;
-//    }
 
     public ExifInterface getExifInterface() {
         return exifInterface;
@@ -34,4 +48,6 @@ public class Photo {
             this.exifInterface = null;
         }
     }
+
+
 }

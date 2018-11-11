@@ -1,6 +1,7 @@
 package com.example.ran.happymoments;
 
 import android.media.ExifInterface;
+import android.util.Log;
 
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfFloat;
@@ -12,6 +13,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+
+import static android.support.constraint.Constraints.TAG;
 
 public class PhotoFeatures {
 
@@ -25,6 +28,11 @@ public class PhotoFeatures {
         setDate(imagePath , exifInterface);
         setPhotoLocation(imagePath , exifInterface);
         setOrientation(imagePath , exifInterface);
+
+        Log.d(TAG, "dateTime: " + dateTime);
+        Log.d(TAG, "photoLocation: " + photoLocation);
+        Log.d(TAG, "orientation: " + orientation);
+
         setHistogram(imagePath);
     }
 
@@ -78,7 +86,7 @@ public class PhotoFeatures {
 
     private Date StringToDate(String dateString){
         Date date = null;
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
         try {
             date = format.parse(dateString);
             System.out.println(date);
