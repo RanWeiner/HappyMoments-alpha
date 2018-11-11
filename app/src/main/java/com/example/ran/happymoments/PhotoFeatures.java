@@ -1,14 +1,27 @@
 package com.example.ran.happymoments;
 
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
 import android.util.Log;
 
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfFloat;
 import org.opencv.core.MatOfInt;
+import org.opencv.core.MatOfKeyPoint;
+import org.opencv.features2d.DescriptorExtractor;
+import org.opencv.features2d.DescriptorMatcher;
+import org.opencv.features2d.FeatureDetector;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -24,6 +37,16 @@ public class PhotoFeatures {
     private String orientation;
 
 
+
+//
+//    static {
+//        if (!OpenCVLoader.initDebug())
+//            Log.d("ERROR", "Unable to load OpenCV");
+//        else
+//            Log.d("SUCCESS", "OpenCV loaded");
+//    }
+
+
     public PhotoFeatures(String imagePath,  ExifInterface exifInterface) {
         setDate(imagePath , exifInterface);
         setPhotoLocation(imagePath , exifInterface);
@@ -32,8 +55,9 @@ public class PhotoFeatures {
         Log.d(TAG, "dateTime: " + dateTime);
         Log.d(TAG, "photoLocation: " + photoLocation);
         Log.d(TAG, "orientation: " + orientation);
-
+        Log.d(TAG, "imagePath: " + imagePath);
         setHistogram(imagePath);
+        Log.d(TAG, "Mat: " + histogram.toString());
     }
 
     private void setHistogram(String imagePath) {
@@ -41,9 +65,7 @@ public class PhotoFeatures {
         Mat histogram = new Mat();
         MatOfFloat ranges = new MatOfFloat(0f, 256f);
         MatOfInt histSize = new MatOfInt(256);
-
         Imgproc.calcHist(Arrays.asList(img), new MatOfInt(0), new Mat(), histogram, histSize, ranges);
-
         this.histogram = histogram;
     }
 
@@ -54,7 +76,6 @@ public class PhotoFeatures {
 
 
     private void setPhotoLocation(String imagePath, ExifInterface exifInterface) {
-
         float[] coordinates = {0,0};
         if (exifInterface.getLatLong(coordinates)){
             this.photoLocation = new PhotoLocation(coordinates[0] , coordinates[1]);
