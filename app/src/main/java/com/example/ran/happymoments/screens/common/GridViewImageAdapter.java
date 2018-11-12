@@ -10,6 +10,8 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.example.ran.happymoments.screens.album.FullScreenViewActivity;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -77,8 +79,6 @@ public class GridViewImageAdapter extends BaseAdapter {
 
         @Override
         public void onClick(View v) {
-            // on selecting grid view image
-            // launch full screen activity
             Intent i = new Intent(mActivity, FullScreenViewActivity.class);
             i.putExtra("position", _postion);
             mActivity.startActivity(i);

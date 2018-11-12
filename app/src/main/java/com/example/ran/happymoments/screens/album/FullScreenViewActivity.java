@@ -1,4 +1,4 @@
-package com.example.ran.happymoments.screens.common;
+package com.example.ran.happymoments.screens.album;
 
 import android.content.Intent;
 import android.support.v4.view.ViewPager;
@@ -7,7 +7,6 @@ import android.os.Bundle;
 
 import com.example.ran.happymoments.R;
 import com.example.ran.happymoments.common.Utils;
-import com.example.ran.happymoments.screens.album.FullScreenImageAdapter;
 
 public class FullScreenViewActivity extends AppCompatActivity {
 
