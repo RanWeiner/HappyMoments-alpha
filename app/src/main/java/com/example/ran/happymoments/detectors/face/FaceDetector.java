@@ -1,4 +1,4 @@
-package com.example.ran.happymoments;
+package com.example.ran.happymoments.detectors.face;
 
 public class FaceDetector {
 

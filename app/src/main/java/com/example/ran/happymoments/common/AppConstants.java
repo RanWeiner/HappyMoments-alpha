@@ -1,4 +1,4 @@
-package com.example.ran.happymoments;
+package com.example.ran.happymoments.common;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;

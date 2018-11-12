@@ -1,8 +1,7 @@
-package com.example.ran.happymoments;
+package com.example.ran.happymoments.common;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.EntityIterator;
 import android.graphics.Point;
 import android.os.Environment;
 import android.util.Log;

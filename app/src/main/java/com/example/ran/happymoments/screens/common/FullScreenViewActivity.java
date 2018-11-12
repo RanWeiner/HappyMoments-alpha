@@ -1,7 +1,9 @@
-package com.example.ran.happymoments;
+package com.example.ran.happymoments.screens.common;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.example.ran.happymoments.R;
 
 public class FullScreenViewActivity extends AppCompatActivity {
 

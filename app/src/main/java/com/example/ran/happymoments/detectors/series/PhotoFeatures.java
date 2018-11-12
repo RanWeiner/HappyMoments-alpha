@@ -1,4 +1,4 @@
-package com.example.ran.happymoments;
+package com.example.ran.happymoments.detectors.series;
 
 import android.media.ExifInterface;
 import android.util.Log;

@@ -1,4 +1,4 @@
-package com.example.ran.happymoments;
+package com.example.ran.happymoments.screens.common;
 
 import android.app.Activity;
 import android.content.Intent;

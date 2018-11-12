@@ -1,4 +1,4 @@
-package com.example.ran.happymoments;
+package com.example.ran.happymoments.screens.detection;
 
 import android.content.Intent;
 import android.content.res.Resources;
@@ -9,8 +9,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.GridView;
 
+import com.example.ran.happymoments.common.AppConstants;
+import com.example.ran.happymoments.detectors.series.Photo;
+import com.example.ran.happymoments.R;
+import com.example.ran.happymoments.common.Utils;
+import com.example.ran.happymoments.detectors.series.SeriesDetector;
+import com.example.ran.happymoments.screens.common.GridViewImageAdapter;
+import com.example.ran.happymoments.screens.base.MainActivity;
+
 import java.util.ArrayList;
-import java.util.List;
 
 import in.myinnos.awesomeimagepicker.models.Image;
 
@@ -31,13 +38,11 @@ public class DetectionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_import_images);
 
+        gridView = (GridView) findViewById(R.id.grid_view_id);
         mDetectBtn = (Button)findViewById(R.id.detect_btn);
-        mDetectBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                findBestMoments();
-            }
-        });
+
+        setListeners();
+
 
         images = (ArrayList<Image>) getIntent().getSerializableExtra("images");
         photos = new ArrayList<>();
@@ -49,7 +54,6 @@ public class DetectionActivity extends AppCompatActivity {
 
         mSeriesDetector = new SeriesDetector(photos);
 
-        gridView = (GridView) findViewById(R.id.grid_view_id);
         utils = new Utils(this);
 
         setGridView();
@@ -58,9 +62,17 @@ public class DetectionActivity extends AppCompatActivity {
 
     }
 
-    private void findBestMoments() {
-        mSeriesDetector.detect();
+    private void setListeners() {
+
+        mDetectBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSeriesDetector.detectSeries();
+            }
+        });
     }
+
+
 
     private void setGridView() {
         Resources r = getResources();
@@ -76,6 +88,8 @@ public class DetectionActivity extends AppCompatActivity {
         gridView.setVerticalSpacing((int) padding);
 
     }
+
+
 
     @Override
     public void onBackPressed() {

@@ -1,4 +1,4 @@
-package com.example.ran.happymoments;
+package com.example.ran.happymoments.screens.album;
 
 import android.content.Intent;
 import android.content.res.Resources;
@@ -6,6 +6,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.widget.GridView;
+
+import com.example.ran.happymoments.common.AppConstants;
+import com.example.ran.happymoments.R;
+import com.example.ran.happymoments.common.Utils;
+import com.example.ran.happymoments.screens.common.GridViewImageAdapter;
+import com.example.ran.happymoments.screens.base.MainActivity;
 
 import java.util.ArrayList;
 

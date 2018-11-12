@@ -1,4 +1,4 @@
-package com.example.ran.happymoments;
+package com.example.ran.happymoments.screens.base;
 
 
 import android.app.Activity;
@@ -14,6 +14,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+
+import com.example.ran.happymoments.R;
+import com.example.ran.happymoments.screens.album.AlbumActivity;
+import com.example.ran.happymoments.screens.detection.DetectionActivity;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;

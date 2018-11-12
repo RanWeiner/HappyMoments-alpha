@@ -1,4 +1,4 @@
-package com.example.ran.happymoments;
+package com.example.ran.happymoments.detectors.series;
 
 import android.media.ExifInterface;
 
@@ -38,6 +38,9 @@ public class Photo {
 
 
 
+    public boolean similarTo(Photo other){
+        return this.getPhotoFeatures().compareFeatures(other.getPhotoFeatures());
+    }
 
     public PhotoFeatures getPhotoFeatures() {
         return photoFeatures;

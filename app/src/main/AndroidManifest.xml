@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".screens.base.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,12 +21,12 @@
             android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="face" />
 
-        <activity android:name=".AlbumActivity" />
+        <activity android:name=".screens.album.AlbumActivity" />
 
-        <activity android:name=".FullScreenViewActivity"
+        <activity android:name=".screens.common.FullScreenViewActivity"
             android:theme="@android:style/Theme.Holo.NoActionBar" />
 
-        <activity android:name=".DetectionActivity"></activity>
+        <activity android:name=".screens.detection.DetectionActivity"></activity>
     </application>
 
 </manifest>
