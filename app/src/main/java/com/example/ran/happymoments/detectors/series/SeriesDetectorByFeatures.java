@@ -6,7 +6,7 @@ import java.util.List;
 
 import static android.support.constraint.Constraints.TAG;
 
-class SeriesDetectorByFeatures implements SeriesDetector{
+public class SeriesDetectorByFeatures implements SeriesDetector{
 
     List<PhotoSeries> mFoundSeries;
     Photo[] mPhotos;
@@ -54,7 +54,7 @@ class SeriesDetectorByFeatures implements SeriesDetector{
         for (PhotoSeries series : mFoundSeries) {
             Log.i(TAG ,"Series "+ series.getId());
             for (Photo photo : series.getPhotos()) {
-                Log.i(TAG ,photo.getPath());
+                Log.i(TAG ,"Series "+ series.getId() + "photo= "+ photo.getPath());
             }
         }
         return mFoundSeries;

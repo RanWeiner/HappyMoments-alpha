@@ -52,26 +52,6 @@ public class MainActivity extends AppCompatActivity  {
         mImportBtn = (Button)findViewById(R.id.import_btn);
 
         setListeners();
-
-
-//        txImageSelects = (TextView) findViewById(R.id.txImageSelects);
-//        imageView = (ImageView) findViewById(R.id.imageView);
-//
-//        imageView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (Build.VERSION.SDK_INT >= 23) {
-////                    if (!checkPermissionForExternalStorage()) {
-////                        requestStoragePermission();
-////                    } else {
-////                        // opening custom gallery
-////                        chooseImagesFromDeviceGallery();
-////                    }
-////                }else{
-////                    chooseImagesFromDeviceGallery();
-////                }
-////            }
-////        });
     }
 
     private void setListeners() {
@@ -117,9 +97,10 @@ public class MainActivity extends AppCompatActivity  {
 
         if (requestCode == ConstantsCustomGallery.REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
             //The array list has the image paths of the selected images
-            ArrayList<Image> images = data.getParcelableArrayListExtra(ConstantsCustomGallery.INTENT_EXTRA_IMAGES);
-            ArrayList<String> imagesPath = getImagesPath(images);
-            goToDetectActivity(imagesPath);
+            ArrayList<Image> chosenImages = data.getParcelableArrayListExtra(ConstantsCustomGallery.INTENT_EXTRA_IMAGES);
+            ArrayList<String> chosenImagesPath = getImagesPath(chosenImages);
+
+            goToDetectActivity(chosenImages,chosenImagesPath );
 
 //            for (int i = 0; i < images.size(); i++) {
 //                Photo p = new Photo(images.get(i).path);
@@ -140,18 +121,20 @@ public class MainActivity extends AppCompatActivity  {
         }
     }
 
-    private ArrayList<String> getImagesPath(ArrayList<Image> images) {
-        ArrayList<String> imagesPath = new ArrayList<>();
+    private ArrayList<String> getImagesPath(ArrayList<Image> chosenImages) {
+        ArrayList<String> paths = new ArrayList<>();
 
-        for (Image image: images) {
-            imagesPath.add(image.path);
+        for (int i = 0 ; i < chosenImages.size() ; i++) {
+            paths.add(chosenImages.get(i).path);
         }
-        return imagesPath;
+        return  paths;
     }
 
-    private void goToDetectActivity(ArrayList<String> imagesPath) {
+
+    private void goToDetectActivity(ArrayList<Image> chosenImages , ArrayList<String> chosenImagesPath) {
         Intent intent = new Intent(MainActivity.this, DetectionActivity.class);
-        intent.putExtra("imagesPath", imagesPath);
+        intent.putExtra("chosenImages", chosenImages);
+        intent.putExtra("chosenImagesPath", chosenImagesPath);
         startActivity(intent);
         finish();
     }

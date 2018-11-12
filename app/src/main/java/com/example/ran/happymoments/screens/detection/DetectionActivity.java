@@ -14,6 +14,7 @@ import com.example.ran.happymoments.detectors.series.Photo;
 import com.example.ran.happymoments.R;
 import com.example.ran.happymoments.common.Utils;
 import com.example.ran.happymoments.detectors.series.SeriesDetector;
+import com.example.ran.happymoments.detectors.series.SeriesDetectorByFeatures;
 import com.example.ran.happymoments.screens.common.GridViewImageAdapter;
 import com.example.ran.happymoments.screens.base.MainActivity;
 
@@ -26,8 +27,8 @@ public class DetectionActivity extends AppCompatActivity {
     private ArrayList<Image> images;
     private ArrayList<String> imagesPath;
     private ArrayList<Photo> photos;
+
     private Utils utils;
-    private ArrayList<String> imagePaths = new ArrayList<String>();
     private GridViewImageAdapter adapter;
     private GridView gridView;
     private int columnWidth;
@@ -46,19 +47,23 @@ public class DetectionActivity extends AppCompatActivity {
         setListeners();
         setGridView();
 
-        imagesPath = (ArrayList<String>) getIntent().getSerializableExtra("imagesPath");
+        images = (ArrayList<Image>) getIntent().getSerializableExtra("chosenImages");
+        imagesPath = (ArrayList<String>) getIntent().getSerializableExtra("chosenImagesPath");
+        photos = new ArrayList<>();
 
-        adapter = new GridViewImageAdapter(DetectionActivity.this, imagePaths, columnWidth);
+        adapter = new GridViewImageAdapter(DetectionActivity.this, imagesPath, columnWidth);
         gridView.setAdapter(adapter);
     }
 
+    private void fetchPhotosFromImages(ArrayList<Image> images) {
 
-    private void setDetector(SeriesDetector seriesDetector) {
-        this.mSeriesDetector = seriesDetector;
+        for (int i = 0 ; i < imagesPath.size() ; i++) {
+            photos.add(new Photo(imagesPath.get(i)));
+        }
     }
 
-    private void setListeners() {
 
+    private void setListeners() {
         mDetectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,7 +89,12 @@ public class DetectionActivity extends AppCompatActivity {
 
     }
 
-
+    @Override
+    protected void onStart() {
+        super.onStart();
+        fetchPhotosFromImages(images);
+        mSeriesDetector = new SeriesDetectorByFeatures(photos);
+    }
 
     @Override
     public void onBackPressed() {

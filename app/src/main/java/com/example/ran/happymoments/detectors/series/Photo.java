@@ -1,6 +1,6 @@
 package com.example.ran.happymoments.detectors.series;
 
-import android.media.ExifInterface;
+import android.support.media.ExifInterface;
 
 import java.io.IOException;
 
@@ -12,9 +12,8 @@ public class Photo {
 
     public Photo(String path){
         this.mPath = path;
-        setExifInterface(path);
-        setPhotoFeatures(path);
-
+        setExifInterface();
+        setPhotoFeatures();
     }
 
     public String getPath() {
@@ -23,9 +22,9 @@ public class Photo {
 
 
 
-    private void setPhotoFeatures(String path) {
+    private void setPhotoFeatures() {
         if (hasExifData()){
-            photoFeatures = new PhotoFeatures(path , exifInterface);
+            photoFeatures = new PhotoFeatures(mPath , this.exifInterface);
         }
     }
 
@@ -50,9 +49,9 @@ public class Photo {
         return exifInterface;
     }
 
-    public void setExifInterface(String imagePath) {
+    public void setExifInterface() {
         try {
-           this.exifInterface =  new ExifInterface(imagePath);
+           this.exifInterface =  new ExifInterface(mPath);
         } catch (IOException e) {
             e.printStackTrace();
             this.exifInterface = null;

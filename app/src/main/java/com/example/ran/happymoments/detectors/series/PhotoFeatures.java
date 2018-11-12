@@ -1,6 +1,6 @@
 package com.example.ran.happymoments.detectors.series;
 
-import android.media.ExifInterface;
+import android.support.media.ExifInterface;
 import android.util.Log;
 
 import org.opencv.core.Mat;
@@ -27,10 +27,11 @@ public class PhotoFeatures {
 
 
     public PhotoFeatures(String imagePath,  ExifInterface exifInterface) {
-        setDate(imagePath , exifInterface);
-        setPhotoLocation(imagePath , exifInterface);
-        setOrientation(imagePath , exifInterface);
+        setDate(exifInterface);
+        setPhotoLocation(exifInterface);
+        setOrientation(exifInterface);
 
+        //some of them might be null - checked
         Log.d(TAG, "dateTime: " + dateTime);
         Log.d(TAG, "photoLocation: " + photoLocation);
         Log.d(TAG, "orientation: " + orientation);
@@ -48,13 +49,13 @@ public class PhotoFeatures {
         this.histogram = histogram;
     }
 
-    private void setOrientation(String imagePath, ExifInterface exifInterface) {
+    private void setOrientation(ExifInterface exifInterface) {
         this.orientation = exifInterface.getAttribute(ExifInterface.TAG_ORIENTATION);
     }
 
 
 
-    private void setPhotoLocation(String imagePath, ExifInterface exifInterface) {
+    private void setPhotoLocation(ExifInterface exifInterface) {
         float[] coordinates = {0,0};
         if (exifInterface.getLatLong(coordinates)){
             this.photoLocation = new PhotoLocation(coordinates[0] , coordinates[1]);
@@ -64,8 +65,15 @@ public class PhotoFeatures {
         }
     }
 
-    private void setDate(String imagePath ,ExifInterface exifInterface) {
-        this.dateTime = StringToDate(exifInterface.getAttribute(ExifInterface.TAG_DATETIME));
+    private void setDate(ExifInterface exifInterface) {
+
+        String dateString = exifInterface.getAttribute(ExifInterface.TAG_DATETIME);
+
+        Log.d(TAG, "dateString: " + dateString);
+
+        if (dateString != null) {
+            this.dateTime = StringToDate(exifInterface.getAttribute(ExifInterface.TAG_DATETIME));
+        }
     }
 
     public Date getDateTime() {
@@ -89,8 +97,6 @@ public class PhotoFeatures {
         SimpleDateFormat format = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
         try {
             date = format.parse(dateString);
-            System.out.println(date);
-
         } catch (ParseException e) {
             e.printStackTrace();
         }
