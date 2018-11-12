@@ -24,6 +24,7 @@ import in.myinnos.awesomeimagepicker.models.Image;
 public class DetectionActivity extends AppCompatActivity {
 
     private ArrayList<Image> images;
+    private ArrayList<String> imagesPath;
     private ArrayList<Photo> photos;
     private Utils utils;
     private ArrayList<String> imagePaths = new ArrayList<String>();
@@ -38,28 +39,22 @@ public class DetectionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_import_images);
 
+        utils = new Utils(this);
         gridView = (GridView) findViewById(R.id.grid_view_id);
         mDetectBtn = (Button)findViewById(R.id.detect_btn);
 
         setListeners();
-
-
-        images = (ArrayList<Image>) getIntent().getSerializableExtra("images");
-        photos = new ArrayList<>();
-
-        for (int i = 0 ; i < images.size() ; i++){
-            imagePaths.add(images.get(i).path);
-            photos.add(new Photo(images.get(i).path));
-        }
-
-        mSeriesDetector = new SeriesDetector(photos);
-
-        utils = new Utils(this);
-
         setGridView();
+
+        imagesPath = (ArrayList<String>) getIntent().getSerializableExtra("imagesPath");
+
         adapter = new GridViewImageAdapter(DetectionActivity.this, imagePaths, columnWidth);
         gridView.setAdapter(adapter);
+    }
 
+
+    private void setDetector(SeriesDetector seriesDetector) {
+        this.mSeriesDetector = seriesDetector;
     }
 
     private void setListeners() {
