@@ -2,14 +2,21 @@ package com.example.ran.happymoments.common;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -100,9 +107,17 @@ public class Utils {
 
         final String appDirectoryName = AppConstants.HAPPY_MOMENTS_ALBUM;
 
+        //v2
+        final String myfolder = Environment.getExternalStorageDirectory()+ "/" + appDirectoryName;
+        final File f = new File(myfolder);
+
+        //v1
         final File imageRoot = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES).getAbsolutePath(), appDirectoryName);
 
+
+
+        //if there is no directory - create
         if (!imageRoot.isDirectory())
             imageRoot.mkdirs();
 
@@ -121,14 +136,63 @@ public class Utils {
         Log.d(TAG, imageRoot + " already exist.");
     }
 
-    public File getPublicAlbumStorageDir(String albumName){
-        File file = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES),albumName);
-        if (!file.mkdirs()){
-            Log.d(TAG, "Directory not created.");
+
+
+//https://stackoverflow.com/questions/11983654/android-how-to-add-an-image-to-an-album
+
+    public void saveImageToExternal(String imgName, Bitmap bm) throws IOException {
+
+        final String appDirectoryName = AppConstants.HAPPY_MOMENTS_ALBUM;
+
+        //Create Path to save Image
+        File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES+"/"+ appDirectoryName);
+
+        //if there is no directory exist
+        if (!path.isDirectory())
+            path.mkdirs();
+
+        File imageFile = new File(path, imgName+".png"); // Imagename.png
+
+        FileOutputStream out = new FileOutputStream(imageFile);
+        try{
+            bm.compress(Bitmap.CompressFormat.PNG, 100, out); // Compress Image
+            out.flush();
+            out.close();
+
+            // Tell the media scanner about the new file so that it is
+            // immediately available to the user.
+            MediaScannerConnection.scanFile(mContext,new String[] { imageFile.getAbsolutePath() }, null,new MediaScannerConnection.OnScanCompletedListener() {
+                public void onScanCompleted(String path, Uri uri) {
+                    Log.i("ExternalStorage", "Scanned " + path + ":");
+                    Log.i("ExternalStorage", "-> uri=" + uri);
+                }
+            });
+        } catch(Exception e) {
+            throw new IOException();
         }
-        return file;
     }
+
+
+
+    public void savePicture(Bitmap bm, File f)
+    {
+        OutputStream fOut = null;
+        String strDirectory = Environment.getExternalStorageDirectory().toString();
+
+        try {
+            fOut = new FileOutputStream(f);
+
+            /**Compress image**/
+            bm.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
+            fOut.flush();
+            fOut.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
     public boolean isExternalStorageWritable(){
         String state = Environment.getExternalStorageState();

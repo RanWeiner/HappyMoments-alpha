@@ -1,8 +1,8 @@
 package com.example.ran.happymoments.detection.face;
 
-public class FaceDetector {
+public class FaceDetectorImpl {
 
-    public FaceDetector(){
+    public FaceDetectorImpl(){
 
     }
 
@@ -117,14 +117,14 @@ public class FaceDetector {
 //
 //        //!!!
 //        //Cannot resolve method setTrackingEnabled(boolean)
-//        //FaceDetector faceDetector = new FaceDetector.Builder(getApplicationContext()).build();
+//        //FaceDetectorImpl faceDetector = new FaceDetectorImpl.Builder(getApplicationContext()).build();
 //        //faceDetector.setTrackingEnabled(false);
 //
-//        FaceDetector faceDetector =
-//                new FaceDetector.Builder(getApplicationContext())
+//        FaceDetectorImpl faceDetector =
+//                new FaceDetectorImpl.Builder(getApplicationContext())
 //                        .setTrackingEnabled(false)
-//                        .setLandmarkType(FaceDetector.ALL_LANDMARKS)
-//                        .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
+//                        .setLandmarkType(FaceDetectorImpl.ALL_LANDMARKS)
+//                        .setClassificationType(FaceDetectorImpl.ALL_CLASSIFICATIONS)
 //                        .build();
 //
 //        Frame frame = new Frame.Builder().setBitmap(myBitmap).build();

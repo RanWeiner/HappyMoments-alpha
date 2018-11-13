@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.GridView;
 
 import com.example.ran.happymoments.common.AppConstants;
-import com.example.ran.happymoments.detection.face.FaceDetector;
+import com.example.ran.happymoments.detection.face.FaceDetectorImpl;
 import com.example.ran.happymoments.detection.series.Photo;
 import com.example.ran.happymoments.R;
 import com.example.ran.happymoments.common.Utils;
@@ -33,6 +33,7 @@ public class DetectionActivity extends AppCompatActivity {
     private ArrayList<Image> images;
     private ArrayList<String> imagesPath;
     private ArrayList<Photo> photos;
+    List<PhotoSeries> mPhotoSeriesList;
 
     private Utils utils;
     private GridViewImageAdapter adapter;
@@ -40,7 +41,7 @@ public class DetectionActivity extends AppCompatActivity {
     private int columnWidth;
     private Button mDetectBtn;
     private SeriesDetector mSeriesDetector;
-    private FaceDetector mFaceDetector;
+    private FaceDetectorImpl mFaceDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,18 +75,22 @@ public class DetectionActivity extends AppCompatActivity {
         mDetectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<PhotoSeries> mPhotoSeriesList = mSeriesDetector.detectSeries();
-                //just for debug
-                for (PhotoSeries series : mPhotoSeriesList) {
-                    Log.i(TAG ,"Series "+ series.getId());
-                    for (Photo photo : series.getPhotos()) {
-                        Log.i(TAG ,"Series "+ series.getId() + "photo= "+ photo.getPath());
-                    }
-                }
+               detectAllSeries();
             }
         });
     }
 
+    private void detectAllSeries() {
+
+        mPhotoSeriesList = mSeriesDetector.detectSeries();
+        //just for debug
+        for (PhotoSeries series : mPhotoSeriesList) {
+            Log.i(TAG ,"Series "+ series.getId());
+            for (Photo photo : series.getPhotos()) {
+                Log.i(TAG ,"Series "+ series.getId() + "photo= "+ photo.getPath());
+            }
+        }
+    }
 
 
     private void setGridView() {
@@ -110,7 +115,7 @@ public class DetectionActivity extends AppCompatActivity {
         mSeriesDetector = new SeriesDetectorByFeatures(photos);
 
 
-        mFaceDetector = new FaceDetector();
+        mFaceDetector = new FaceDetectorImpl();
     }
 
     @Override
