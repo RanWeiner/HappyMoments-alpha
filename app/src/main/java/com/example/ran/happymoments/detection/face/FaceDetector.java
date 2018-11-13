@@ -1,6 +1,10 @@
-package com.example.ran.happymoments.detectors.face;
+package com.example.ran.happymoments.detection.face;
 
 public class FaceDetector {
+
+    public FaceDetector(){
+
+    }
 
 
 //    private static final int RQS_LOADIMAGE = 1;

@@ -1,4 +1,4 @@
-package com.example.ran.happymoments.detectors.series;
+package com.example.ran.happymoments.detection.series;
 
 import android.util.Log;
 import java.util.ArrayList;
@@ -47,14 +47,6 @@ public class SeriesDetectorByFeatures implements SeriesDetector{
                 PhotoSeries newPhotoSeries = new PhotoSeries();
                 newPhotoSeries.addPhoto(mPhotos[i]);
                 mFoundSeries.add(newPhotoSeries);
-            }
-        }
-
-        //just for debug
-        for (PhotoSeries series : mFoundSeries) {
-            Log.i(TAG ,"Series "+ series.getId());
-            for (Photo photo : series.getPhotos()) {
-                Log.i(TAG ,"Series "+ series.getId() + "photo= "+ photo.getPath());
             }
         }
         return mFoundSeries;

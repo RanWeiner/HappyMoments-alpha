@@ -1,4 +1,4 @@
-package com.example.ran.happymoments.screens.common;
+package com.example.ran.happymoments.common;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -10,7 +10,7 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-import com.example.ran.happymoments.screens.album.FullScreenViewActivity;
+import com.example.ran.happymoments.album.FullScreenViewActivity;
 
 import java.io.File;
 import java.io.FileInputStream;

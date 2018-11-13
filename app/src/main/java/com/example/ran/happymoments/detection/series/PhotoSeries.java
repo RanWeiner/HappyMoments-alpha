@@ -1,4 +1,4 @@
-package com.example.ran.happymoments.detectors.series;
+package com.example.ran.happymoments.detection.series;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,10 +15,10 @@ public class PhotoSeries {
         mPhotos = new ArrayList<>();
     }
 
-    public PhotoSeries(List<Photo> photos) {
-        this();
-        mPhotos.addAll(photos);
-    }
+//    public PhotoSeries(List<Photo> photos) {
+//        this();
+//        mPhotos.addAll(photos);
+//    }
 
 
     public int getId() {

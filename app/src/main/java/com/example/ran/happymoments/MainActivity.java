@@ -1,4 +1,4 @@
-package com.example.ran.happymoments.screens.base;
+package com.example.ran.happymoments;
 
 
 import android.app.Activity;
@@ -15,16 +15,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import com.example.ran.happymoments.R;
-import com.example.ran.happymoments.screens.album.AlbumActivity;
-import com.example.ran.happymoments.screens.detection.DetectionActivity;
+import com.example.ran.happymoments.album.AlbumActivity;
+import com.example.ran.happymoments.detection.DetectionActivity;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import in.myinnos.awesomeimagepicker.activities.AlbumSelectActivity;
 import in.myinnos.awesomeimagepicker.helpers.ConstantsCustomGallery;

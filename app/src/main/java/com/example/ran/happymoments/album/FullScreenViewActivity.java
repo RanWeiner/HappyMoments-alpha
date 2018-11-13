@@ -1,4 +1,4 @@
-package com.example.ran.happymoments.screens.album;
+package com.example.ran.happymoments.album;
 
 import android.content.Intent;
 import android.support.v4.view.ViewPager;

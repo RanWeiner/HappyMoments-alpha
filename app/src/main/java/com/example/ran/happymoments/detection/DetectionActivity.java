@@ -1,26 +1,32 @@
-package com.example.ran.happymoments.screens.detection;
+package com.example.ran.happymoments.detection;
 
 import android.content.Intent;
 import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridView;
 
 import com.example.ran.happymoments.common.AppConstants;
-import com.example.ran.happymoments.detectors.series.Photo;
+import com.example.ran.happymoments.detection.face.FaceDetector;
+import com.example.ran.happymoments.detection.series.Photo;
 import com.example.ran.happymoments.R;
 import com.example.ran.happymoments.common.Utils;
-import com.example.ran.happymoments.detectors.series.SeriesDetector;
-import com.example.ran.happymoments.detectors.series.SeriesDetectorByFeatures;
-import com.example.ran.happymoments.screens.common.GridViewImageAdapter;
-import com.example.ran.happymoments.screens.base.MainActivity;
+import com.example.ran.happymoments.detection.series.PhotoSeries;
+import com.example.ran.happymoments.detection.series.SeriesDetector;
+import com.example.ran.happymoments.detection.series.SeriesDetectorByFeatures;
+import com.example.ran.happymoments.common.GridViewImageAdapter;
+import com.example.ran.happymoments.MainActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import in.myinnos.awesomeimagepicker.models.Image;
+
+import static android.support.constraint.Constraints.TAG;
 
 public class DetectionActivity extends AppCompatActivity {
 
@@ -34,6 +40,7 @@ public class DetectionActivity extends AppCompatActivity {
     private int columnWidth;
     private Button mDetectBtn;
     private SeriesDetector mSeriesDetector;
+    private FaceDetector mFaceDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +74,14 @@ public class DetectionActivity extends AppCompatActivity {
         mDetectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mSeriesDetector.detectSeries();
+                List<PhotoSeries> mPhotoSeriesList = mSeriesDetector.detectSeries();
+                //just for debug
+                for (PhotoSeries series : mPhotoSeriesList) {
+                    Log.i(TAG ,"Series "+ series.getId());
+                    for (Photo photo : series.getPhotos()) {
+                        Log.i(TAG ,"Series "+ series.getId() + "photo= "+ photo.getPath());
+                    }
+                }
             }
         });
     }
@@ -94,6 +108,9 @@ public class DetectionActivity extends AppCompatActivity {
         super.onStart();
         fetchPhotosFromImages(images);
         mSeriesDetector = new SeriesDetectorByFeatures(photos);
+
+
+        mFaceDetector = new FaceDetector();
     }
 
     @Override
