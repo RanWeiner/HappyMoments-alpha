@@ -1,7 +1,7 @@
 package com.example.ran.happymoments.detection.series;
 
 public class PhotoLocation {
-    float latitude, longitude;
+    private float latitude, longitude;
 
 
     public PhotoLocation(float latitude , float longitude){

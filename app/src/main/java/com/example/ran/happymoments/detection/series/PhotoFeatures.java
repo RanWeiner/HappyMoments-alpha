@@ -1,5 +1,6 @@
 package com.example.ran.happymoments.detection.series;
 
+import android.location.Location;
 import android.support.media.ExifInterface;
 import android.util.Log;
 
@@ -12,13 +13,14 @@ import org.opencv.imgproc.Imgproc;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
+import java.util.Calendar;
 
 import static android.support.constraint.Constraints.TAG;
 
 public class PhotoFeatures {
     private final double HISTOGRAM_THRESHOLD = 70;
-    private Date dateTime;
+    private final double DISTANCE_THRESHOLD = 0.1;
+    private Calendar dateTime;
     private PhotoLocation photoLocation;
     private Mat histogram;
     private String orientation;
@@ -32,7 +34,7 @@ public class PhotoFeatures {
         setOrientation(exifInterface);
 
         //some of them might be null - checked
-        Log.d(TAG, "dateTime: " + dateTime);
+        Log.d(TAG, "dateTime: " + dateTime.getTime());
         Log.d(TAG, "photoLocation: " + photoLocation);
         Log.d(TAG, "orientation: " + orientation);
         Log.d(TAG, "imagePath: " + imagePath);
@@ -54,7 +56,6 @@ public class PhotoFeatures {
     }
 
 
-
     private void setPhotoLocation(ExifInterface exifInterface) {
         float[] coordinates = {0,0};
         if (exifInterface.getLatLong(coordinates)){
@@ -72,11 +73,11 @@ public class PhotoFeatures {
         Log.d(TAG, "dateString: " + dateString);
 
         if (dateString != null) {
-            this.dateTime = StringToDate(exifInterface.getAttribute(ExifInterface.TAG_DATETIME));
+            this.dateTime = StringToCalendar(dateString);
         }
     }
 
-    public Date getDateTime() {
+    public Calendar getDateTime() {
         return dateTime;
     }
 
@@ -92,25 +93,35 @@ public class PhotoFeatures {
         return orientation;
     }
 
-    private Date StringToDate(String dateString){
-        Date date = null;
+    private Calendar StringToCalendar(String dateString){
+        Calendar calendar = Calendar.getInstance();
         SimpleDateFormat format = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
         try {
-            date = format.parse(dateString);
+            calendar.setTime(format.parse(dateString));
         } catch (ParseException e) {
+            Log.d("Exception:", "Parsing went wrong! " + dateString);
             e.printStackTrace();
         }
-        return date;
+        return calendar;
     }
 
 
 
     public boolean compareFeatures(PhotoFeatures otherPhotoFeatures) {
 
-        if (!compareHist(otherPhotoFeatures.getHistogram()))
-            return false;
+            if(getDistance(this.getPhotoLocation(), otherPhotoFeatures.getPhotoLocation()) > DISTANCE_THRESHOLD)
+                return false;
 
-        return true;
+            if(!areDateSimilar(this.getDateTime(), otherPhotoFeatures.getDateTime()))
+                return false;
+
+            if(!orientation.equals(otherPhotoFeatures.getOrientation()))
+                return false;
+
+            if (!compareHist(otherPhotoFeatures.getHistogram()))
+                return false;
+
+            return true;
     }
 
     public boolean compareHist(Mat otherHist){
@@ -119,6 +130,78 @@ public class PhotoFeatures {
         Double d = new Double(res * 100);
 
         if (d >= HISTOGRAM_THRESHOLD)
+            return true;
+        return false;
+    }
+
+    public double getDistance(PhotoLocation p1, PhotoLocation p2) {
+//        float[] result = new float[2];
+////        Location.distanceBetween(p1.getLatitude(), p1.getLongitude(), p2.getLatitude(), p2.getLongitude(), result);
+////        Log.d("distance:", "" + result[0]);
+////        return result[0];
+//        Location loc1 = new Location("");
+//        loc1.setLatitude(p1.getLatitude());
+//        loc1.setLongitude(p1.getLongitude());
+//
+//        Location loc2 = new Location("");
+//        loc2.setLatitude(p2.getLatitude());
+//        loc2.setLongitude(p2.getLongitude());
+//
+//        float res = loc1.distanceTo(loc2);
+//        Log.d("Distance:", ""+res);
+//        return res;
+        return distance(p1.getLatitude() , p1.getLongitude() , p2.getLatitude() , p2.getLongitude());
+
+    }
+
+
+
+    public double distance(double lat1, double lon1, double lat2, double lon2) {
+        double theta = lon1 - lon2;
+        double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+        dist = Math.acos(dist);
+        dist = rad2deg(dist);
+        dist = dist * 60 * 1.1515;
+        dist = dist * 1.609344;
+
+        Log.d("Distance:", ""+dist);
+        return (dist);
+    }
+
+
+    public  double rad2deg(double rad) {
+        return (rad * 180 / Math.PI);
+    }
+
+
+    public  double deg2rad(double deg) {
+        return (deg * Math.PI / 180.0);
+    }
+
+//    public boolean areDateSimilar(Date d1, Date d2)
+//    {
+//        boolean lessThanMinute;
+//        long diff = d1.getTime() - d2.getTime();
+//        int diffMin = (int) (diff / (60 * 1000));
+//
+//        lessThanMinute = diffMin < 1;
+//
+//        if(d1.getYear() == d2.getYear() && d1.getMonth() == d2.getMonth() && d1.getDay() == d2.getDay() &&
+//                d1.getHours() == d2.getHours() && lessThanMinute)
+//            return true;
+//
+//        return false;
+//    }
+
+    public boolean areDateSimilar(Calendar c1, Calendar c2)
+    {
+        long diff = Math.abs(c1.getTimeInMillis() - c2.getTimeInMillis());
+       // long diffSeconds = diff / 1000 % 60;
+        long diffMinutes = diff / (60 * 1000) % 60;
+        long diffHours = diff / (60 * 60 * 1000);
+
+
+        if(diffHours == 0 && diffMinutes < 1)
             return true;
         return false;
     }
