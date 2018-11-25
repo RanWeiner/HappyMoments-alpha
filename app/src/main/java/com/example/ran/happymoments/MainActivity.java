@@ -6,11 +6,7 @@ import android.content.Intent;
 
 import android.content.pm.PackageManager;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Build;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,7 +16,6 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.ran.happymoments.album.AlbumActivity;
-import com.example.ran.happymoments.common.AppConstants;
 import com.example.ran.happymoments.common.Utils;
 import com.example.ran.happymoments.detection.DetectionActivity;
 
@@ -28,9 +23,6 @@ import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import in.myinnos.awesomeimagepicker.activities.AlbumSelectActivity;
@@ -40,13 +32,14 @@ import in.myinnos.awesomeimagepicker.models.Image;
 import static android.support.constraint.Constraints.TAG;
 
 
+
+
 public class MainActivity extends AppCompatActivity  {
 
     private static final int READ_STORAGE_PERMISSION = 4000;
     private static final int LIMIT = 5;
     private Button mAlbumBtn , mImportBtn;
 
-    //test
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,12 +83,12 @@ public class MainActivity extends AppCompatActivity  {
 
         Utils utils = new Utils(this);
 
-        final Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.image);
-        try {
-            utils.saveImageToExternal("image_name.jpg", bm);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        final Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.image);
+//        try {
+//            utils.saveImageToExternal("image_name.jpg", bm);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
     }
 
@@ -110,7 +103,7 @@ public class MainActivity extends AppCompatActivity  {
             ArrayList<Image> chosenImages = data.getParcelableArrayListExtra(ConstantsCustomGallery.INTENT_EXTRA_IMAGES);
             ArrayList<String> chosenImagesPath = getImagesPath(chosenImages);
 
-            goToDetectActivity(chosenImages,chosenImagesPath );
+            goToDetectionActivity(chosenImages,chosenImagesPath );
 
 //            for (int i = 0; i < images.size(); i++) {
 //                Photo p = new Photo(images.get(i).path);
@@ -141,7 +134,7 @@ public class MainActivity extends AppCompatActivity  {
     }
 
 
-    private void goToDetectActivity(ArrayList<Image> chosenImages , ArrayList<String> chosenImagesPath) {
+    private void goToDetectionActivity(ArrayList<Image> chosenImages , ArrayList<String> chosenImagesPath) {
         Intent intent = new Intent(MainActivity.this, DetectionActivity.class);
         intent.putExtra("chosenImages", chosenImages);
         intent.putExtra("chosenImagesPath", chosenImagesPath);

@@ -17,7 +17,7 @@ import com.example.ran.happymoments.R;
 import com.example.ran.happymoments.common.Utils;
 import com.example.ran.happymoments.detection.series.PhotoSeries;
 import com.example.ran.happymoments.detection.series.SeriesDetector;
-import com.example.ran.happymoments.detection.series.SeriesDetectorByFeatures;
+import com.example.ran.happymoments.detection.series.SeriesDetectorImpl;
 import com.example.ran.happymoments.common.GridViewImageAdapter;
 import com.example.ran.happymoments.MainActivity;
 
@@ -27,6 +27,8 @@ import java.util.List;
 import in.myinnos.awesomeimagepicker.models.Image;
 
 import static android.support.constraint.Constraints.TAG;
+
+//http://android-er.blogspot.com/2015/08/face-detection-with-google-play.html
 
 public class DetectionActivity extends AppCompatActivity {
 
@@ -76,6 +78,11 @@ public class DetectionActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                detectAllSeries();
+
+
+               mFaceDetector = new FaceDetectorImpl(mPhotoSeriesList);
+               mFaceDetector.detect();
+
             }
         });
     }
@@ -112,10 +119,10 @@ public class DetectionActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         fetchPhotosFromImages(images);
-        mSeriesDetector = new SeriesDetectorByFeatures(photos);
+
+        mSeriesDetector = new SeriesDetectorImpl(photos);
 
 
-        mFaceDetector = new FaceDetectorImpl();
     }
 
     @Override

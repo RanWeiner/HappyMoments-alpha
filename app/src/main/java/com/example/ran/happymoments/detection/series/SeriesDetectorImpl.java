@@ -6,13 +6,13 @@ import java.util.List;
 
 import static android.support.constraint.Constraints.TAG;
 
-public class SeriesDetectorByFeatures implements SeriesDetector{
+public class SeriesDetectorImpl implements SeriesDetector{
 
     List<PhotoSeries> mFoundSeries;
     Photo[] mPhotos;
 
 
-    public SeriesDetectorByFeatures(List<Photo> photos) {
+    public SeriesDetectorImpl(List<Photo> photos) {
         mFoundSeries = new ArrayList<>();
         mPhotos = photos.toArray(new Photo[0]);
     }

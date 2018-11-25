@@ -1,8 +1,22 @@
 package com.example.ran.happymoments.detection.face;
 
+import com.example.ran.happymoments.detection.series.Photo;
+import com.example.ran.happymoments.detection.series.PhotoSeries;
+
+import java.util.List;
+
 public class FaceDetectorImpl {
 
-    public FaceDetectorImpl(){
+    PhotoSeries[] photoSeries;
+
+
+    public FaceDetectorImpl(List<PhotoSeries> photoSeriesList){
+        this.photoSeries = photoSeriesList.toArray(new PhotoSeries[0]);
+    }
+
+    public void detect() {
+
+
 
     }
 
