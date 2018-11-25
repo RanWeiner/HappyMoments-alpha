@@ -37,7 +37,7 @@ import static android.support.constraint.Constraints.TAG;
 public class MainActivity extends AppCompatActivity  {
 
     private static final int READ_STORAGE_PERMISSION = 4000;
-    private static final int LIMIT = 5;
+    private static final int LIMIT = 20;
     private Button mAlbumBtn , mImportBtn;
 
 
@@ -81,8 +81,8 @@ public class MainActivity extends AppCompatActivity  {
     protected void onStart() {
         super.onStart();
 
-        Utils utils = new Utils(this);
-
+//        Utils utils = new Utils(this);
+//
 //        final Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.image);
 //        try {
 //            utils.saveImageToExternal("image_name.jpg", bm);
@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity  {
 //        }
 
     }
+
 
 
     //after user choose images

@@ -60,15 +60,16 @@ public class DetectionActivity extends AppCompatActivity {
         images = (ArrayList<Image>) getIntent().getSerializableExtra("chosenImages");
         imagesPath = (ArrayList<String>) getIntent().getSerializableExtra("chosenImagesPath");
         photos = new ArrayList<>();
+        setPhotos(imagesPath);
+        mSeriesDetector = new SeriesDetectorByFeatures(photos);
 
         adapter = new GridViewImageAdapter(DetectionActivity.this, imagesPath, columnWidth);
         gridView.setAdapter(adapter);
     }
 
-    private void fetchPhotosFromImages(ArrayList<Image> images) {
-
-        for (int i = 0 ; i < imagesPath.size() ; i++) {
-            photos.add(new Photo(imagesPath.get(i)));
+    private void setPhotos(ArrayList<String> imagesPath) {
+        for (int i = 0 ;i < imagesPath.size() ; i++){
+            this.photos.add(new Photo(imagesPath.get(i)));
         }
     }
 
@@ -90,6 +91,13 @@ public class DetectionActivity extends AppCompatActivity {
     private void detectAllSeries() {
 
         mPhotoSeriesList = mSeriesDetector.detectSeries();
+
+        //just for debug
+        printSerieses();
+    }
+
+
+    public void printSerieses() {
         //just for debug
         for (PhotoSeries series : mPhotoSeriesList) {
             Log.i(TAG ,"Series "+ series.getId());
@@ -98,7 +106,6 @@ public class DetectionActivity extends AppCompatActivity {
             }
         }
     }
-
 
     private void setGridView() {
         Resources r = getResources();
@@ -115,6 +122,7 @@ public class DetectionActivity extends AppCompatActivity {
 
     }
 
+<<<<<<< HEAD
     @Override
     protected void onStart() {
         super.onStart();
@@ -124,6 +132,9 @@ public class DetectionActivity extends AppCompatActivity {
 
 
     }
+=======
+
+>>>>>>> bff3bcd1539f3c72d8710acfb74f805af3de6cba
 
     @Override
     public void onBackPressed() {
