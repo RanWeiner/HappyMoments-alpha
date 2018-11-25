@@ -1,5 +1,6 @@
 package com.example.ran.happymoments.detection;
 
+
 import android.content.Intent;
 import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;
@@ -11,13 +12,14 @@ import android.widget.Button;
 import android.widget.GridView;
 
 import com.example.ran.happymoments.common.AppConstants;
-import com.example.ran.happymoments.detection.face.FaceDetectorImpl;
+import com.example.ran.happymoments.detection.face.FaceSeriesGenerator;
+import com.example.ran.happymoments.detection.face.FaceSeriesGeneratorImpl;
 import com.example.ran.happymoments.detection.series.Photo;
 import com.example.ran.happymoments.R;
 import com.example.ran.happymoments.common.Utils;
 import com.example.ran.happymoments.detection.series.PhotoSeries;
-import com.example.ran.happymoments.detection.series.SeriesDetector;
-import com.example.ran.happymoments.detection.series.SeriesDetectorImpl;
+import com.example.ran.happymoments.detection.series.FeaturesSeriesGenerator;
+import com.example.ran.happymoments.detection.series.FeaturesSeriesGeneratorImpl;
 import com.example.ran.happymoments.common.GridViewImageAdapter;
 import com.example.ran.happymoments.MainActivity;
 
@@ -27,8 +29,6 @@ import java.util.List;
 import in.myinnos.awesomeimagepicker.models.Image;
 
 import static android.support.constraint.Constraints.TAG;
-
-//http://android-er.blogspot.com/2015/08/face-detection-with-google-play.html
 
 public class DetectionActivity extends AppCompatActivity {
 
@@ -42,8 +42,9 @@ public class DetectionActivity extends AppCompatActivity {
     private GridView gridView;
     private int columnWidth;
     private Button mDetectBtn;
-    private SeriesDetector mSeriesDetector;
-    private FaceDetectorImpl mFaceDetector;
+    private FeaturesSeriesGenerator mFeaturesSeriesGenerator;
+    private FaceSeriesGenerator mFaceSeriesGenerator;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +62,10 @@ public class DetectionActivity extends AppCompatActivity {
         imagesPath = (ArrayList<String>) getIntent().getSerializableExtra("chosenImagesPath");
         photos = new ArrayList<>();
         setPhotos(imagesPath);
-        mSeriesDetector = new SeriesDetectorByFeatures(photos);
+
+        mFeaturesSeriesGenerator = new FeaturesSeriesGeneratorImpl(photos);
+        mFaceSeriesGenerator = new FaceSeriesGeneratorImpl();
+
 
         adapter = new GridViewImageAdapter(DetectionActivity.this, imagesPath, columnWidth);
         gridView.setAdapter(adapter);
@@ -78,22 +82,26 @@ public class DetectionActivity extends AppCompatActivity {
         mDetectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               detectAllSeries();
-
-
-               mFaceDetector = new FaceDetectorImpl(mPhotoSeriesList);
-               mFaceDetector.detect();
-
+                detectAllSeries();
             }
         });
     }
 
     private void detectAllSeries() {
 
-        mPhotoSeriesList = mSeriesDetector.detectSeries();
+        //Features Series Generator
+        mPhotoSeriesList = mFeaturesSeriesGenerator.detectSeries();
 
         //just for debug
         printSerieses();
+
+        //Face Series Generator
+        List<Photo> photos;
+        List<PhotoSeries>photoSeriesFound = new ArrayList<>();
+
+        for ( PhotoSeries photoSeries: mPhotoSeriesList) {
+           photos =  photoSeries.getPhotos();
+        }
     }
 
 
@@ -122,19 +130,7 @@ public class DetectionActivity extends AppCompatActivity {
 
     }
 
-<<<<<<< HEAD
-    @Override
-    protected void onStart() {
-        super.onStart();
-        fetchPhotosFromImages(images);
 
-        mSeriesDetector = new SeriesDetectorImpl(photos);
-
-
-    }
-=======
-
->>>>>>> bff3bcd1539f3c72d8710acfb74f805af3de6cba
 
     @Override
     public void onBackPressed() {

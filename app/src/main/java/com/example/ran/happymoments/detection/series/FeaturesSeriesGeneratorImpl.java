@@ -1,18 +1,20 @@
 package com.example.ran.happymoments.detection.series;
 
-import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.support.constraint.Constraints.TAG;
-
-public class SeriesDetectorImpl implements SeriesDetector{
+public class FeaturesSeriesGeneratorImpl implements FeaturesSeriesGenerator {
 
     List<PhotoSeries> mFoundSeries;
     Photo[] mPhotos;
 
 
-    public SeriesDetectorImpl(List<Photo> photos) {
+    public FeaturesSeriesGeneratorImpl() {
+
+    }
+
+
+    public FeaturesSeriesGeneratorImpl(List<Photo> photos) {
         mFoundSeries = new ArrayList<>();
         mPhotos = photos.toArray(new Photo[0]);
     }

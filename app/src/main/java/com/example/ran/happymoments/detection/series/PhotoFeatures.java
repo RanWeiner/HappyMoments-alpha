@@ -108,6 +108,7 @@ public class PhotoFeatures {
 
 
     public boolean compareFeatures(PhotoFeatures otherPhotoFeatures) {
+            //check if null
 
             if(getDistance(this.getPhotoLocation(), otherPhotoFeatures.getPhotoLocation()) > DISTANCE_THRESHOLD)
                 return false;
