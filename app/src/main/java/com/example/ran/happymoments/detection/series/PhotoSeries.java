@@ -7,12 +7,14 @@ public class PhotoSeries {
 
     private static int idGenerator = 0;
     private int id;
-    private List<Photo> mPhotos;
+    private List<Photo> photos;
+    private int numOfPhotos;
 
 
     public PhotoSeries() {
         this.id = ++idGenerator;
-        mPhotos = new ArrayList<>();
+        photos = new ArrayList<>();
+        numOfPhotos = 0;
     }
 
 //    public PhotoSeries(List<Photo> photos) {
@@ -26,19 +28,39 @@ public class PhotoSeries {
     }
 
 
+
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setPhotos(List<Photo> photos) {
+        this.photos = photos;
+    }
+
+    public int getNumOfPhotos() {
+        return numOfPhotos;
+    }
+
+    public void setNumOfPhotos(int numOfPhotos) {
+        this.numOfPhotos = numOfPhotos;
+    }
+
     public List<Photo> getPhotos() {
-        return this.mPhotos;
+        return this.photos;
     }
 
     public void addPhoto(Photo photo) {
-        this.mPhotos.add(photo);
+        this.photos.add(photo);
+        numOfPhotos++;
     }
 
     public Photo getPhoto(int index) {
-        return this.mPhotos.get(index);
+        return this.photos.get(index);
     }
 
     public void removePhoto(Photo photo) {
-        this.mPhotos.remove(photo);
+        numOfPhotos--;
+        this.photos.remove(photo);
     }
 }

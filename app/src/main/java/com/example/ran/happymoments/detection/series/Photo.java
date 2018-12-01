@@ -2,18 +2,23 @@ package com.example.ran.happymoments.detection.series;
 
 import android.support.media.ExifInterface;
 
+import com.example.ran.happymoments.detection.face.Face;
+
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Photo {
     private String mPath;
     private PhotoFeatures photoFeatures;
     private ExifInterface exifInterface;
-
+    private List<Face> faces = null;
 
     public Photo(String path){
         this.mPath = path;
         setExifInterface();
         setPhotoFeatures();
+        faces = new ArrayList<>();
     }
 
     public String getPath() {
@@ -59,4 +64,7 @@ public class Photo {
     }
 
 
+    public void setFaces(List<Face> faces) {
+        this.faces = faces;
+    }
 }

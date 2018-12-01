@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.GridView;
 
 import com.example.ran.happymoments.common.AppConstants;
+import com.example.ran.happymoments.detection.face.Face;
 import com.example.ran.happymoments.detection.face.FaceSeriesGenerator;
 import com.example.ran.happymoments.detection.face.FaceSeriesGeneratorImpl;
 import com.example.ran.happymoments.detection.series.Photo;
@@ -36,6 +37,7 @@ public class DetectionActivity extends AppCompatActivity {
     private ArrayList<String> imagesPath;
     private ArrayList<Photo> photos;
     List<PhotoSeries> mPhotoSeriesList;
+    private List<Photo> mOutputPhotos;
 
     private Utils utils;
     private GridViewImageAdapter adapter;
@@ -62,6 +64,7 @@ public class DetectionActivity extends AppCompatActivity {
         imagesPath = (ArrayList<String>) getIntent().getSerializableExtra("chosenImagesPath");
         photos = new ArrayList<>();
         setPhotos(imagesPath);
+        mOutputPhotos = new ArrayList<>();
 
         mFeaturesSeriesGenerator = new FeaturesSeriesGeneratorImpl(photos);
         mFaceSeriesGenerator = new FaceSeriesGeneratorImpl();
@@ -87,6 +90,7 @@ public class DetectionActivity extends AppCompatActivity {
         });
     }
 
+
     private void detectAllSeries() {
 
         //Features Series Generator
@@ -95,13 +99,33 @@ public class DetectionActivity extends AppCompatActivity {
         //just for debug
         printSerieses();
 
-        //Face Series Generator
-        List<Photo> photos;
-        List<PhotoSeries>photoSeriesFound = new ArrayList<>();
 
-        for ( PhotoSeries photoSeries: mPhotoSeriesList) {
-           photos =  photoSeries.getPhotos();
+        //returning series containing only one photo
+        ArrayList <Photo> photosToBeRemoved = new ArrayList<>();
+        for (int i = 0 ; i < mPhotoSeriesList.size() ; i++) {
+            if (mPhotoSeriesList.get(i).getNumOfPhotos() == 1) {
+                mOutputPhotos.add(mPhotoSeriesList.get(i).getPhoto(0));
+                photosToBeRemoved.add(mPhotoSeriesList.get(i).getPhoto(0));
+            }
         }
+        mPhotoSeriesList.removeAll(photosToBeRemoved);
+
+
+        //extracting faces in each photo
+        List <Face> faces;
+        for (int i = 0 ; i < mPhotoSeriesList.size() ; i++) {
+            for (int j = 0 ; j < mPhotoSeriesList.get(i).getNumOfPhotos() ; j++) {
+
+                faces = mFaceSeriesGenerator.detectFaces(DetectionActivity.this , mPhotoSeriesList.get(i).getPhoto(j).getPath());
+                if (!faces.isEmpty()) {
+                    mPhotoSeriesList.get(i).getPhoto(j).setFaces(faces);
+                    faces.clear();
+                }
+            }
+        }
+        //now each photo contains array of faces
+
+
     }
 
 
