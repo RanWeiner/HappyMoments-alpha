@@ -10,6 +10,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ProgressBar;
 
 import com.example.ran.happymoments.common.AppConstants;
 import com.example.ran.happymoments.detection.face.Face;
@@ -46,6 +47,7 @@ public class DetectionActivity extends AppCompatActivity {
     private Button mDetectBtn;
     private FeaturesSeriesGenerator mFeaturesSeriesGenerator;
     private FaceSeriesGenerator mFaceSeriesGenerator;
+    private ProgressBar mProgressBar;
 
 
     @Override
@@ -56,6 +58,7 @@ public class DetectionActivity extends AppCompatActivity {
         utils = new Utils(this);
         gridView = (GridView) findViewById(R.id.grid_view_id);
         mDetectBtn = (Button)findViewById(R.id.detect_btn);
+        mProgressBar = (ProgressBar)findViewById(R.id.progress_bar);
 
         setListeners();
         setGridView();
@@ -85,7 +88,26 @@ public class DetectionActivity extends AppCompatActivity {
         mDetectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                detectAllSeries();
+                mDetectBtn.setEnabled(false);
+                mProgressBar.setVisibility(View.VISIBLE);
+                Thread t = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        detectAllSeries();
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mProgressBar.setVisibility(View.INVISIBLE);
+                                mDetectBtn.setEnabled(true);
+                            }
+                        });
+                    }
+                });
+
+                t.start();
+
+
             }
         });
     }
@@ -101,11 +123,11 @@ public class DetectionActivity extends AppCompatActivity {
 
 
         //returning series containing only one photo
-        ArrayList <Photo> photosToBeRemoved = new ArrayList<>();
+        ArrayList <PhotoSeries> photosToBeRemoved = new ArrayList<>();
         for (int i = 0 ; i < mPhotoSeriesList.size() ; i++) {
             if (mPhotoSeriesList.get(i).getNumOfPhotos() == 1) {
                 mOutputPhotos.add(mPhotoSeriesList.get(i).getPhoto(0));
-                photosToBeRemoved.add(mPhotoSeriesList.get(i).getPhoto(0));
+                photosToBeRemoved.add(mPhotoSeriesList.get(i));
             }
         }
         mPhotoSeriesList.removeAll(photosToBeRemoved);
@@ -114,18 +136,36 @@ public class DetectionActivity extends AppCompatActivity {
         //extracting faces in each photo
         List <Face> faces;
         for (int i = 0 ; i < mPhotoSeriesList.size() ; i++) {
-            for (int j = 0 ; j < mPhotoSeriesList.get(i).getNumOfPhotos() ; j++) {
+            for (int j = 0 ; j < mPhotoSeriesList.get(i).getPhotos().size() ; j++) {
 
-                faces = mFaceSeriesGenerator.detectFaces(DetectionActivity.this , mPhotoSeriesList.get(i).getPhoto(j).getPath());
+                faces = mFaceSeriesGenerator.detectFaces(getApplicationContext(), mPhotoSeriesList.get(i).getPhoto(j).getPath());
+                Log.d(TAG, "detectFaces() found " + faces.size() + " faces");
                 if (!faces.isEmpty()) {
                     mPhotoSeriesList.get(i).getPhoto(j).setFaces(faces);
-                    faces.clear();
+                    //faces.clear();
                 }
             }
         }
+
+        printFaces();
         //now each photo contains array of faces
 
 
+    }
+
+    public void printFaces() {
+        for (PhotoSeries series : mPhotoSeriesList) {
+            Log.i(TAG ,"Series "+ series.getId());
+            for (Photo photo : series.getPhotos()) {
+                Log.i(TAG ,"Face found: " + photo.getFaces().size());
+
+                for (Face face : photo.getFaces()){
+                    Log.i(TAG ,"Face: Smiling Prob = " + face.isSmiling() + " Eyes open Prob = " + face.areEyesOpen());
+
+                }
+            }
+
+        }
     }
 
 

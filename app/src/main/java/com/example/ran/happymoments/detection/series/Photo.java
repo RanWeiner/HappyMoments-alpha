@@ -67,4 +67,8 @@ public class Photo {
     public void setFaces(List<Face> faces) {
         this.faces = faces;
     }
+
+    public List<Face> getFaces(){
+        return faces;
+    }
 }
