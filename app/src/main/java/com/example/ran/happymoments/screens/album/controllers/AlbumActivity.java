@@ -11,6 +11,7 @@ import com.example.ran.happymoments.screens.home.controllers.MainActivity;
 public class AlbumActivity extends AppCompatActivity {
 
 
+    //empty
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

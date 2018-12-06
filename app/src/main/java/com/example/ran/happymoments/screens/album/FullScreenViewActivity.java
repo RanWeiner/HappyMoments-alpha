@@ -8,6 +8,7 @@ import android.os.Bundle;
 import com.example.ran.happymoments.R;
 import com.example.ran.happymoments.common.Utils;
 
+//NOT USED
 public class FullScreenViewActivity extends Activity {
 
     private Utils utils;

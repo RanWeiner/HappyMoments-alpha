@@ -17,6 +17,8 @@ import com.example.ran.happymoments.R;
 
 import java.util.ArrayList;
 
+
+//NOT USED
 public class FullScreenImageAdapter extends PagerAdapter {
 
 

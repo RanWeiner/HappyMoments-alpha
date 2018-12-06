@@ -7,7 +7,6 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 
@@ -15,7 +14,6 @@ import com.example.ran.happymoments.R;
 import com.example.ran.happymoments.common.AppConstants;
 import com.example.ran.happymoments.common.Utils;
 import com.example.ran.happymoments.generator.series.Photo;
-import com.example.ran.happymoments.screens.detection.views.adapter.GridViewImageAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

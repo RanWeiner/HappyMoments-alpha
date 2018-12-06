@@ -63,7 +63,8 @@ public class MainViewImpl implements MainView {
         return mRootView;
     }
 
-    private Context getContext() {
+    @Override
+    public Context getContext() {
         return getRootView().getContext();
     }
 

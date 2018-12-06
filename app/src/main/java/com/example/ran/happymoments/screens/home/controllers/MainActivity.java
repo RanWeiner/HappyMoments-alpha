@@ -169,8 +169,7 @@ public class MainActivity extends AppCompatActivity implements MainView.ButtonAc
 
 
 
-
-    ///////// [permissions] //////////////
+    //permissions
 
     public boolean checkPermissionForExternalStorage() {
         int result = ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE);

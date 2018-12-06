@@ -1,7 +1,6 @@
 package com.example.ran.happymoments.generator;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.example.ran.happymoments.generator.face.Face;
 import com.example.ran.happymoments.generator.series.Photo;

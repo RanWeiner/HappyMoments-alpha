@@ -24,8 +24,6 @@ public class FaceExtractor {
 
     }
 
-
-
     public List<Face> detectFaces(Context context, String imagePath) {
 
         List<Face> foundFaces = new ArrayList<>();

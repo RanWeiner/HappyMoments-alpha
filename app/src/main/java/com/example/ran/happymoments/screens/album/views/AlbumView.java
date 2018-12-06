@@ -9,6 +9,9 @@ import com.example.ran.happymoments.R;
 
 public class AlbumView {
 
+    //empty
+
+
     private final View mRootView;
 
 
