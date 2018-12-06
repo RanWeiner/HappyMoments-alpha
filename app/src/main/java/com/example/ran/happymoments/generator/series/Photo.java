@@ -1,8 +1,8 @@
-package com.example.ran.happymoments.detection.series;
+package com.example.ran.happymoments.generator.series;
 
 import android.support.media.ExifInterface;
 
-import com.example.ran.happymoments.detection.face.Face;
+import com.example.ran.happymoments.generator.face.Face;
 
 import java.io.IOException;
 import java.util.ArrayList;

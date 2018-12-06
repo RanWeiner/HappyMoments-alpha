@@ -18,5 +18,6 @@ public class AppConstants {
     //supported file formats
     public static final List<String> SUPPORTED_FILE_EXTENSIONS = Arrays.asList("jpg" , "jpeg" , "png");
 
+    public static final String IMPORTED_IMAGES_PATH = "ImportedImagesPath";
 
 }

@@ -3,6 +3,7 @@ package com.example.ran.happymoments.common;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -14,6 +15,8 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -201,6 +204,32 @@ public class Utils {
         }
         return false;
     }
+
+    //Resizing image size
+    public static Bitmap decodeFile(String filePath, int WIDTH, int HEIGHT) {
+        try {
+
+            File f = new File(filePath);
+
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(new FileInputStream(f), null, o);
+
+            final int REQUIRED_WIDTH = WIDTH;
+            final int REQUIRED_HEIGHT = HEIGHT;
+            int scale = 1;
+            while (o.outWidth / scale / 2 >= REQUIRED_WIDTH && o.outHeight / scale / 2 >= REQUIRED_HEIGHT)
+                scale *= 2;
+
+            BitmapFactory.Options o2 = new BitmapFactory.Options();
+            o2.inSampleSize = scale;
+            return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
     public boolean isExternalStorageReadable(){
         String state = Environment.getExternalStorageState();

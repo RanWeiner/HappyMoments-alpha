@@ -1,4 +1,4 @@
-package com.example.ran.happymoments.detection.series;
+package com.example.ran.happymoments.generator.series;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,5 @@
-package com.example.ran.happymoments.detection.series;
+package com.example.ran.happymoments.generator.series;
 
-import android.location.Location;
 import android.support.media.ExifInterface;
 import android.util.Log;
 

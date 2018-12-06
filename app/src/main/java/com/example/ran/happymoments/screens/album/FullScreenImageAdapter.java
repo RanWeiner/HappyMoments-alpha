@@ -1,4 +1,4 @@
-package com.example.ran.happymoments.album;
+package com.example.ran.happymoments.screens.album;
 
 import android.app.Activity;
 import android.content.Context;
