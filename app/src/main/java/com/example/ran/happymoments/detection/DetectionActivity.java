@@ -42,7 +42,7 @@ public class DetectionActivity extends AppCompatActivity {
 
     private Utils utils;
     private GridViewImageAdapter adapter;
-    private GridView gridView;
+    private GridView mGridView;
     private int columnWidth;
     private Button mDetectBtn;
     private FeaturesSeriesGenerator mFeaturesSeriesGenerator;
@@ -56,15 +56,15 @@ public class DetectionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_import_images);
 
         utils = new Utils(this);
-        gridView = (GridView) findViewById(R.id.grid_view_id);
+        mGridView = (GridView) findViewById(R.id.grid_view_id);
         mDetectBtn = (Button)findViewById(R.id.detect_btn);
         mProgressBar = (ProgressBar)findViewById(R.id.progress_bar);
 
         setListeners();
         setGridView();
 
-        images = (ArrayList<Image>) getIntent().getSerializableExtra("chosenImages");
-        imagesPath = (ArrayList<String>) getIntent().getSerializableExtra("chosenImagesPath");
+        images = (ArrayList<Image>) getIntent().getSerializableExtra("chosenImages"); //Change to CONST
+        imagesPath = (ArrayList<String>) getIntent().getSerializableExtra("chosenImagesPath"); //Change to CONST
         photos = new ArrayList<>();
         setPhotos(imagesPath);
         mOutputPhotos = new ArrayList<>();
@@ -73,8 +73,9 @@ public class DetectionActivity extends AppCompatActivity {
         mFaceSeriesGenerator = new FaceSeriesGeneratorImpl();
 
 
-        adapter = new GridViewImageAdapter(DetectionActivity.this, imagesPath, columnWidth);
-        gridView.setAdapter(adapter);
+//        adapter = new GridViewImageAdapter(DetectionActivity.this, imagesPath, columnWidth);
+//        mGridView.setAdapter(adapter);
+
     }
 
     private void setPhotos(ArrayList<String> imagesPath) {
@@ -93,7 +94,9 @@ public class DetectionActivity extends AppCompatActivity {
                 Thread t = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        detectAllSeries();
+                        detectSeries();
+                        excludeSinglePhotoSeries();
+                        detectFaces();
 
                         runOnUiThread(new Runnable() {
                             @Override
@@ -113,7 +116,7 @@ public class DetectionActivity extends AppCompatActivity {
     }
 
 
-    private void detectAllSeries() {
+    public void detectSeries() {
 
         //Features Series Generator
         mPhotoSeriesList = mFeaturesSeriesGenerator.detectSeries();
@@ -121,7 +124,9 @@ public class DetectionActivity extends AppCompatActivity {
         //just for debug
         printSerieses();
 
+    }
 
+    public void excludeSinglePhotoSeries(){
         //returning series containing only one photo
         ArrayList <PhotoSeries> photosToBeRemoved = new ArrayList<>();
         for (int i = 0 ; i < mPhotoSeriesList.size() ; i++) {
@@ -131,8 +136,9 @@ public class DetectionActivity extends AppCompatActivity {
             }
         }
         mPhotoSeriesList.removeAll(photosToBeRemoved);
+    }
 
-
+    public void detectFaces(){
         //extracting faces in each photo
         List <Face> faces;
         for (int i = 0 ; i < mPhotoSeriesList.size() ; i++) {
@@ -142,15 +148,12 @@ public class DetectionActivity extends AppCompatActivity {
                 Log.d(TAG, "detectFaces() found " + faces.size() + " faces");
                 if (!faces.isEmpty()) {
                     mPhotoSeriesList.get(i).getPhoto(j).setFaces(faces);
-                    //faces.clear();
                 }
             }
         }
 
         printFaces();
         //now each photo contains array of faces
-
-
     }
 
     public void printFaces() {
@@ -160,7 +163,7 @@ public class DetectionActivity extends AppCompatActivity {
                 Log.i(TAG ,"Face found: " + photo.getFaces().size());
 
                 for (Face face : photo.getFaces()){
-                    Log.i(TAG ,"Face: Smiling Prob = " + face.isSmiling() + " Eyes open Prob = " + face.areEyesOpen());
+                    Log.i(TAG ,"Face: is Smiling = " + face.isSmiling() + " are  Eyes open = " + face.areEyesOpen());
 
                 }
             }
@@ -184,13 +187,13 @@ public class DetectionActivity extends AppCompatActivity {
         float padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, AppConstants.GRID_PADDING, r.getDisplayMetrics());
 
         columnWidth = (int) ((utils.getScreenWidth() - ((AppConstants.NUM_OF_COLUMNS + 1) * padding)) / AppConstants.NUM_OF_COLUMNS);
-        gridView.setNumColumns(AppConstants.NUM_OF_COLUMNS);
-        gridView.setColumnWidth(columnWidth);
-        gridView.setStretchMode(GridView.NO_STRETCH);
-        gridView.setPadding((int) padding, (int) padding, (int) padding,
+        mGridView.setNumColumns(AppConstants.NUM_OF_COLUMNS);
+        mGridView.setColumnWidth(columnWidth);
+        mGridView.setStretchMode(GridView.NO_STRETCH);
+        mGridView.setPadding((int) padding, (int) padding, (int) padding,
                 (int) padding);
-        gridView.setHorizontalSpacing((int) padding);
-        gridView.setVerticalSpacing((int) padding);
+        mGridView.setHorizontalSpacing((int) padding);
+        mGridView.setVerticalSpacing((int) padding);
 
     }
 
