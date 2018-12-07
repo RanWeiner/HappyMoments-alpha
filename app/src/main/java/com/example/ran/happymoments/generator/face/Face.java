@@ -10,6 +10,19 @@ public class Face {
     Position position;
     float width, height, smilingProbability, leftEyeOpenProbability, rightEyeOpenProbability;
 
+    double angleFromGravityCenter;
+    double distanceFromGravityCenter;
+
+
+
+    public double getDistanceFromGravityCenter() {
+        return distanceFromGravityCenter;
+    }
+
+    public void setDistanceFromGravityCenter(double distanceFromGravityCenter) {
+        this.distanceFromGravityCenter = distanceFromGravityCenter;
+    }
+
     public Face(){
 
     }
@@ -26,6 +39,14 @@ public class Face {
     }
 
 
+
+    public double getAngleFromGravityCenter() {
+        return angleFromGravityCenter;
+    }
+
+    public void setAngleFromGravityCenter(double angleFromGravityCenter) {
+        this.angleFromGravityCenter = angleFromGravityCenter;
+    }
 
     public Position getPosition() {
         return position;

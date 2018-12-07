@@ -14,6 +14,8 @@ import android.view.Display;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.example.ran.happymoments.generator.face.Position;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -87,6 +89,26 @@ public class Utils {
     }
 
 
+    //return the angle degree from one point to another point
+    public double calcAngleBetweenPoints(double srcX ,double srcY , double targetX , double targetY) {
+        double angle  = Math.toDegrees(Math.atan2(targetY - srcY, targetX - srcX));
+
+        if (angle < 0) {
+            angle += 360;
+        }
+        return  angle;
+    }
+
+    public double calcEuclidDistance(double x1 , double y1 , double x2 , double y2) {
+        double x ,y;
+
+        x = x1 - x2;
+        y = y1 - y2;
+
+        return Math.sqrt(x*x + y*y);
+    }
+
+
     // Getting screen width
     public int getScreenWidth() {
         int columnWidth;
@@ -106,43 +128,8 @@ public class Utils {
 
 
 
-    public void createAlbumInGallery(){
-
-        final String appDirectoryName = AppConstants.HAPPY_MOMENTS_ALBUM;
-
-        //v2
-        final String myfolder = Environment.getExternalStorageDirectory()+ "/" + appDirectoryName;
-        final File f = new File(myfolder);
-
-        //v1
-        final File imageRoot = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES).getAbsolutePath(), appDirectoryName);
-
-
-
-        //if there is no directory - create
-        if (!imageRoot.isDirectory())
-            imageRoot.mkdirs();
-
-        final File imageFile = new File(imageRoot , "image1.jpg");
-
-
-
-        if (!imageFile.exists()){
-            if (!imageFile.mkdir()){
-                Log.d(TAG, imageRoot + " cannot be created.");
-            }
-            else {
-                Log.d(TAG, imageRoot + " can be created.");
-            }
-        }
-        Log.d(TAG, imageRoot + " already exist.");
-    }
-
-
 
 //https://stackoverflow.com/questions/11983654/android-how-to-add-an-image-to-an-album
-
     public void saveImageToExternal(String imgName, Bitmap bm) throws IOException {
 
         final String appDirectoryName = AppConstants.HAPPY_MOMENTS_ALBUM;
@@ -175,26 +162,38 @@ public class Utils {
         }
     }
 
-
-
-    public void savePicture(Bitmap bm, File f)
-    {
-        OutputStream fOut = null;
-        String strDirectory = Environment.getExternalStorageDirectory().toString();
-
-        try {
-            fOut = new FileOutputStream(f);
-
-            /**Compress image**/
-            bm.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
-            fOut.flush();
-            fOut.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
+    public ArrayList<String> getImagesPathFromExternal() {
+        ArrayList<String> filePaths = new ArrayList<String>();
+        final String appDirectoryName = AppConstants.HAPPY_MOMENTS_ALBUM;
+        File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES+"/"+ appDirectoryName);
+        if (!path.isDirectory()) {
+            AlertDialog.Builder alert = new AlertDialog.Builder(mContext);
+            alert.setTitle("Error!").setMessage(AppConstants.HAPPY_MOMENTS_ALBUM + " directory path is not valid!");
+            alert.setPositiveButton("OK", null);
+            alert.show();
+            return null;
         }
-    }
 
+        File[] listFiles = path.listFiles();
+        if (listFiles.length > 0) {
+
+            for (int i = 0; i < listFiles.length; i++) {
+
+                // get file path
+                String filePath = listFiles[i].getAbsolutePath();
+
+                // check for supported file extension
+                if (IsSupportedFile(filePath)) {
+                    // Add image path to array list
+                    filePaths.add(filePath);
+                }
+            }
+        } else {
+            Toast.makeText(mContext, AppConstants.HAPPY_MOMENTS_ALBUM + " is empty.", Toast.LENGTH_LONG).show();
+        }
+
+        return filePaths;
+    }
 
 
     public boolean isExternalStorageWritable(){
@@ -205,8 +204,17 @@ public class Utils {
         return false;
     }
 
+    public boolean isExternalStorageReadable(){
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state) ||
+                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)){
+            return true;
+        }
+        return false;
+    }
+
     //Resizing image size
-    public static Bitmap decodeFile(String filePath, int WIDTH, int HEIGHT) {
+    public static Bitmap decodeFile(String filePath, int width, int height) {
         try {
 
             File f = new File(filePath);
@@ -214,11 +222,8 @@ public class Utils {
             BitmapFactory.Options o = new BitmapFactory.Options();
             o.inJustDecodeBounds = true;
             BitmapFactory.decodeStream(new FileInputStream(f), null, o);
-
-            final int REQUIRED_WIDTH = WIDTH;
-            final int REQUIRED_HEIGHT = HEIGHT;
             int scale = 1;
-            while (o.outWidth / scale / 2 >= REQUIRED_WIDTH && o.outHeight / scale / 2 >= REQUIRED_HEIGHT)
+            while (o.outWidth / scale / 2 >= width && o.outHeight / scale / 2 >= height)
                 scale *= 2;
 
             BitmapFactory.Options o2 = new BitmapFactory.Options();
@@ -231,13 +236,6 @@ public class Utils {
     }
 
 
-    public boolean isExternalStorageReadable(){
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state) ||
-                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)){
-            return true;
-        }
-        return false;
-    }
+
 
 }

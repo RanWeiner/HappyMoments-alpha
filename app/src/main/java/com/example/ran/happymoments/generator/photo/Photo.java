@@ -19,6 +19,7 @@ public class Photo {
 
 
 
+
     public Photo(String path){
         this.mPath = path;
         setExifInterface();

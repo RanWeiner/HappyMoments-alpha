@@ -45,18 +45,31 @@ public class SeriesGenerator {
         List <Face> faces;
         Position centerGravity;
         for (int i = 0 ; i < mAllSeries.size() ; i++) {
+
+
             for (int j = 0 ; j < mAllSeries.get(i).getPhotos().size() ; j++) {
                 faces = mFaceExtractor.detectFaces(mContext , mAllSeries.get(i).getPhoto(j).getPath());
                 if (!faces.isEmpty()) {
                     mAllSeries.get(i).getPhoto(j).setFaces(faces);
                     centerGravity = calcFacesCenterGravity(faces);
                     mAllSeries.get(i).getPhoto(j).setFacesCenterGravity(centerGravity);
+
+                    for (Face face : faces) {
+                        //TODO normalize data!!!!
+                        double angle = face.getPosition().calcAngle(centerGravity);
+                        double dist = face.getPosition().calcEuclidDistance(centerGravity);
+                        face.setAngleFromGravityCenter(angle);
+                        face.setDistanceFromGravityCenter(dist);
+                    }
+
                 }
             }
         }
         ///////////////////////////////////////////////////////////////
 
         //now each photo contains array of faces and center gravity
+
+
 
         return null;
     }
