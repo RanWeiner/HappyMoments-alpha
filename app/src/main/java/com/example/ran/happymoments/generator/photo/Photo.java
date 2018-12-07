@@ -1,8 +1,9 @@
-package com.example.ran.happymoments.generator.series;
+package com.example.ran.happymoments.generator.photo;
 
 import android.support.media.ExifInterface;
 
 import com.example.ran.happymoments.generator.face.Face;
+import com.example.ran.happymoments.generator.face.Position;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,12 +14,17 @@ public class Photo {
     private PhotoFeatures photoFeatures;
     private ExifInterface exifInterface;
     private List<Face> faces = null;
+    private Position facesCenterGravity;
+
+
+
 
     public Photo(String path){
         this.mPath = path;
         setExifInterface();
         setPhotoFeatures();
         faces = new ArrayList<>();
+        facesCenterGravity = new Position();
     }
 
     public String getPath() {
@@ -26,11 +32,15 @@ public class Photo {
     }
 
 
+    public int getNumOfFaces() {
+        return this.faces.size();
+    }
 
     private void setPhotoFeatures() {
         if (hasExifData()){
             photoFeatures = new PhotoFeatures(mPath , this.exifInterface);
         }
+
     }
 
     public boolean hasExifData() {
@@ -41,6 +51,13 @@ public class Photo {
     }
 
 
+    public Position getFacesCenterGravity() {
+        return facesCenterGravity;
+    }
+
+    public void setFacesCenterGravity(Position facesCenterGravity) {
+        this.facesCenterGravity = facesCenterGravity;
+    }
 
     public boolean similarTo(Photo other){
         return this.getPhotoFeatures().compareFeatures(other.getPhotoFeatures());

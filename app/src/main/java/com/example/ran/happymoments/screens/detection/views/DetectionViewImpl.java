@@ -13,7 +13,7 @@ import android.widget.GridView;
 import com.example.ran.happymoments.R;
 import com.example.ran.happymoments.common.AppConstants;
 import com.example.ran.happymoments.common.Utils;
-import com.example.ran.happymoments.generator.series.Photo;
+import com.example.ran.happymoments.generator.photo.Photo;
 
 import java.util.ArrayList;
 import java.util.List;

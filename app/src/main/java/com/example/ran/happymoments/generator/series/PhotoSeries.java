@@ -1,5 +1,7 @@
 package com.example.ran.happymoments.generator.series;
 
+import com.example.ran.happymoments.generator.photo.Photo;
+
 import java.util.ArrayList;
 import java.util.List;
 

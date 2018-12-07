@@ -10,7 +10,7 @@ import android.view.WindowManager;
 
 import com.example.ran.happymoments.common.AppConstants;
 import com.example.ran.happymoments.generator.SeriesGenerator;
-import com.example.ran.happymoments.generator.series.Photo;
+import com.example.ran.happymoments.generator.photo.Photo;
 import com.example.ran.happymoments.screens.detection.views.DetectionView;
 import com.example.ran.happymoments.screens.detection.views.DetectionViewImpl;
 import com.example.ran.happymoments.screens.home.controllers.MainActivity;

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.view.View;
 
-import com.example.ran.happymoments.generator.series.Photo;
+import com.example.ran.happymoments.generator.photo.Photo;
 
 import java.util.List;
 

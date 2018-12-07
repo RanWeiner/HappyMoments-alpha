@@ -37,10 +37,10 @@ public class FaceExtractor {
             throw new RuntimeException(e);
         }
 
-        FaceDetector detector = new FaceDetector.Builder(context)
+        com.google.android.gms.vision.face.FaceDetector detector = new com.google.android.gms.vision.face.FaceDetector.Builder(context)
                 .setTrackingEnabled(false)
-                .setLandmarkType(FaceDetector.ALL_LANDMARKS)
-                .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
+                .setLandmarkType(com.google.android.gms.vision.face.FaceDetector.ALL_LANDMARKS)
+                .setClassificationType(com.google.android.gms.vision.face.FaceDetector.ALL_CLASSIFICATIONS)
                 .build();
 
         if (!detector.isOperational()) {
@@ -63,6 +63,7 @@ public class FaceExtractor {
 
             foundFaces.add(new Face(facePosition, width, height, smilingProbability, leftEyeOpenProbability, rightEyeOpenProbability));
         }
+
         return foundFaces;
     }
 

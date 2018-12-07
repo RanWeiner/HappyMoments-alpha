@@ -1,4 +1,4 @@
-package com.example.ran.happymoments.generator.series;
+package com.example.ran.happymoments.generator.photo;
 
 import android.support.media.ExifInterface;
 import android.util.Log;

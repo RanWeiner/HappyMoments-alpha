@@ -3,7 +3,8 @@ package com.example.ran.happymoments.generator;
 import android.content.Context;
 
 import com.example.ran.happymoments.generator.face.Face;
-import com.example.ran.happymoments.generator.series.Photo;
+import com.example.ran.happymoments.generator.face.Position;
+import com.example.ran.happymoments.generator.photo.Photo;
 import com.example.ran.happymoments.generator.series.PhotoSeries;
 
 import java.util.ArrayList;
@@ -24,33 +25,53 @@ public class SeriesGenerator {
     public SeriesGenerator(Context context , List<String> imagesPath) {
         mContext = context;
         mInput = imagesPath;
+        mAllPhotos = setPhotos(imagesPath);
         mFaceExtractor = new FaceExtractor();
     }
 
 
     public List<String> detect() {
 
-        mAllPhotos = setPhotos(mInput);
+//        mAllPhotos = setPhotos(mInput);
 
+        ///////////// [SERIES PART] ///////////////////////////////////
         mAllSeries = generateSeriesByFeatures();
-
         filterAllOnePhotoSeries();
+        /////////////////////////////////////////////////////////////
+
+
+        ///////////// [FACES PART] ///////////////////////////////////
 
         List <Face> faces;
+        Position centerGravity;
         for (int i = 0 ; i < mAllSeries.size() ; i++) {
             for (int j = 0 ; j < mAllSeries.get(i).getPhotos().size() ; j++) {
                 faces = mFaceExtractor.detectFaces(mContext , mAllSeries.get(i).getPhoto(j).getPath());
                 if (!faces.isEmpty()) {
                     mAllSeries.get(i).getPhoto(j).setFaces(faces);
+                    centerGravity = calcFacesCenterGravity(faces);
+                    mAllSeries.get(i).getPhoto(j).setFacesCenterGravity(centerGravity);
                 }
             }
         }
+        ///////////////////////////////////////////////////////////////
 
-        //now each photo contains array of faces
+        //now each photo contains array of faces and center gravity
 
         return null;
     }
 
+
+
+    private Position calcFacesCenterGravity(List<Face> faces) {
+        double sumX = 0 , sumY = 0;
+
+        for (Face face : faces) {
+            sumX += face.getPosition().getX();
+            sumY += face.getPosition().getY();
+        }
+        return new Position(sumX/faces.size() , sumY/faces.size());
+    }
 
 
     //returning series containing only one photo
