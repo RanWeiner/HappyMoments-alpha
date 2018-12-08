@@ -1,21 +1,29 @@
 package com.example.ran.happymoments.generator.photo;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.media.ExifInterface;
+import android.util.Log;
 
 import com.example.ran.happymoments.generator.face.Face;
-import com.example.ran.happymoments.generator.face.Position;
+import com.example.ran.happymoments.common.Position;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.support.constraint.Constraints.TAG;
 
 public class Photo {
     private String mPath;
     private PhotoFeatures photoFeatures;
     private ExifInterface exifInterface;
-    private List<Face> faces = null;
+    private List<Face> faces;
     private Position facesCenterGravity;
 
+    private Bitmap bitmap;
 
 
 
@@ -24,9 +32,24 @@ public class Photo {
         this.mPath = path;
         setExifInterface();
         setPhotoFeatures();
+        
+        setBitmap();
         faces = new ArrayList<>();
         facesCenterGravity = new Position();
     }
+
+
+    private void setBitmap() {
+        this.bitmap = null;
+        FileInputStream stream;
+        try {
+            stream = new FileInputStream(this.mPath);
+            this.bitmap = BitmapFactory.decodeStream(stream);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public String getPath() {
         return this.mPath;
@@ -77,7 +100,6 @@ public class Photo {
            this.exifInterface =  new ExifInterface(mPath);
         } catch (IOException e) {
             e.printStackTrace();
-            this.exifInterface = null;
         }
     }
 
@@ -88,5 +110,9 @@ public class Photo {
 
     public List<Face> getFaces(){
         return faces;
+    }
+
+    public Bitmap getBitmap() {
+        return this.bitmap;
     }
 }

@@ -107,22 +107,50 @@ public class PhotoFeatures {
 
 
     public boolean compareFeatures(PhotoFeatures otherPhotoFeatures) {
-            //check if null
 
-            if(getDistance(this.getPhotoLocation(), otherPhotoFeatures.getPhotoLocation()) > DISTANCE_THRESHOLD)
-                return false;
+        if (!compareDateTime(otherPhotoFeatures.dateTime)) {
+            return false;
+        }
 
-            if(!areDateSimilar(this.getDateTime(), otherPhotoFeatures.getDateTime()))
-                return false;
+        if (!compareLocations(otherPhotoFeatures.photoLocation )) {
+            return false;
+        }
 
-            if(!orientation.equals(otherPhotoFeatures.getOrientation()))
-                return false;
+        if (!compareHist(otherPhotoFeatures.getHistogram())) {
+            return false;
+        }
 
-            if (!compareHist(otherPhotoFeatures.getHistogram()))
-                return false;
-
-            return true;
+        return true;
     }
+
+
+    private boolean compareDateTime(Calendar other) {
+        if (this.dateTime == null && other == null) {
+            return true;
+        }
+
+        if (this.dateTime == null || other ==null) {
+            return false;
+        }
+        return areDateSimilar(this.dateTime , other);
+    }
+
+    private boolean compareLocations(PhotoLocation other) {
+        if (this.photoLocation == null && other == null) {
+            return true;
+        }
+
+        if (this.photoLocation == null || other ==null) {
+            return false;
+        }
+
+        double dist = calcDistanceBetweenLocations(this.photoLocation , other);
+        if (dist > DISTANCE_THRESHOLD) {
+            return false;
+        }
+        return true;
+    }
+
 
     public boolean compareHist(Mat otherHist){
         //Computes the correlation between the two histograms.
@@ -134,39 +162,27 @@ public class PhotoFeatures {
         return false;
     }
 
-    public double getDistance(PhotoLocation p1, PhotoLocation p2) {
-//        float[] result = new float[2];
-////        Location.distanceBetween(p1.getLatitude(), p1.getLongitude(), p2.getLatitude(), p2.getLongitude(), result);
-////        Log.d("distance:", "" + result[0]);
-////        return result[0];
-//        Location loc1 = new Location("");
-//        loc1.setLatitude(p1.getLatitude());
-//        loc1.setLongitude(p1.getLongitude());
-//
-//        Location loc2 = new Location("");
-//        loc2.setLatitude(p2.getLatitude());
-//        loc2.setLongitude(p2.getLongitude());
-//
-//        float res = loc1.distanceTo(loc2);
-//        Log.d("Distance:", ""+res);
-//        return res;
-        return distance(p1.getLatitude() , p1.getLongitude() , p2.getLatitude() , p2.getLongitude());
-
-    }
-
-
-
-    public double distance(double lat1, double lon1, double lat2, double lon2) {
-        double theta = lon1 - lon2;
-        double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+    public double calcDistanceBetweenLocations(PhotoLocation p1, PhotoLocation p2) {
+        double theta = p1.getLongitude() - p2.getLongitude();
+        double dist = Math.sin(deg2rad(p1.getLatitude())) * Math.sin(deg2rad(p2.getLatitude())) + Math.cos(deg2rad(p1.getLatitude())) * Math.cos(deg2rad(p2.getLatitude())) * Math.cos(deg2rad(theta));
         dist = Math.acos(dist);
         dist = rad2deg(dist);
         dist = dist * 60 * 1.1515;
         dist = dist * 1.609344;
+        return dist;
+        }
 
-        Log.d("Distance:", ""+dist);
-        return (dist);
-    }
+
+
+//    public double distance(double lat1, double lon1, double lat2, double lon2) {
+//        double theta = lon1 - lon2;
+//        double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+//        dist = Math.acos(dist);
+//        dist = rad2deg(dist);
+//        dist = dist * 60 * 1.1515;
+//        dist = dist * 1.609344;
+//        return (dist);
+//    }
 
 
     public  double rad2deg(double rad) {

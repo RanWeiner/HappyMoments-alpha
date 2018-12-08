@@ -1,9 +1,12 @@
 package com.example.ran.happymoments.generator;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.util.Log;
 
+import com.example.ran.happymoments.common.Utils;
 import com.example.ran.happymoments.generator.face.Face;
-import com.example.ran.happymoments.generator.face.Position;
+import com.example.ran.happymoments.common.Position;
 import com.example.ran.happymoments.generator.photo.Photo;
 import com.example.ran.happymoments.generator.series.PhotoSeries;
 
@@ -12,11 +15,11 @@ import java.util.List;
 
 public class SeriesGenerator {
 
-    List<String> mInput;
-    List<String> mOutput;
+    private List<String> mInput;
+    private List<String> mOutput;
 
-    List<PhotoSeries> mAllSeries;
-    List<Photo> mAllPhotos;
+    private List<PhotoSeries> mAllSeries;
+    private List<Photo> mAllPhotos;
 
     private Context mContext;
     private FaceExtractor mFaceExtractor;
@@ -26,7 +29,8 @@ public class SeriesGenerator {
         mContext = context;
         mInput = imagesPath;
         mAllPhotos = setPhotos(imagesPath);
-        mFaceExtractor = new FaceExtractor();
+        mFaceExtractor = new FaceExtractorMobileVision();
+        mOutput = new ArrayList<>();
     }
 
 
@@ -36,6 +40,9 @@ public class SeriesGenerator {
 
         ///////////// [SERIES PART] ///////////////////////////////////
         mAllSeries = generateSeriesByFeatures();
+
+        printSerieses();
+
         filterAllOnePhotoSeries();
         /////////////////////////////////////////////////////////////
 
@@ -46,44 +53,89 @@ public class SeriesGenerator {
         Position centerGravity;
         for (int i = 0 ; i < mAllSeries.size() ; i++) {
 
+            //TODO in function !
 
             for (int j = 0 ; j < mAllSeries.get(i).getPhotos().size() ; j++) {
+
                 faces = mFaceExtractor.detectFaces(mContext , mAllSeries.get(i).getPhoto(j).getPath());
+                Log.i("FaceXXXXX" , "series : " + mAllSeries.get(i).getPhoto(j).getPath());
+                Log.i("FaceXXXXX" ,"numOfFaces= " + faces.size());
+
                 if (!faces.isEmpty()) {
                     mAllSeries.get(i).getPhoto(j).setFaces(faces);
                     centerGravity = calcFacesCenterGravity(faces);
                     mAllSeries.get(i).getPhoto(j).setFacesCenterGravity(centerGravity);
 
                     for (Face face : faces) {
-                        //TODO normalize data!!!!
-                        double angle = face.getPosition().calcAngle(centerGravity);
-                        double dist = face.getPosition().calcEuclidDistance(centerGravity);
-                        face.setAngleFromGravityCenter(angle);
-                        face.setDistanceFromGravityCenter(dist);
-                    }
 
+                        double angle = face.getPosition().calcAngle(centerGravity);
+                        double normalizedAngle = Utils.normalize(angle , 360 ,0);
+                        double dist = face.getPosition().calcEuclidDistance(centerGravity);
+                        double width =  mAllSeries.get(i).getPhoto(j).getBitmap().getWidth();
+                        double height =  mAllSeries.get(i).getPhoto(j).getBitmap().getHeight();
+                        double diagonal = Utils.pitagoras(width , height);
+                        double normalizedDist = Utils.normalize(dist, diagonal,0);
+
+                        face.setAngleFromGravityCenter(normalizedAngle);
+                        face.setDistanceFromGravityCenter(normalizedDist);
+                    }
                 }
             }
         }
+
+
+
         ///////////////////////////////////////////////////////////////
 
         //now each photo contains array of faces and center gravity
+        printFaces();
+
+
+        return mOutput;
+    }
 
 
 
-        return null;
+
+
+    private void printSerieses() {
+        //just for debug
+        for (PhotoSeries series : mAllSeries) {
+            Log.i("SeriesXXXX" ,"Series "+ series.getId());
+            for (Photo photo : series.getPhotos()) {
+                Log.i("SeriesXXXX" ,"Series "+ series.getId() + "photo= "+ photo.getPath());
+            }
+        }
+    }
+
+    public void printFaces() {
+        for (PhotoSeries series : mAllSeries) {
+            Log.i("FaceXXXXX" ,"SeriesXXXXX "+ series.getId());
+            for (Photo photo : series.getPhotos()) {
+
+                Log.i("FaceXXXXX" , "series : " + photo.getPath());
+                Log.i("FaceXXXXX" ,"Face found: " + photo.getFaces().size());
+
+                for (Face face : photo.getFaces()){
+                    Log.i("FaceXXXXX" ,"Face: Smiling Prob = " + face.isSmiling() + " Eyes open Prob = " + face.areEyesOpen());
+                    Log.i("FaceXXXXX" ,"angle from center= " + face.getAngleFromGravityCenter());
+                    Log.i("FaceXXXXX" ,"distance from center" + face.getDistanceFromGravityCenter());
+                }
+            }
+        }
     }
 
 
 
     private Position calcFacesCenterGravity(List<Face> faces) {
         double sumX = 0 , sumY = 0;
+        int size = faces.size();
 
         for (Face face : faces) {
             sumX += face.getPosition().getX();
             sumY += face.getPosition().getY();
         }
-        return new Position(sumX/faces.size() , sumY/faces.size());
+        return new Position(sumX/size , sumY/size);
     }
 
 

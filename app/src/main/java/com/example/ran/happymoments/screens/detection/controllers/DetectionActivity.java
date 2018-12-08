@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.example.ran.happymoments.common.AppConstants;
 import com.example.ran.happymoments.generator.SeriesGenerator;
@@ -27,6 +28,7 @@ public class DetectionActivity extends AppCompatActivity implements DetectionVie
     private List<String> mInput;
     private List<String> mResults;
 
+    List<Photo> photos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,25 +74,34 @@ public class DetectionActivity extends AppCompatActivity implements DetectionVie
 
     @Override
     public void onDetectBtnClicked() {
-        disableUserInteraction();
+//        disableUserInteraction();
 
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //tell view that started - disable button if not working and start spinner
-                mResults = mSeriesGenerator.detect();
-                Log.i("Start" , "STARTED DETECTNG");
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        enableUserInteraction();
-                        Log.i("Finish" , "Finish DETECTNG");
-                        //tell view finished - enable button and stop spinner
-                    }
-                });
-            }
-        });
-        t.start();
+        Toast.makeText(DetectionActivity.this , "started...",Toast.LENGTH_SHORT).show();
+
+        mResults = mSeriesGenerator.detect();
+
+//        Thread t = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                //tell view that started - disable button if not working and start spinner
+//                mResults = mSeriesGenerator.detect();
+//                Log.i("Start" , "STARTED DETECTNG");
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+////                        enableUserInteraction();
+//                        Toast.makeText(DetectionActivity.this , "Finished!",Toast.LENGTH_SHORT).show();
+//                        Log.i("Finish" , "Finish DETECTNG");
+//                        //tell view finished - enable button and stop spinner
+//                    }
+//                });
+//            }
+//        });
+//        t.start();
+
+
+        Toast.makeText(DetectionActivity.this , "finished!",Toast.LENGTH_SHORT).show();
+
     }
 
 

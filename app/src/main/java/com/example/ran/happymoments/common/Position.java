@@ -1,4 +1,4 @@
-package com.example.ran.happymoments.generator.face;
+package com.example.ran.happymoments.common;
 
 public class Position {
     double x , y;

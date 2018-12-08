@@ -1,5 +1,7 @@
 package com.example.ran.happymoments.generator.face;
 
+import com.example.ran.happymoments.common.Position;
+
 public class Face {
 
     public final static float SMILING_ACCEPT_PROBABILITY =  0.5f;

@@ -8,24 +8,18 @@ import android.graphics.Point;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 import android.widget.Toast;
-
-import com.example.ran.happymoments.generator.face.Position;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Locale;
-
-import static android.support.constraint.Constraints.TAG;
 
 public class Utils {
 
@@ -34,6 +28,21 @@ public class Utils {
 
     public Utils(Context context) {
         this.mContext = context;
+    }
+
+//    public static double normalizeData(double data) {
+//
+//        return  ((data - Double.MIN_VALUE) / (Double.MAX_VALUE - Double.MIN_VALUE));
+//    }
+
+
+    public static double pitagoras (double x , double y){
+        return Math.sqrt((x*x)+(y*y));
+    }
+
+
+    public static double normalize(double data, double max, double min) {
+        return  ((data - min) / (max - min));
     }
 
     // Reading file paths from SDCard
