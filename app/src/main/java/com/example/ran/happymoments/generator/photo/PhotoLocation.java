@@ -1,4 +1,4 @@
-package com.example.ran.happymoments.detection.series;
+package com.example.ran.happymoments.generator.photo;
 
 public class PhotoLocation {
     private float latitude, longitude;

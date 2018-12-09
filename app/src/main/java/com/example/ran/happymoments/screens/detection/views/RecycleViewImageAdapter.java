@@ -1,4 +1,5 @@
-package com.example.ran.happymoments.common;
+package com.example.ran.happymoments.screens.detection.views;
+
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,20 +12,20 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.ran.happymoments.R;
-import com.example.ran.happymoments.detection.series.Photo;
+import com.example.ran.happymoments.generator.photo.Photo;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
-public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
+public class RecycleViewImageAdapter extends RecyclerView.Adapter<RecycleViewImageAdapter.ViewHolder> {
 
     private ArrayList<Photo> mPhotos;
     private int mColWidth;
 
 
-    public GridAdapter(ArrayList<Photo> mPhotos,int mColWidth){
+    public RecycleViewImageAdapter(ArrayList<Photo> mPhotos,int mColWidth){
         this.mPhotos = mPhotos;
         this.mColWidth = mColWidth;
     }
@@ -112,3 +113,4 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
 
     }
 }
+

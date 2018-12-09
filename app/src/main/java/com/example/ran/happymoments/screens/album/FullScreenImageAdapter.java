@@ -1,4 +1,4 @@
-package com.example.ran.happymoments.album;
+package com.example.ran.happymoments.screens.album;
 
 import android.app.Activity;
 import android.content.Context;
@@ -17,6 +17,8 @@ import com.example.ran.happymoments.R;
 
 import java.util.ArrayList;
 
+
+//NOT USED
 public class FullScreenImageAdapter extends PagerAdapter {
 
 

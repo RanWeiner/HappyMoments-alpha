@@ -1,4 +1,4 @@
-package com.example.ran.happymoments;
+package com.example.ran.happymoments.screens.home.controllers;
 
 
 import android.app.Activity;
@@ -12,12 +12,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
+import android.view.LayoutInflater;
+import android.widget.Toast;
 
-import com.example.ran.happymoments.album.AlbumActivity;
-import com.example.ran.happymoments.common.Utils;
-import com.example.ran.happymoments.detection.DetectionActivity;
+import com.example.ran.happymoments.common.AppConstants;
+import com.example.ran.happymoments.screens.album.controllers.AlbumActivity;
+import com.example.ran.happymoments.screens.detection.controllers.DetectionActivity;
+
+import com.example.ran.happymoments.screens.home.views.MainView;
+import com.example.ran.happymoments.screens.home.views.MainViewImpl;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
@@ -34,47 +37,23 @@ import static android.support.constraint.Constraints.TAG;
 
 
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity implements MainView.ButtonActionListener {
 
     private static final int READ_STORAGE_PERMISSION = 4000;
     private static final int LIMIT = 20;
-    private Button mAlbumBtn , mImportBtn;
 
+    private MainViewImpl mView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        mAlbumBtn = (Button)findViewById(R.id.album_btn);
-        mImportBtn = (Button)findViewById(R.id.import_btn);
 
-        setListeners();
+        mView = new MainViewImpl(LayoutInflater.from(this), null);
+        mView.setListener(this);
+        setContentView(mView.getRootView());
     }
 
-    private void setListeners() {
 
-        mAlbumBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goToAlbumActivity();
-            }
-        });
-
-        mImportBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Build.VERSION.SDK_INT >= 23) {
-                    if (!checkPermissionForExternalStorage()) {
-                        requestStoragePermission();
-                    } else {
-                        chooseImagesFromDeviceGallery();
-                    }
-                }else{
-                    chooseImagesFromDeviceGallery();
-                }
-            }
-        });
-    }
 
 
     @Override
@@ -92,7 +71,28 @@ public class MainActivity extends AppCompatActivity  {
 
     }
 
+    @Override
+    public void onImportClicked() {
+        importImages();
+    }
 
+    @Override
+    public void onAlbumClicked() {
+        goToAlbumActivity();
+    }
+
+
+    public void importImages() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (!checkPermissionForExternalStorage()) {
+                requestStoragePermission();
+            } else {
+                chooseImagesFromDeviceGallery();
+            }
+        }else{
+            chooseImagesFromDeviceGallery();
+        }
+    }
 
     //after user choose images
     @Override
@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity  {
             ArrayList<Image> chosenImages = data.getParcelableArrayListExtra(ConstantsCustomGallery.INTENT_EXTRA_IMAGES);
             ArrayList<String> chosenImagesPath = getImagesPath(chosenImages);
 
+<<<<<<< HEAD:app/src/main/java/com/example/ran/happymoments/MainActivity.java
 
             goToDetectionActivity(chosenImages,chosenImagesPath );
 
@@ -125,12 +126,14 @@ public class MainActivity extends AppCompatActivity  {
 //                        + "\n" +
 //                        String.valueOf(i + 1) + ". " + String.valueOf(uri));
 //            }
+=======
+            goToDetectionActivity(chosenImagesPath);
+>>>>>>> bb1f3841b823c8f9fabbedade86a9e61e2528e90:app/src/main/java/com/example/ran/happymoments/screens/home/controllers/MainActivity.java
         }
     }
 
     private ArrayList<String> getImagesPath(ArrayList<Image> chosenImages) {
         ArrayList<String> paths = new ArrayList<>();
-
         for (int i = 0 ; i < chosenImages.size() ; i++) {
             paths.add(chosenImages.get(i).path);
         }
@@ -138,11 +141,14 @@ public class MainActivity extends AppCompatActivity  {
     }
 
 
+<<<<<<< HEAD:app/src/main/java/com/example/ran/happymoments/MainActivity.java
     private void goToDetectionActivity(ArrayList<Image> chosenImages , ArrayList<String> chosenImagesPath) {
         Log.d(TAG, "goToDetectionActivity: done.");
+=======
+    private void goToDetectionActivity(ArrayList<String> chosenImagesPath) {
+>>>>>>> bb1f3841b823c8f9fabbedade86a9e61e2528e90:app/src/main/java/com/example/ran/happymoments/screens/home/controllers/MainActivity.java
         Intent intent = new Intent(MainActivity.this, DetectionActivity.class);
-        intent.putExtra("chosenImages", chosenImages);
-        intent.putExtra("chosenImagesPath", chosenImagesPath);
+        intent.putExtra(AppConstants.IMPORTED_IMAGES_PATH, chosenImagesPath);
         startActivity(intent);
         finish();
     }
@@ -161,26 +167,7 @@ public class MainActivity extends AppCompatActivity  {
         finish();
     }
 
-    public boolean checkPermissionForExternalStorage() {
-            int result = ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE);
-            if (result == PackageManager.PERMISSION_GRANTED) {
-                return true;
-            } else {
-                return false;
-            }
-        }
 
-        public boolean requestStoragePermission() {
-            if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    this.requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},
-                            READ_STORAGE_PERMISSION);
-                }
-            } else {
-            }
-            return false;
-        }
 
 
     private BaseLoaderCallback baseLoaderCallback = new BaseLoaderCallback(this) {
@@ -210,6 +197,28 @@ public class MainActivity extends AppCompatActivity  {
         }
     }
 
+
+
+    //permissions
+
+    public boolean checkPermissionForExternalStorage() {
+        int result = ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE);
+        if (result == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    public boolean requestStoragePermission() {
+        if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                this.requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, READ_STORAGE_PERMISSION);
+        }
+        return false;
+    }
 }
 
 
