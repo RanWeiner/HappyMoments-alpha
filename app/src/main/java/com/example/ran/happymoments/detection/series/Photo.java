@@ -1,12 +1,15 @@
 package com.example.ran.happymoments.detection.series;
 
 import android.support.media.ExifInterface;
+import android.util.Log;
 
 import com.example.ran.happymoments.detection.face.Face;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.support.constraint.Constraints.TAG;
 
 public class Photo {
     private String mPath;
@@ -18,7 +21,17 @@ public class Photo {
         this.mPath = path;
         setExifInterface();
         setPhotoFeatures();
+        setPhotoOrientation();
         faces = new ArrayList<>();
+    }
+
+    public void setPhotoOrientation() {
+        if(hasExifData()){
+            int deg = exifInterface.getRotationDegrees();
+                exifInterface.rotate(180);
+                Log.d(TAG, "Picture was rotated. deg = " + deg);
+
+        }
     }
 
     public String getPath() {

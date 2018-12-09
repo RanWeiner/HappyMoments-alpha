@@ -1,55 +1,114 @@
 package com.example.ran.happymoments.common;
 
-import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.ran.happymoments.R;
+import com.example.ran.happymoments.detection.series.Photo;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
-public class GridAdapter extends BaseAdapter {
+public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
 
-    private ArrayList<String> mFilePaths = new ArrayList<>();
-    private Context mContext;
+    private ArrayList<Photo> mPhotos;
+    private int mColWidth;
 
-    public GridAdapter(ArrayList<String> mFilePaths, Context mContext){
-        this.mFilePaths = mFilePaths;
-        this.mContext = mContext;
+
+    public GridAdapter(ArrayList<Photo> mPhotos,int mColWidth){
+        this.mPhotos = mPhotos;
+        this.mColWidth = mColWidth;
+    }
+
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.album_layout,parent,false);
+        ViewHolder imageViewHolder = new ViewHolder(view);
+        return imageViewHolder;
     }
 
     @Override
-    public int getCount() {
-        return mFilePaths.size();
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        Bitmap bitmap = setImageFromPath(position);
+        holder.img.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        holder.img.setImageBitmap(bitmap);
+        holder.img.setOnClickListener(new OnImageClickListener(position));
     }
 
-    @Override
-    public Object getItem(int position) {
-        return mFilePaths.get(position);
-    }
 
     @Override
-    public long getItemId(int position) {
-        return position;
+    public int getItemCount() { return mPhotos.size(); }
+
+
+
+    public String getPhotoName(int position){
+        String photoPath = mPhotos.get(position).getPath();
+        return photoPath.substring(photoPath.lastIndexOf("/")+1);
     }
 
-    @Override
-    public View getView(final int i, View view, ViewGroup viewGroup) {
-        final ImageView imageView;
-        if (view == null) {
-            imageView = new ImageView(mContext);
-        } else {
-            imageView = (ImageView)view;
+    public Bitmap setImageFromPath(int position){
+        String imgPath = mPhotos.get(position).getPath();
+        Bitmap myBitmap = decodeFile(imgPath, mColWidth, mColWidth);
+        return myBitmap;
+    }
+
+    public static Bitmap decodeFile(String filePath, int WIDTH, int HEIGHT) {
+        try {
+
+            File f = new File(filePath);
+
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(new FileInputStream(f), null, o);
+
+            final int REQUIRED_WIDTH = WIDTH;
+            final int REQUIRED_HEIGHT = HEIGHT;
+            int scale = 1;
+            while (o.outWidth / scale / 2 >= REQUIRED_WIDTH && o.outHeight / scale / 2 >= REQUIRED_HEIGHT)
+                scale *= 2;
+
+            BitmapFactory.Options o2 = new BitmapFactory.Options();
+            o2.inSampleSize = scale;
+            return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder
+    {
+        private ImageView img;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            img = (ImageView)itemView.findViewById(R.id.img);
+        }
+    }
+
+    class OnImageClickListener implements View.OnClickListener {
+
+        int _postion;
+
+        // constructor
+        public OnImageClickListener(int position) {
+            this._postion = position;
         }
 
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(mContext, "Photo No. " + i, Toast.LENGTH_SHORT).show();
-            }
-        });
+        @Override
+        public void onClick(View v) {
+            Toast.makeText(v.getContext(), "Img "+ getPhotoName(_postion), Toast.LENGTH_SHORT).show();
+        }
 
-        return imageView;
     }
 }

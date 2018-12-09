@@ -36,7 +36,7 @@ public class PhotoFeatures {
         //some of them might be null - checked
         Log.d(TAG, "dateTime: " + dateTime.getTime());
         Log.d(TAG, "photoLocation: " + photoLocation);
-        Log.d(TAG, "orientation: " + orientation);
+        Log.d(TAG, "orientation: " + orientation.toString());
         Log.d(TAG, "imagePath: " + imagePath);
         setHistogram(imagePath);
         Log.d(TAG, "Mat: " + histogram.toString());
@@ -109,15 +109,14 @@ public class PhotoFeatures {
 
     public boolean compareFeatures(PhotoFeatures otherPhotoFeatures) {
             //check if null
+//        if(getDistance(this.getPhotoLocation(), otherPhotoFeatures.getPhotoLocation()) > DISTANCE_THRESHOLD)
+//            return false;
+//
+//            if(!areDateSimilar(this.getDateTime(), otherPhotoFeatures.getDateTime()))
+//                return false;
 
-            if(getDistance(this.getPhotoLocation(), otherPhotoFeatures.getPhotoLocation()) > DISTANCE_THRESHOLD)
-                return false;
-
-            if(!areDateSimilar(this.getDateTime(), otherPhotoFeatures.getDateTime()))
-                return false;
-
-            if(!orientation.equals(otherPhotoFeatures.getOrientation()))
-                return false;
+//            if(!orientation.equals(otherPhotoFeatures.getOrientation()))
+////                return false;
 
             if (!compareHist(otherPhotoFeatures.getHistogram()))
                 return false;

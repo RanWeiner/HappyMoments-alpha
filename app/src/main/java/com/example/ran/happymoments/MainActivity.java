@@ -97,6 +97,7 @@ public class MainActivity extends AppCompatActivity  {
     //after user choose images
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "onActivityResult: done.");
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == ConstantsCustomGallery.REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
@@ -104,7 +105,9 @@ public class MainActivity extends AppCompatActivity  {
             ArrayList<Image> chosenImages = data.getParcelableArrayListExtra(ConstantsCustomGallery.INTENT_EXTRA_IMAGES);
             ArrayList<String> chosenImagesPath = getImagesPath(chosenImages);
 
+
             goToDetectionActivity(chosenImages,chosenImagesPath );
+
 
 //            for (int i = 0; i < images.size(); i++) {
 //                Photo p = new Photo(images.get(i).path);
@@ -136,6 +139,7 @@ public class MainActivity extends AppCompatActivity  {
 
 
     private void goToDetectionActivity(ArrayList<Image> chosenImages , ArrayList<String> chosenImagesPath) {
+        Log.d(TAG, "goToDetectionActivity: done.");
         Intent intent = new Intent(MainActivity.this, DetectionActivity.class);
         intent.putExtra("chosenImages", chosenImages);
         intent.putExtra("chosenImagesPath", chosenImagesPath);
@@ -144,6 +148,7 @@ public class MainActivity extends AppCompatActivity  {
     }
 
     private void chooseImagesFromDeviceGallery() {
+        Log.d(TAG, "chooseImagesFromDeviceGallery: done.");
         Intent intent = new Intent(MainActivity.this, AlbumSelectActivity.class);
         intent.putExtra(ConstantsCustomGallery.INTENT_EXTRA_LIMIT, LIMIT);
         startActivityForResult(intent, ConstantsCustomGallery.REQUEST_CODE);
