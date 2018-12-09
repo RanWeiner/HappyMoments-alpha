@@ -1,24 +1,28 @@
 package com.example.ran.happymoments.generator;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.example.ran.happymoments.common.Utils;
 import com.example.ran.happymoments.generator.face.Face;
 import com.example.ran.happymoments.common.Position;
 import com.example.ran.happymoments.generator.photo.Photo;
+import com.example.ran.happymoments.generator.series.Person;
 import com.example.ran.happymoments.generator.series.PhotoSeries;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SeriesGenerator {
 
     private List<String> mInput;
     private List<String> mOutput;
 
-    private List<PhotoSeries> mAllSeries;
+    private List<PhotoSeries> mSameFeaturesAllSeries;
+    private List<PhotoSeries> mIdenticalAllSeries;
+
     private List<Photo> mAllPhotos;
 
     private Context mContext;
@@ -30,6 +34,7 @@ public class SeriesGenerator {
         mInput = imagesPath;
         mAllPhotos = setPhotos(imagesPath);
         mFaceExtractor = new FaceExtractorMobileVision();
+        mIdenticalAllSeries = new ArrayList<>();
         mOutput = new ArrayList<>();
     }
 
@@ -39,40 +44,38 @@ public class SeriesGenerator {
 //        mAllPhotos = setPhotos(mInput);
 
         ///////////// [SERIES PART] ///////////////////////////////////
-        mAllSeries = generateSeriesByFeatures();
-
-        printSerieses();
-
+        mSameFeaturesAllSeries = generateSeriesByFeatures();
+//        printSerieses();
         filterAllOnePhotoSeries();
-        /////////////////////////////////////////////////////////////
-
 
         ///////////// [FACES PART] ///////////////////////////////////
 
-        List <Face> faces;
+        List<Face> faces;
         Position centerGravity;
-        for (int i = 0 ; i < mAllSeries.size() ; i++) {
+        Map<Integer, List<Photo>> sameFacesPhotos = new HashMap<>();
 
-            //TODO in function !
+        for (PhotoSeries series : mSameFeaturesAllSeries) {
 
-            for (int j = 0 ; j < mAllSeries.get(i).getPhotos().size() ; j++) {
+            sameFacesPhotos.clear();
 
-                faces = mFaceExtractor.detectFaces(mContext , mAllSeries.get(i).getPhoto(j).getPath());
-                Log.i("FaceXXXXX" , "series : " + mAllSeries.get(i).getPhoto(j).getPath());
-                Log.i("FaceXXXXX" ,"numOfFaces= " + faces.size());
-
+            for (Photo photo : series.getPhotos()) {
+                faces = mFaceExtractor.detectFaces(mContext, photo.getPath());
                 if (!faces.isEmpty()) {
-                    mAllSeries.get(i).getPhoto(j).setFaces(faces);
+                    photo.setFaces(faces);
+
                     centerGravity = calcFacesCenterGravity(faces);
-                    mAllSeries.get(i).getPhoto(j).setFacesCenterGravity(centerGravity);
+
+                    photo.setFacesCenterGravity(centerGravity);
+
+                    addPhotoToMap(sameFacesPhotos, photo, faces.size());
 
                     for (Face face : faces) {
 
                         double angle = face.getPosition().calcAngle(centerGravity);
                         double normalizedAngle = Utils.normalize(angle , 360 ,0);
                         double dist = face.getPosition().calcEuclidDistance(centerGravity);
-                        double width =  mAllSeries.get(i).getPhoto(j).getBitmap().getWidth();
-                        double height =  mAllSeries.get(i).getPhoto(j).getBitmap().getHeight();
+                        double width =  photo.getBitmap().getWidth();
+                        double height =  photo.getBitmap().getHeight();
                         double diagonal = Utils.pitagoras(width , height);
                         double normalizedDist = Utils.normalize(dist, diagonal,0);
 
@@ -80,27 +83,137 @@ public class SeriesGenerator {
                         face.setDistanceFromGravityCenter(normalizedDist);
                     }
                 }
+//                if has no faces decide what to do
+//                addPhotoToMap(sameFacesPhotos, photo, faces.size());
             }
+
+            for (Map.Entry<Integer, List<Photo>> entry : sameFacesPhotos.entrySet()) {
+                PhotoSeries s = new PhotoSeries(entry.getValue());
+                s.setPersons(entry.getKey());
+                mIdenticalAllSeries.add(s);
+            }
+        }
+
+        //suppose to have series of identical images with the same amount of faces and array of persons
+
+        for (PhotoSeries photoSeries: mIdenticalAllSeries) {
+
+
+            for (Photo photo: photoSeries.getPhotos()) {
+
+                matchAllPersonsToAllFaces(photo.getFaces() , photoSeries.getPersons());
+
+            }
+
         }
 
 
 
-        ///////////////////////////////////////////////////////////////
-
-        //now each photo contains array of faces and center gravity
-        printFaces();
 
 
         return mOutput;
     }
 
+    private void matchAllPersonsToAllFaces(List<Face> faces, Person[] persons) {
+
+        List<Face> facesInPhoto = new ArrayList<>(faces);
+
+        for (int i = 0 ; i < persons.length; i++) {
+
+            if (persons[i].getFaces().isEmpty()) {
+                persons[i].addFace(facesInPhoto.get(i));
+            } else {
+                int matched = matchPersonToFace(persons[i] , facesInPhoto);
+                facesInPhoto.remove(matched);
+            }
+        }
+    }
+
+    private int matchPersonToFace(Person person, List<Face> facesInPhoto) {
+
+        double minDistance , currentDistance;
+        int matchingFaceIndex = 0;
+//        minDistance = compareVectors(person.getFaces().get(0).getVector() , facesInPhoto.get(0).getVector())
+
+//        for (int i = 1 ; i < facesInPhoto.size() ; i++) {
+//            currentDistance = compareVectors(person.getFaces().get(0).getVector() , face.getVector())
+//            if (currentDistance < minDistance) {
+//                minDistance = currentDistance;
+//                matchingFaceIndex = i;
+//            }
+//        }
+
+        person.addFace(facesInPhoto.get(matchingFaceIndex));
+        return matchingFaceIndex;
+    }
+
+//        for (int i = 0; i < mSameFeaturesAllSeries.size() ; i++) {
+//
+//            Map<Integer , Photo> sameFacesPhotos = new HashMap<>();
+//
+//
+//            // for each photo in series
+//
+//            for (int j = 0; j < mSameFeaturesAllSeries.get(i).getPhotos().size() ; j++) {
+//
+//
+//                faces = mFaceExtractor.detectFaces(mContext , mSameFeaturesAllSeries.get(i).getPhoto(j).getPath());
+//
+//
+//                if (!faces.isEmpty()) {
+//                    mSameFeaturesAllSeries.get(i).getPhoto(j).setFaces(faces);
+
+//                    centerGravity = calcFacesCenterGravity(faces);
+//                    mSameFeaturesAllSeries.get(i).getPhoto(j).setFacesCenterGravity(centerGravity);
+//
+//                    for (Face face : faces) {
+//
+//                        double angle = face.getPosition().calcAngle(centerGravity);
+//                        double normalizedAngle = Utils.normalize(angle , 360 ,0);
+//                        double dist = face.getPosition().calcEuclidDistance(centerGravity);
+//                        double width =  mSameFeaturesAllSeries.get(i).getPhoto(j).getBitmap().getWidth();
+//                        double height =  mSameFeaturesAllSeries.get(i).getPhoto(j).getBitmap().getHeight();
+//                        double diagonal = Utils.pitagoras(width , height);
+//                        double normalizedDist = Utils.normalize(dist, diagonal,0);
+//
+//                        face.setAngleFromGravityCenter(normalizedAngle);
+//                        face.setDistanceFromGravityCenter(normalizedDist);
+//                    }
 
 
+
+
+
+
+        ///////////////////////////////////////////////////////////////
+
+//        //now each photo contains array of faces and center gravity
+//
+//        printFaces();
+//
+//
+//        return mOutput;
+//    }
+
+    private void addPhotoToMap(Map<Integer,List<Photo>> sameFacesPhotos, Photo photo, int key) {
+        List<Photo> temp = sameFacesPhotos.get(key);
+
+        //not exist in map
+        if (temp == null) {
+            temp = new ArrayList<Photo>();
+            temp.add(photo);
+            sameFacesPhotos.put(key, temp);
+        } else {
+            //exist in map
+            temp.add(photo);
+        }
+
+    }
 
 
     private void printSerieses() {
         //just for debug
-        for (PhotoSeries series : mAllSeries) {
+        for (PhotoSeries series : mSameFeaturesAllSeries) {
             Log.i("SeriesXXXX" ,"Series "+ series.getId());
             for (Photo photo : series.getPhotos()) {
                 Log.i("SeriesXXXX" ,"Series "+ series.getId() + "photo= "+ photo.getPath());
@@ -109,7 +222,7 @@ public class SeriesGenerator {
     }
 
     public void printFaces() {
-        for (PhotoSeries series : mAllSeries) {
+        for (PhotoSeries series : mSameFeaturesAllSeries) {
             Log.i("FaceXXXXX" ,"SeriesXXXXX "+ series.getId());
             for (Photo photo : series.getPhotos()) {
 
@@ -143,13 +256,13 @@ public class SeriesGenerator {
     private void filterAllOnePhotoSeries() {
 
         ArrayList <PhotoSeries> photosToBeRemoved = new ArrayList<>();
-        for (int i = 0 ; i < mAllSeries.size() ; i++) {
-            if (mAllSeries.get(i).getNumOfPhotos() == 1) {
-                mOutput.add(mAllSeries.get(i).getPhoto(0).getPath());
-                photosToBeRemoved.add(mAllSeries.get(i));
+        for (int i = 0; i < mSameFeaturesAllSeries.size() ; i++) {
+            if (mSameFeaturesAllSeries.get(i).getNumOfPhotos() == 1) {
+                mOutput.add(mSameFeaturesAllSeries.get(i).getPhoto(0).getPath());
+                photosToBeRemoved.add(mSameFeaturesAllSeries.get(i));
             }
         }
-        mAllSeries.removeAll(photosToBeRemoved);
+        mSameFeaturesAllSeries.removeAll(photosToBeRemoved);
     }
 
 
