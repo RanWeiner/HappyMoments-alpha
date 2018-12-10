@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 
 public class SeriesGenerator {
 
@@ -34,21 +35,37 @@ public class SeriesGenerator {
         mInput = imagesPath;
         mAllPhotos = setPhotos(imagesPath);
         mFaceExtractor = new FaceExtractorMobileVision();
-        mIdenticalAllSeries = new ArrayList<>();
         mOutput = new ArrayList<>();
     }
 
 
     public List<String> detect() {
 
-//        mAllPhotos = setPhotos(mInput);
-
         ///////////// [SERIES PART] ///////////////////////////////////
         mSameFeaturesAllSeries = generateSeriesByFeatures();
-//        printSerieses();
         filterAllOnePhotoSeries();
 
         ///////////// [FACES PART] ///////////////////////////////////
+        mIdenticalAllSeries = generateSeriesByFaces();
+
+        FaceMatcher matcher = new FaceMatcher();
+        matcher.matchFacesToPersons(mIdenticalAllSeries);
+
+        Ranker ranker = new Ranker();
+        //rank all series and person and calculate the total rank for photo
+
+
+        for (PhotoSeries series: mIdenticalAllSeries) {
+            Photo best = series.getHighestRankedPhoto();
+//            mOutput.add(getHighestRankedPhoto());
+        }
+
+        return mOutput;
+    }
+
+
+    private List<PhotoSeries> generateSeriesByFaces() {
+        List<PhotoSeries> result = new ArrayList<>();
 
         List<Face> faces;
         Position centerGravity;
@@ -60,17 +77,13 @@ public class SeriesGenerator {
 
             for (Photo photo : series.getPhotos()) {
                 faces = mFaceExtractor.detectFaces(mContext, photo.getPath());
+
                 if (!faces.isEmpty()) {
                     photo.setFaces(faces);
-
                     centerGravity = calcFacesCenterGravity(faces);
-
                     photo.setFacesCenterGravity(centerGravity);
-
                     addPhotoToMap(sameFacesPhotos, photo, faces.size());
-
                     for (Face face : faces) {
-
                         double angle = face.getPosition().calcAngle(centerGravity);
                         double normalizedAngle = Utils.normalize(angle , 360 ,0);
                         double dist = face.getPosition().calcEuclidDistance(centerGravity);
@@ -78,7 +91,6 @@ public class SeriesGenerator {
                         double height =  photo.getBitmap().getHeight();
                         double diagonal = Utils.pitagoras(width , height);
                         double normalizedDist = Utils.normalize(dist, diagonal,0);
-
                         face.setAngleFromGravityCenter(normalizedAngle);
                         face.setDistanceFromGravityCenter(normalizedDist);
                     }
@@ -87,127 +99,33 @@ public class SeriesGenerator {
 //                addPhotoToMap(sameFacesPhotos, photo, faces.size());
             }
 
+            if (sameFacesPhotos.size() == 1) {
+
+            }
             for (Map.Entry<Integer, List<Photo>> entry : sameFacesPhotos.entrySet()) {
                 PhotoSeries s = new PhotoSeries(entry.getValue());
-                s.setPersons(entry.getKey());
-                mIdenticalAllSeries.add(s);
+                s.initPersons(entry.getKey());
+                result.add(s);
             }
         }
 
-        //suppose to have series of identical images with the same amount of faces and array of persons
-
-        for (PhotoSeries photoSeries: mIdenticalAllSeries) {
-
-
-            for (Photo photo: photoSeries.getPhotos()) {
-
-                matchAllPersonsToAllFaces(photo.getFaces() , photoSeries.getPersons());
-
-            }
-
-        }
-
-
-
-
-
-        return mOutput;
+        return result;
     }
 
-    private void matchAllPersonsToAllFaces(List<Face> faces, Person[] persons) {
 
-        List<Face> facesInPhoto = new ArrayList<>(faces);
-
-        for (int i = 0 ; i < persons.length; i++) {
-
-            if (persons[i].getFaces().isEmpty()) {
-                persons[i].addFace(facesInPhoto.get(i));
-            } else {
-                int matched = matchPersonToFace(persons[i] , facesInPhoto);
-                facesInPhoto.remove(matched);
-            }
-        }
-    }
-
-    private int matchPersonToFace(Person person, List<Face> facesInPhoto) {
-
-        double minDistance , currentDistance;
-        int matchingFaceIndex = 0;
-//        minDistance = compareVectors(person.getFaces().get(0).getVector() , facesInPhoto.get(0).getVector())
-
-//        for (int i = 1 ; i < facesInPhoto.size() ; i++) {
-//            currentDistance = compareVectors(person.getFaces().get(0).getVector() , face.getVector())
-//            if (currentDistance < minDistance) {
-//                minDistance = currentDistance;
-//                matchingFaceIndex = i;
-//            }
-//        }
-
-        person.addFace(facesInPhoto.get(matchingFaceIndex));
-        return matchingFaceIndex;
-    }
-
-//        for (int i = 0; i < mSameFeaturesAllSeries.size() ; i++) {
-//
-//            Map<Integer , Photo> sameFacesPhotos = new HashMap<>();
-//
-//
-//            // for each photo in series
-//
-//            for (int j = 0; j < mSameFeaturesAllSeries.get(i).getPhotos().size() ; j++) {
-//
-//
-//                faces = mFaceExtractor.detectFaces(mContext , mSameFeaturesAllSeries.get(i).getPhoto(j).getPath());
-//
-//
-//                if (!faces.isEmpty()) {
-//                    mSameFeaturesAllSeries.get(i).getPhoto(j).setFaces(faces);
-
-//                    centerGravity = calcFacesCenterGravity(faces);
-//                    mSameFeaturesAllSeries.get(i).getPhoto(j).setFacesCenterGravity(centerGravity);
-//
-//                    for (Face face : faces) {
-//
-//                        double angle = face.getPosition().calcAngle(centerGravity);
-//                        double normalizedAngle = Utils.normalize(angle , 360 ,0);
-//                        double dist = face.getPosition().calcEuclidDistance(centerGravity);
-//                        double width =  mSameFeaturesAllSeries.get(i).getPhoto(j).getBitmap().getWidth();
-//                        double height =  mSameFeaturesAllSeries.get(i).getPhoto(j).getBitmap().getHeight();
-//                        double diagonal = Utils.pitagoras(width , height);
-//                        double normalizedDist = Utils.normalize(dist, diagonal,0);
-//
-//                        face.setAngleFromGravityCenter(normalizedAngle);
-//                        face.setDistanceFromGravityCenter(normalizedDist);
-//                    }
-
-
-
-
-
-
-        ///////////////////////////////////////////////////////////////
-
-//        //now each photo contains array of faces and center gravity
-//
-//        printFaces();
-//
-//
-//        return mOutput;
-//    }
 
     private void addPhotoToMap(Map<Integer,List<Photo>> sameFacesPhotos, Photo photo, int key) {
-        List<Photo> temp = sameFacesPhotos.get(key);
+        List<Photo> photos = sameFacesPhotos.get(key);
 
         //not exist in map
-        if (temp == null) {
-            temp = new ArrayList<Photo>();
-            temp.add(photo);
-            sameFacesPhotos.put(key, temp);
+        if (photos == null) {
+            photos = new ArrayList<Photo>();
+            photos.add(photo);
+            sameFacesPhotos.put(key, photos);
         } else {
             //exist in map
-            temp.add(photo);
+            photos.add(photo);
         }
-
     }
 
 

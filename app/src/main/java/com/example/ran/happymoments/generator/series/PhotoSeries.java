@@ -65,11 +65,16 @@ public class PhotoSeries {
         return this.persons[index];
     }
 
-    public void setPersons(int numOfPersons) {
+    public void initPersons(int numOfPersons) {
         this.persons = new Person[numOfPersons];
     }
 
     public Person[] getPersons() {
         return this.persons;
+    }
+
+
+    public Photo getHighestRankedPhoto() {
+        return photos.get(0);
     }
 }
