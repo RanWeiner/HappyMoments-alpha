@@ -7,10 +7,17 @@ import com.example.ran.happymoments.generator.face.Face;
 
 public class Person {
 
+
+    private static int idGenerator = 0;
+    private int id;
     Face face;
     RelativePositionVector vector;
 
+
+
     public Person(Face face, RelativePositionVector vector){
+        this.id = ++idGenerator;
+
         this.face = face;
         this.vector = vector;
     }
@@ -34,6 +41,14 @@ public class Person {
 
     public double getFaceSize() {
         return this.face.getSize();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void normalizeVector(double maxDistance) {

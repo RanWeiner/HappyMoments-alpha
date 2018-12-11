@@ -55,14 +55,26 @@ public class SeriesGenerator {
         normalizeVectors();
 
         ///////////////////// [FACE CORRESPONDENCE] /////////////////////
-//        FaceMatcher matcher = new FaceMatcher();
-//
-//        for (PhotoSeries series : mIdenticalSeriesList) {
-//            matcher.matchPersonsInSeries(series);
-//        }
+
+        FaceMatcher matcher = new FaceMatcher();
+        for (PhotoSeries series : mIdenticalSeriesList) {
+            matcher.matchPersons(series);
+        }
+
+        //now each series has list of photos that contains list of person
+        //that each person has a matching person (by id) in another photo
+
+
+        ///////////////////// [RANK] /////////////////////
 
 
 
+
+
+        for (PhotoSeries series: mIdenticalSeriesList) {
+            Photo p = series.getHighestRankedPhoto();
+            mOutput.add(p.getPath());
+        }
 
         return mOutput;
     }
