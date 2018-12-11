@@ -6,7 +6,7 @@ import java.util.List;
 
 public class AppConstants {
 
-    //Number of columns in GridView
+    //Number of columns in RecycleView
     public static final int NUM_OF_COLUMNS = 3;
 
     //GridView image padding in dp
@@ -21,4 +21,8 @@ public class AppConstants {
     public static final String IMPORTED_IMAGES_PATH = "ImportedImagesPath";
 
     public static final double MAX_ANGLE = 360;
+
+    public static final double EYES_WEIGHT = 0.7;
+
+    public static final double SMILE_WEIGHT = 0.5;
 }

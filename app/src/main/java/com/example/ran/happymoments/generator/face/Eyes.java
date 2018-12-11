@@ -4,7 +4,7 @@ public class Eyes {
 
     public final static float EYES_OPEN_PROBABILITY =  0.5f;
 
-    float leftEyeOpenProbability, rightEyeOpenProbability;
+    private float leftEyeOpenProbability, rightEyeOpenProbability;
 
     public Eyes(float leftEyeOpenProbability, float rightEyeOpenProbability) {
         this.leftEyeOpenProbability = leftEyeOpenProbability;
@@ -26,6 +26,10 @@ public class Eyes {
 
     public void setRightEyeOpenProbability(float rightEyeOpenProbability) {
         this.rightEyeOpenProbability = rightEyeOpenProbability;
+    }
+
+    public float getEyesOpenProbability(){
+        return (getLeftEyeOpenProbability() + getRightEyeOpenProbability()) / 2;
     }
 
 

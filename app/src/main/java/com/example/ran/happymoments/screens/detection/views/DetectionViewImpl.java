@@ -78,7 +78,7 @@ public class DetectionViewImpl implements DetectionView  {
     public void initRecyclerView() {
         setColumnWidth();
         mAdapter = new RecycleViewImageAdapter(mPhotos,mColumnWidth);
-        mLayoutManager = new GridLayoutManager(getContext(), 3);//Change to CONST
+        mLayoutManager = new GridLayoutManager(getContext(), AppConstants.NUM_OF_COLUMNS);//Change to CONST
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);

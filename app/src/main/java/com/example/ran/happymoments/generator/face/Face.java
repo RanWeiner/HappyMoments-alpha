@@ -4,10 +4,11 @@ import com.example.ran.happymoments.common.Position;
 
 public class Face {
 
-    Smile smile;
-    Eyes eyes;
-    Position position;
-    float width, height;
+    private Smile smile;
+    private Eyes eyes;
+    private Position position;
+    private float width, height;
+    private float faceImportanceScore, faceScore;
 
     public Face(){
 
@@ -72,5 +73,21 @@ public class Face {
 
     public float getSize() {
         return this.width * this.height;
+    }
+
+    public float getFaceImportanceScore() {
+        return faceImportanceScore;
+    }
+
+    public void setFaceImportanceScore(float faceImportanceScore) {
+        this.faceImportanceScore = faceImportanceScore;
+    }
+
+    public float getFaceScore() {
+        return faceScore;
+    }
+
+    public void setFaceScore(float faceScore) {
+        this.faceScore = faceScore;
     }
 }

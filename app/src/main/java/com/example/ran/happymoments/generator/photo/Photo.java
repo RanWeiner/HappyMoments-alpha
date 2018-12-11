@@ -20,6 +20,7 @@ public class Photo {
     private Position totalFacesCenter;
     private List<Person> mPersonList;
     private List<Face> faces;
+    private float faceScore;
 
     private double maxFaceSize , maxFaceDistanceFromCenter;
     private Bitmap bitmap;
@@ -150,4 +151,13 @@ public class Photo {
         this.mPersonList.add(person);
     }
 
+    public List<Person> getPersonList() { return mPersonList; }
+
+    public float getFaceScore() {
+        return faceScore;
+    }
+
+    public void setFaceScore(float faceScore) {
+        this.faceScore = faceScore;
+    }
 }
