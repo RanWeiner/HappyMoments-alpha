@@ -3,7 +3,6 @@ package com.example.ran.happymoments.generator.photo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.media.ExifInterface;
-import android.util.Log;
 
 import com.example.ran.happymoments.generator.face.Face;
 import com.example.ran.happymoments.common.Position;
@@ -14,17 +13,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.support.constraint.Constraints.TAG;
-
 public class Photo {
     private String mPath;
     private PhotoFeatures photoFeatures;
     private ExifInterface exifInterface;
+    private Position totalFacesCenter;
+    private List<Person> mPersonList;
     private List<Face> faces;
-    private Position facesCenterGravity;
 
+    private double maxFaceSize , maxFaceDistanceFromCenter;
     private Bitmap bitmap;
-
 
 
 
@@ -33,21 +31,16 @@ public class Photo {
         setExifInterface();
         setPhotoFeatures();
 
-        setPhotoOrientation();
+        //setPhotoOrientation();
 
-        
-        //setBitmap();
+        setBitmap();
+
+        mPersonList = new ArrayList<>();
         faces = new ArrayList<>();
-        facesCenterGravity = new Position();
-    }
+        totalFacesCenter = new Position();
 
-    public void setPhotoOrientation() {
-        if(hasExifData()){
-            int deg = exifInterface.getRotationDegrees();
-                exifInterface.rotate(180);
-                Log.d(TAG, "Picture was rotated. deg = " + deg);
-
-        }
+        this.maxFaceSize = 0;
+        this.maxFaceDistanceFromCenter = 0;
     }
 
 
@@ -87,12 +80,12 @@ public class Photo {
     }
 
 
-    public Position getFacesCenterGravity() {
-        return facesCenterGravity;
+    public Position getTotalFacesCenter() {
+        return totalFacesCenter;
     }
 
-    public void setFacesCenterGravity(Position facesCenterGravity) {
-        this.facesCenterGravity = facesCenterGravity;
+    public void setTotalFacesCenter(Position totalFacesCenter) {
+        this.totalFacesCenter = totalFacesCenter;
     }
 
     public boolean similarTo(Photo other){
@@ -124,7 +117,37 @@ public class Photo {
         return faces;
     }
 
-//    public Bitmap getBitmap() {
-//        return this.bitmap;
-//    }
+    public Bitmap getBitmap() {
+        return this.bitmap;
+    }
+
+
+    public List<Person> getPersons() {
+        return mPersonList;
+    }
+
+    public double getMaxFaceSize() {
+        return maxFaceSize;
+    }
+
+    public void setMaxFaceSize(double maxFaceSize) {
+        if (maxFaceSize > this.maxFaceSize) {
+            this.maxFaceSize = maxFaceSize;
+        }
+    }
+
+    public double getMaxFaceDistanceFromCenter() {
+        return maxFaceDistanceFromCenter;
+    }
+
+    public void setMaxFaceDistanceFromCenter(double maxFaceDistanceFromCenter) {
+        if (maxFaceDistanceFromCenter > this.maxFaceDistanceFromCenter) {
+            this.maxFaceDistanceFromCenter = maxFaceDistanceFromCenter;
+        }
+    }
+
+    public void addPerson(Person person) {
+        this.mPersonList.add(person);
+    }
+
 }

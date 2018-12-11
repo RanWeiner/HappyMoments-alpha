@@ -11,28 +11,25 @@ public class PhotoSeries {
     private static int idGenerator = 0;
     private int id;
     private List<Photo> photos;
-    private int numOfPhotos;
-    //private ArrayList<PhotoPerson> personsInSeries;
+    private double maxDistanceToFacesCenter;
 
 
     public PhotoSeries() {
         this.id = ++idGenerator;
         photos = new ArrayList<>();
-        numOfPhotos = 0;
-        //personsInSeries = new ArrayList<>();
+        maxDistanceToFacesCenter = 0;
+
     }
 
-//    public PhotoSeries(List<Photo> photos) {
-//        this();
-//        mPhotos.addAll(photos);
-//    }
+    public PhotoSeries(List<Photo> photos) {
+        this();
+        photos.addAll(photos);
+    }
 
 
     public int getId() {
         return id;
     }
-
-
 
 
     public void setId(int id) {
@@ -44,11 +41,7 @@ public class PhotoSeries {
     }
 
     public int getNumOfPhotos() {
-        return numOfPhotos;
-    }
-
-    public void setNumOfPhotos(int numOfPhotos) {
-        this.numOfPhotos = numOfPhotos;
+        return photos.size();
     }
 
     public List<Photo> getPhotos() {
@@ -57,7 +50,6 @@ public class PhotoSeries {
 
     public void addPhoto(Photo photo) {
         this.photos.add(photo);
-        numOfPhotos++;
     }
 
     public Photo getPhoto(int index) {
@@ -65,7 +57,29 @@ public class PhotoSeries {
     }
 
     public void removePhoto(Photo photo) {
-        numOfPhotos--;
         this.photos.remove(photo);
+    }
+
+    public double getMaxDistanceToFacesCenter() {
+        return maxDistanceToFacesCenter;
+    }
+
+    public void setMaxDistanceToFacesCenter(double maxDistanceToFacesCenter) {
+        if (maxDistanceToFacesCenter > this.maxDistanceToFacesCenter) {
+            this.maxDistanceToFacesCenter = maxDistanceToFacesCenter;
+        }
+    }
+
+    public void setFaceMaxDistanceToCenter() {
+
+        for (Photo photo: photos) {
+            if (photo.getMaxFaceDistanceFromCenter() > this.maxDistanceToFacesCenter) {
+                this.maxDistanceToFacesCenter = photo.getMaxFaceDistanceFromCenter();
+            }
+        }
+    }
+
+    public Photo getHighestRankedPhoto() {
+        return null;
     }
 }

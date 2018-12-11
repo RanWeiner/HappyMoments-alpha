@@ -4,63 +4,58 @@ import com.example.ran.happymoments.common.Position;
 
 public class Face {
 
-    public final static float SMILING_ACCEPT_PROBABILITY =  0.5f;
-    public final static float EYES_OPEN_PROBABILITY =  0.5f;
-
-    //normalized vector to center
-
+    Smile smile;
+    Eyes eyes;
     Position position;
-    float width, height, smilingProbability, leftEyeOpenProbability, rightEyeOpenProbability;
-
-    double angleFromGravityCenter;
-    double distanceFromGravityCenter;
-
-
-
-    public double getDistanceFromGravityCenter() {
-        return distanceFromGravityCenter;
-    }
-
-    public void setDistanceFromGravityCenter(double distanceFromGravityCenter) {
-        this.distanceFromGravityCenter = distanceFromGravityCenter;
-    }
+    float width, height;
 
     public Face(){
 
     }
 
 
-    public Face(Position position, float width, float height, float smilingProbability, float leftEyeOpenProbability, float rightEyeOpenProbability) {
-
+    public Face(Position position, float width, float height , Smile smile , Eyes eyes) {
         this.position = position;
         this.width = width;
         this.height = height;
-        this.smilingProbability = smilingProbability;
-        this.leftEyeOpenProbability= leftEyeOpenProbability;
-        this.rightEyeOpenProbability = rightEyeOpenProbability;
+        this.smile = smile;
+        this.eyes = eyes;
     }
 
 
-
-    public double getAngleFromGravityCenter() {
-        return angleFromGravityCenter;
+    public Smile getSmile() {
+        return smile;
     }
 
-    public void setAngleFromGravityCenter(double angleFromGravityCenter) {
-        this.angleFromGravityCenter = angleFromGravityCenter;
+    public Eyes getEyes() {
+        return eyes;
     }
+//    public double getDistanceFromGravityCenter() {
+//        return distanceFromGravityCenter;
+//    }
+//
+//    public void setDistanceFromTotalFacesCenter(double distanceFromGravityCenter) {
+//        this.distanceFromGravityCenter = distanceFromGravityCenter;
+//    }
+//
+//    public double getAngleFromGravityCenter() {
+//        return angleFromGravityCenter;
+//    }
+//
+//    public void setAngleFromTotalFacesCenter(double angleFromGravityCenter) {
+//        this.angleFromGravityCenter = angleFromGravityCenter;
+//    }
 
     public Position getPosition() {
-        return position;
+        return this.position;
     }
 
     public void setPosition(Position position) {
         this.position = position;
     }
 
-
     public float getWidth() {
-        return width;
+        return this.width;
     }
 
     public void setWidth(float width) {
@@ -68,51 +63,14 @@ public class Face {
     }
 
     public float getHeight() {
-        return height;
+        return this.height;
     }
 
     public void setHeight(float height) {
         this.height = height;
     }
 
-    public float getSmilingProbability() {
-        return smilingProbability;
-    }
-
-    public void setSmilingProbability(float smilingProbability) {
-        this.smilingProbability = smilingProbability;
-    }
-
-    public float getLeftEyeOpenProbability() {
-        return leftEyeOpenProbability;
-    }
-
-    public void setLeftEyeOpenProbability(float leftEyeOpenProbability) {
-        this.leftEyeOpenProbability = leftEyeOpenProbability;
-    }
-
-    public float getRightEyeOpenProbability() {
-        return rightEyeOpenProbability;
-    }
-
-    public void setRightEyeOpenProbability(float rightEyeOpenProbability) {
-        this.rightEyeOpenProbability = rightEyeOpenProbability;
-    }
-
-
-    public boolean isSmiling(){
-        if (smilingProbability > SMILING_ACCEPT_PROBABILITY) {
-            return true;
-        }
-        return false;
-    }
-
-
-    public boolean areEyesOpen(){
-        if (leftEyeOpenProbability > EYES_OPEN_PROBABILITY
-                && rightEyeOpenProbability > EYES_OPEN_PROBABILITY ) {
-            return true;
-        }
-        return false;
+    public float getSize() {
+        return this.width * this.height;
     }
 }

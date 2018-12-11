@@ -81,7 +81,6 @@ public class DetectionActivity extends AppCompatActivity implements DetectionVie
 
 //        mResults = mSeriesGenerator.detect();
 
-        //Thread is crashing app - not anymore :)
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -95,16 +94,15 @@ public class DetectionActivity extends AppCompatActivity implements DetectionVie
 //                        enableUserInteraction();
                         Toast.makeText(DetectionActivity.this , "Finished!",Toast.LENGTH_SHORT).show();
                         Log.i("Finish" , "Finish DETECTNG");
-                        mView.dismissUserJobInProgress();
+
                         //tell view finished - enable button and stop spinner
+                        mView.dismissUserJobInProgress();
+
                     }
                 });
             }
         });
         t.start();
-
-
-        //Toast.makeText(DetectionActivity.this , "finished!",Toast.LENGTH_SHORT).show();
 
     }
 
