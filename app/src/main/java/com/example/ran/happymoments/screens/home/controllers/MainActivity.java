@@ -97,7 +97,6 @@ public class MainActivity extends AppCompatActivity implements MainView.ButtonAc
     //after user choose images
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "onActivityResult: done.");
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == ConstantsCustomGallery.REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
@@ -105,30 +104,7 @@ public class MainActivity extends AppCompatActivity implements MainView.ButtonAc
             ArrayList<Image> chosenImages = data.getParcelableArrayListExtra(ConstantsCustomGallery.INTENT_EXTRA_IMAGES);
             ArrayList<String> chosenImagesPath = getImagesPath(chosenImages);
 
-<<<<<<< HEAD:app/src/main/java/com/example/ran/happymoments/MainActivity.java
-
-            goToDetectionActivity(chosenImages,chosenImagesPath );
-
-
-//            for (int i = 0; i < images.size(); i++) {
-//                Photo p = new Photo(images.get(i).path);
-
-//                Uri uri = Uri.fromFile(new File(images.get(i).path));
-//
-//                Glide.with(this).load(uri)
-//                        .placeholder(R.color.colorAccent)
-//                        .override(400, 400)
-//                        .crossFade()
-//                        .centerCrop()
-//                        .into(imageView);
-//
-//                txImageSelects.setText(txImageSelects.getText().toString().trim()
-//                        + "\n" +
-//                        String.valueOf(i + 1) + ". " + String.valueOf(uri));
-//            }
-=======
             goToDetectionActivity(chosenImagesPath);
->>>>>>> bb1f3841b823c8f9fabbedade86a9e61e2528e90:app/src/main/java/com/example/ran/happymoments/screens/home/controllers/MainActivity.java
         }
     }
 
@@ -141,12 +117,11 @@ public class MainActivity extends AppCompatActivity implements MainView.ButtonAc
     }
 
 
-<<<<<<< HEAD:app/src/main/java/com/example/ran/happymoments/MainActivity.java
     private void goToDetectionActivity(ArrayList<Image> chosenImages , ArrayList<String> chosenImagesPath) {
         Log.d(TAG, "goToDetectionActivity: done.");
-=======
+    }
+
     private void goToDetectionActivity(ArrayList<String> chosenImagesPath) {
->>>>>>> bb1f3841b823c8f9fabbedade86a9e61e2528e90:app/src/main/java/com/example/ran/happymoments/screens/home/controllers/MainActivity.java
         Intent intent = new Intent(MainActivity.this, DetectionActivity.class);
         intent.putExtra(AppConstants.IMPORTED_IMAGES_PATH, chosenImagesPath);
         startActivity(intent);

@@ -14,11 +14,10 @@ public interface DetectionView {
     void bindPhotos(List<Photo> photos);
 
 
-
-
     public interface DetectButtonListener {
         void onDetectBtnClicked();
         }
+
 
     void setListener(DetectButtonListener listener);
 
@@ -27,5 +26,9 @@ public interface DetectionView {
     Context getContext();
 
     Resources getResources();
+
+    void dismissUserJobInProgress();
+
+    void showUserJobInProgress();
 
     }

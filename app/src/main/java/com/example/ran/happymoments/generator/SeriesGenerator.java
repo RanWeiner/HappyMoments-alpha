@@ -2,6 +2,7 @@ package com.example.ran.happymoments.generator;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
 
 import com.example.ran.happymoments.common.Utils;
@@ -71,13 +72,13 @@ public class SeriesGenerator {
                         double angle = face.getPosition().calcAngle(centerGravity);
                         double normalizedAngle = Utils.normalize(angle , 360 ,0);
                         double dist = face.getPosition().calcEuclidDistance(centerGravity);
-                        double width =  mAllSeries.get(i).getPhoto(j).getBitmap().getWidth();
-                        double height =  mAllSeries.get(i).getPhoto(j).getBitmap().getHeight();
-                        double diagonal = Utils.pitagoras(width , height);
-                        double normalizedDist = Utils.normalize(dist, diagonal,0);
+//                        double width =  mAllSeries.get(i).getPhoto(j).getExifInterface().getThumbnailBitmap().getWidth();
+//                        double height =  mAllSeries.get(i).getPhoto(j).getBitmap().getHeight();
+//                        double diagonal = Utils.pitagoras(width , height);
+//                        double normalizedDist = Utils.normalize(dist, diagonal,0);
 
                         face.setAngleFromGravityCenter(normalizedAngle);
-                        face.setDistanceFromGravityCenter(normalizedDist);
+//                        face.setDistanceFromGravityCenter(normalizedDist);
                     }
                 }
             }

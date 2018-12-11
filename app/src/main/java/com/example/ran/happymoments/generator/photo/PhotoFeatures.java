@@ -107,7 +107,6 @@ public class PhotoFeatures {
 
 
     public boolean compareFeatures(PhotoFeatures otherPhotoFeatures) {
-<<<<<<< HEAD:app/src/main/java/com/example/ran/happymoments/detection/series/PhotoFeatures.java
             //check if null
 //        if(getDistance(this.getPhotoLocation(), otherPhotoFeatures.getPhotoLocation()) > DISTANCE_THRESHOLD)
 //            return false;
@@ -117,7 +116,7 @@ public class PhotoFeatures {
 
 //            if(!orientation.equals(otherPhotoFeatures.getOrientation()))
 ////                return false;
-=======
+
 
         if (!compareDateTime(otherPhotoFeatures.dateTime)) {
             return false;
@@ -133,7 +132,6 @@ public class PhotoFeatures {
 
         return true;
     }
->>>>>>> bb1f3841b823c8f9fabbedade86a9e61e2528e90:app/src/main/java/com/example/ran/happymoments/generator/photo/PhotoFeatures.java
 
 
     private boolean compareDateTime(Calendar other) {

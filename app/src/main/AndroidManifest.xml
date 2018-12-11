@@ -17,7 +17,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".screens.album.AlbumActivity"
+        <activity android:name=".screens.album.controllers.AlbumActivity"
             android:theme="@android:style/Theme.Holo.NoActionBar"/>
 
         <activity android:name=".screens.album.FullScreenViewActivity"

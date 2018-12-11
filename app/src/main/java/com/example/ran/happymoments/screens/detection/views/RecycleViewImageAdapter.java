@@ -17,15 +17,15 @@ import com.example.ran.happymoments.generator.photo.Photo;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
+import java.util.List;
 
-public class RecycleViewImageAdapter extends RecyclerView.Adapter<RecycleViewImageAdapter.ViewHolder> {
+public class RecycleViewImageAdapter extends RecyclerView.Adapter<RecycleViewImageAdapter.ViewHolder>{
 
-    private ArrayList<Photo> mPhotos;
+    private List<Photo> mPhotos;
     private int mColWidth;
 
 
-    public RecycleViewImageAdapter(ArrayList<Photo> mPhotos,int mColWidth){
+    public RecycleViewImageAdapter(List<Photo> mPhotos, int mColWidth){
         this.mPhotos = mPhotos;
         this.mColWidth = mColWidth;
     }
@@ -33,7 +33,7 @@ public class RecycleViewImageAdapter extends RecyclerView.Adapter<RecycleViewIma
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_photo_grid,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_photo_item,parent,false);
         ViewHolder imageViewHolder = new ViewHolder(view);
         return imageViewHolder;
     }

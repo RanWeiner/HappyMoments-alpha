@@ -32,17 +32,15 @@ public class Photo {
         this.mPath = path;
         setExifInterface();
         setPhotoFeatures();
-<<<<<<< HEAD:app/src/main/java/com/example/ran/happymoments/detection/series/Photo.java
+
         setPhotoOrientation();
-=======
+
         
-        setBitmap();
->>>>>>> bb1f3841b823c8f9fabbedade86a9e61e2528e90:app/src/main/java/com/example/ran/happymoments/generator/photo/Photo.java
+        //setBitmap();
         faces = new ArrayList<>();
         facesCenterGravity = new Position();
     }
 
-<<<<<<< HEAD:app/src/main/java/com/example/ran/happymoments/detection/series/Photo.java
     public void setPhotoOrientation() {
         if(hasExifData()){
             int deg = exifInterface.getRotationDegrees();
@@ -52,7 +50,6 @@ public class Photo {
         }
     }
 
-=======
 
     private void setBitmap() {
         this.bitmap = null;
@@ -66,7 +63,6 @@ public class Photo {
     }
 
 
->>>>>>> bb1f3841b823c8f9fabbedade86a9e61e2528e90:app/src/main/java/com/example/ran/happymoments/generator/photo/Photo.java
     public String getPath() {
         return this.mPath;
     }
@@ -128,7 +124,7 @@ public class Photo {
         return faces;
     }
 
-    public Bitmap getBitmap() {
-        return this.bitmap;
-    }
+//    public Bitmap getBitmap() {
+//        return this.bitmap;
+//    }
 }
