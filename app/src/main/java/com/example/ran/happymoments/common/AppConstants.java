@@ -20,4 +20,5 @@ public class AppConstants {
 
     public static final String IMPORTED_IMAGES_PATH = "ImportedImagesPath";
 
+    public static final double MAX_ANGLE = 360;
 }

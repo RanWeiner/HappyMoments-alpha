@@ -8,8 +8,10 @@ import android.support.media.ExifInterface;
 import android.util.Log;
 import android.util.SparseArray;
 
+import com.example.ran.happymoments.generator.face.Eyes;
 import com.example.ran.happymoments.generator.face.Face;
 import com.example.ran.happymoments.common.Position;
+import com.example.ran.happymoments.generator.face.Smile;
 import com.google.android.gms.vision.Frame;
 
 import java.io.File;
@@ -85,7 +87,10 @@ public class FaceExtractorMobileVision implements FaceExtractor {
             float leftEyeOpenProbability = faces.valueAt(i).getIsLeftEyeOpenProbability();
             float rightEyeOpenProbability = faces.valueAt(i).getIsRightEyeOpenProbability();
 
-            foundFaces.add(new Face(facePosition, width, height, smilingProbability, leftEyeOpenProbability, rightEyeOpenProbability));
+            Smile smile = new Smile(smilingProbability);
+            Eyes eyes = new Eyes(leftEyeOpenProbability , rightEyeOpenProbability);
+
+            foundFaces.add(new Face(facePosition, width, height, smile,eyes));
         }
 
         return foundFaces;
