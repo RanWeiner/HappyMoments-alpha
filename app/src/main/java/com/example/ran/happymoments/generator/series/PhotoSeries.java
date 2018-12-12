@@ -2,6 +2,7 @@ package com.example.ran.happymoments.generator.series;
 
 import com.example.ran.happymoments.generator.photo.Photo;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,11 +14,11 @@ public class PhotoSeries {
     private double maxDistanceToFacesCenter;
 
 
-
     public PhotoSeries() {
         this.id = ++idGenerator;
         photos = new ArrayList<>();
         maxDistanceToFacesCenter = 0;
+
     }
 
     public PhotoSeries(List<Photo> photos) {

@@ -19,12 +19,10 @@ public class Photo {
     private ExifInterface exifInterface;
     private Position totalFacesCenter;
     private List<Person> mPersonList;
-
     private List<Face> faces;
+    private float faceScore;
 
-    double maxFaceSize , maxFaceDistanceFromCenter;
-
-
+    private double maxFaceSize , maxFaceDistanceFromCenter;
     private Bitmap bitmap;
 
 
@@ -33,7 +31,9 @@ public class Photo {
         this.mPath = path;
         setExifInterface();
         setPhotoFeatures();
-        
+
+        //setPhotoOrientation();
+
         setBitmap();
 
         mPersonList = new ArrayList<>();
@@ -149,5 +149,15 @@ public class Photo {
 
     public void addPerson(Person person) {
         this.mPersonList.add(person);
+    }
+
+    public List<Person> getPersonList() { return mPersonList; }
+
+    public float getFaceScore() {
+        return faceScore;
+    }
+
+    public void setFaceScore(float faceScore) {
+        this.faceScore = faceScore;
     }
 }

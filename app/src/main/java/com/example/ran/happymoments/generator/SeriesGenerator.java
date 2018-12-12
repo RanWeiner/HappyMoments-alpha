@@ -1,7 +1,6 @@
 package com.example.ran.happymoments.generator;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.example.ran.happymoments.common.RelativePositionVector;
 import com.example.ran.happymoments.generator.face.Face;
@@ -66,8 +65,6 @@ public class SeriesGenerator {
 
 
         ///////////////////// [RANK] /////////////////////
-
-
 
         for (PhotoSeries series: mIdenticalSeriesList) {
             Photo p = series.getHighestRankedPhoto();

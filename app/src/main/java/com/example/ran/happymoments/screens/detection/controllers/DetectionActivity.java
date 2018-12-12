@@ -49,6 +49,7 @@ public class DetectionActivity extends AppCompatActivity implements DetectionVie
     protected void onStart() {
         super.onStart();
         bindPhotos(mInput);
+
     }
 
 
@@ -75,32 +76,33 @@ public class DetectionActivity extends AppCompatActivity implements DetectionVie
     @Override
     public void onDetectBtnClicked() {
 //        disableUserInteraction();
-
+        mView.showUserJobInProgress();
         Toast.makeText(DetectionActivity.this , "started...",Toast.LENGTH_SHORT).show();
 
-        mResults = mSeriesGenerator.detect();
+//        mResults = mSeriesGenerator.detect();
 
-//        Thread t = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                //tell view that started - disable button if not working and start spinner
-//                mResults = mSeriesGenerator.detect();
-//                Log.i("Start" , "STARTED DETECTNG");
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-////                        enableUserInteraction();
-//                        Toast.makeText(DetectionActivity.this , "Finished!",Toast.LENGTH_SHORT).show();
-//                        Log.i("Finish" , "Finish DETECTNG");
-//                        //tell view finished - enable button and stop spinner
-//                    }
-//                });
-//            }
-//        });
-//        t.start();
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //tell view that started - disable button if not working and start spinner
 
+                mResults = mSeriesGenerator.detect();
+                Log.i("Start" , "STARTED DETECTNG");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+//                        enableUserInteraction();
+                        Toast.makeText(DetectionActivity.this , "Finished!",Toast.LENGTH_SHORT).show();
+                        Log.i("Finish" , "Finish DETECTNG");
 
-        Toast.makeText(DetectionActivity.this , "finished!",Toast.LENGTH_SHORT).show();
+                        //tell view finished - enable button and stop spinner
+                        mView.dismissUserJobInProgress();
+
+                    }
+                });
+            }
+        });
+        t.start();
 
     }
 

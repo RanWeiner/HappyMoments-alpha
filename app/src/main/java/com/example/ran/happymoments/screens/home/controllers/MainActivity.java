@@ -117,6 +117,10 @@ public class MainActivity extends AppCompatActivity implements MainView.ButtonAc
     }
 
 
+    private void goToDetectionActivity(ArrayList<Image> chosenImages , ArrayList<String> chosenImagesPath) {
+        Log.d(TAG, "goToDetectionActivity: done.");
+    }
+
     private void goToDetectionActivity(ArrayList<String> chosenImagesPath) {
         Intent intent = new Intent(MainActivity.this, DetectionActivity.class);
         intent.putExtra(AppConstants.IMPORTED_IMAGES_PATH, chosenImagesPath);
@@ -125,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements MainView.ButtonAc
     }
 
     private void chooseImagesFromDeviceGallery() {
+        Log.d(TAG, "chooseImagesFromDeviceGallery: done.");
         Intent intent = new Intent(MainActivity.this, AlbumSelectActivity.class);
         intent.putExtra(ConstantsCustomGallery.INTENT_EXTRA_LIMIT, LIMIT);
         startActivityForResult(intent, ConstantsCustomGallery.REQUEST_CODE);

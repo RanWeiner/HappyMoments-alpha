@@ -4,7 +4,7 @@ public class Smile {
 
     public final static float SMILING_ACCEPT_PROBABILITY =  0.5f;
 
-    float smilingProbability;
+    private float smilingProbability;
 
     public Smile(float smilingProbability){
         this.smilingProbability = smilingProbability;
