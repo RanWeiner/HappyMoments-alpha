@@ -178,7 +178,7 @@ public class SeriesGenerator {
                         double angle = face.getPosition().calcAngle(photo.getTotalFacesCenter());
                         double dist = face.getPosition().calcEuclidDistance(photo.getTotalFacesCenter());
 
-                        Log.i("TESTING" , "face "+ face.getId()+ ": center faces= (" + photo.getTotalFacesCenter().getX() +"," + photo.getTotalFacesCenter().getX() +")");
+                        Log.i("TESTING" , "face "+ face.getId()+ ": center faces= (" + photo.getTotalFacesCenter().getX() +"," + photo.getTotalFacesCenter().getY() +")");
 
                         photo.addPerson(new Person(face , new RelativePositionVector(angle , dist)));
                     }

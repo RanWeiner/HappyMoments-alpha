@@ -30,7 +30,7 @@ public class PhotoSeries {
 
     public PhotoSeries(List<Photo> photos) {
         this();
-        photos.addAll(photos);
+        this.photos.addAll(photos);
     }
 
 
