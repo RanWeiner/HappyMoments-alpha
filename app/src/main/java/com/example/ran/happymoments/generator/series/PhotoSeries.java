@@ -89,12 +89,6 @@ public class PhotoSeries {
 
 
 
-    public Photo getHighestRankedPhoto() {
-        return  null;
-    }
-
-
-
     public void setPersonsImportance() {
 
         Map<Integer , Double> maxPersonFaceSize = new HashMap<>();

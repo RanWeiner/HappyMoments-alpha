@@ -104,6 +104,14 @@ public class DetectionActivity extends AppCompatActivity implements DetectionVie
         });
         t.start();
 
+
+        printResults();
+    }
+
+    private void printResults() {
+        for (int i = 0 ; i < mResults.size() ; i++) {
+            Log.i("RESULTS" , "RESULT: " + mResults.get(i));
+        }
     }
 
 

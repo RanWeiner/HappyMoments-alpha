@@ -1,13 +1,10 @@
 package com.example.ran.happymoments.generator.photo;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.media.ExifInterface;
 
 import com.example.ran.happymoments.common.Position;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,14 +14,11 @@ public class Photo {
     private PhotoFeatures photoFeatures;
     private ExifInterface exifInterface;
     private Position totalFacesCenter;
-    private List<Person> mPersonList;
-
+    private List<Person> persons;
     private double rank;
+    private double maxFaceDistanceFromCenter;
 
-
-
-    private double maxFaceSize , maxFaceDistanceFromCenter;
-    private Bitmap bitmap;
+//    private Bitmap bitmap;
 
 
 
@@ -35,26 +29,24 @@ public class Photo {
 
         //setPhotoOrientation();
 
-        setBitmap();
+//        setBitmap();
 
-        mPersonList = new ArrayList<>();
+        persons = new ArrayList<>();
         totalFacesCenter = new Position();
-
-        this.maxFaceSize = 0;
         this.maxFaceDistanceFromCenter = 0;
     }
 
 
-    private void setBitmap() {
-        this.bitmap = null;
-        FileInputStream stream;
-        try {
-            stream = new FileInputStream(this.mPath);
-            this.bitmap = BitmapFactory.decodeStream(stream);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
+//    private void setBitmap() {
+//        this.bitmap = null;
+//        FileInputStream stream;
+//        try {
+//            stream = new FileInputStream(this.mPath);
+//            this.bitmap = BitmapFactory.decodeStream(stream);
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 
     public String getPath() {
@@ -108,24 +100,10 @@ public class Photo {
 
 
 
-    public Bitmap getBitmap() {
-        return this.bitmap;
-    }
-
-
     public List<Person> getPersons() {
-        return mPersonList;
+        return persons;
     }
 
-    public double getMaxFaceSize() {
-        return maxFaceSize;
-    }
-
-    public void setMaxFaceSize(double maxFaceSize) {
-        if (maxFaceSize > this.maxFaceSize) {
-            this.maxFaceSize = maxFaceSize;
-        }
-    }
 
     public double getMaxFaceDistanceFromCenter() {
         return maxFaceDistanceFromCenter;
@@ -138,10 +116,10 @@ public class Photo {
     }
 
     public void addPerson(Person person) {
-        this.mPersonList.add(person);
+        this.persons.add(person);
     }
 
-    public List<Person> getPersonList() { return mPersonList; }
+    public List<Person> getPersonList() { return persons; }
 
 
 

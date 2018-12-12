@@ -1,6 +1,7 @@
 package com.example.ran.happymoments.generator;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.ran.happymoments.common.RelativePositionVector;
 import com.example.ran.happymoments.generator.face.Face;
@@ -54,16 +55,42 @@ public class SeriesGenerator {
         mSameFeaturesSeriesList = generateSeriesByFeatures();
         filterAllOnePhotoSeries();
 
+        printSeries(mSameFeaturesSeriesList);
+        
         ///////////////////// [FACES PART] /////////////////////
+        Log.i("TESTING" , "FACES");
         mIdenticalSeriesList = generateSeriesByFaces();
 
+        printSeries(mIdenticalSeriesList);
+
+
+
         ///////////////////// [NORMALIZE] /////////////////////
+        Log.i("TESTING" , "NORMAELIZING");
+
+        for (PhotoSeries series : mIdenticalSeriesList) {
+            for (Photo photo : series.getPhotos()) {
+                for (Person person : photo.getPersons()) {
+                    Log.i("TESTING" , "NOT normalized angle=" + person.getVector().getAngle());
+                    Log.i("TESTING" , "NOT normalized distance=" + person.getVector().getDistance());
+                }
+            }
+        }
+
+
         normalizeVectors();
+        for (PhotoSeries series : mIdenticalSeriesList) {
+            for (Photo photo : series.getPhotos()) {
+               for (Person person : photo.getPersons()) {
+                   Log.i("TESTING" , "normalized angle=" + person.getVector().getAngle());
+                   Log.i("TESTING" , "normalized distance=" + person.getVector().getDistance());
+               }
+            }
+        }
+
 
         ///////////////////// [FACE CORRESPONDENCE & RANKING] /////////////////////
-
-
-
+        Log.i("TESTING" , "MATCHING");
         for (PhotoSeries series : mIdenticalSeriesList) {
 
             mMatcher.matchPersons(series);
@@ -89,6 +116,16 @@ public class SeriesGenerator {
         return mOutput;
     }
 
+    private void printSeries(List<PhotoSeries> seriesList) {
+        for (PhotoSeries series : seriesList) {
+            Log.i("TESTING" , "Series ID= " + series.getId());
+
+            for (Photo photo : series.getPhotos()) {
+                Log.i("TESTING" , "path= " + photo.getPath());
+            }
+        }
+    }
+
 
     private void normalizeVectors() {
         double maxDistance;
@@ -96,6 +133,8 @@ public class SeriesGenerator {
         for (PhotoSeries series: mIdenticalSeriesList) {
 
             maxDistance = series.getMaxDistanceToFacesCenter();
+
+            Log.i("TESTING" , "maxDistance=" + maxDistance);
 
             for (Photo photo: series.getPhotos()) {
 
@@ -125,14 +164,21 @@ public class SeriesGenerator {
 
                 faces = mFaceExtractor.detectFaces(mContext, photo.getPath());
 
+                Log.i("TESTING" , "faces size= " + faces.size());
+
+
                 if (!faces.isEmpty()) {
 
                     setTotalFacesCenterInPhoto(photo , faces);
+
+                    Log.i("TESTING" , "photo center faces= (" + photo.getTotalFacesCenter().getX() + "," +  + photo.getTotalFacesCenter().getY() +")");
 
                     for (Face face : faces) {
 
                         double angle = face.getPosition().calcAngle(photo.getTotalFacesCenter());
                         double dist = face.getPosition().calcEuclidDistance(photo.getTotalFacesCenter());
+
+                        Log.i("TESTING" , "face "+ face.getId()+ ": center faces= (" + photo.getTotalFacesCenter().getX() +"," + photo.getTotalFacesCenter().getX() +")");
 
                         photo.addPerson(new Person(face , new RelativePositionVector(angle , dist)));
                     }
@@ -143,10 +189,17 @@ public class SeriesGenerator {
 //                addPhotoToMap(sameFacesPhotos, photo, faces.size());
             }
 
-            for (Map.Entry<Integer, List<Photo>> entry : sameFacesPhotos.entrySet()) {
-                PhotoSeries s = new PhotoSeries(entry.getValue());
-                s.setFaceMaxDistanceToCenter();
-                result.add(s);
+
+            Log.i("TESTING" , "running on map");
+
+            if (sameFacesPhotos.size() == 1) {
+                result.add(series);
+            } else {
+                for (Map.Entry<Integer, List<Photo>> entry : sameFacesPhotos.entrySet()) {
+                    PhotoSeries s = new PhotoSeries(entry.getValue());
+                    s.setFaceMaxDistanceToCenter();
+                    result.add(s);
+                }
             }
         }
         return result;
