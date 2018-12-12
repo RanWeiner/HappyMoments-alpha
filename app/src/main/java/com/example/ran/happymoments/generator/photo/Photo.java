@@ -19,7 +19,7 @@ public class Photo {
     private ExifInterface exifInterface;
     private Position totalFacesCenter;
     private List<Person> mPersonList;
-    private List<Face> faces;
+   private List<Face> faces; //Can not have Persons list AND list of faces!
     private float faceScore;
 
     private double maxFaceSize , maxFaceDistanceFromCenter;

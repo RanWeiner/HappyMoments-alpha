@@ -48,9 +48,14 @@ public class FaceMatcher {
         }
     }
 
-    private double compareVectors(RelativePositionVector vector, RelativePositionVector vector1) {
+    private double compareVectors(RelativePositionVector v1, RelativePositionVector v2) {
+        double exponent = 2.0;
+        double a, b, distance;
 
-        return 0;
+        a = (v2.getDistance() * Math.cos(v2.getAngle())) - (v1.getDistance() * Math.cos(v1.getAngle()));
+        b = (v2.getDistance() * Math.sin(v2.getAngle())) - (v1.getDistance() * Math.sin(v1.getAngle()));
+        distance = Math.pow(a,exponent) + Math.pow(b, exponent);
+        return Math.sqrt(distance);
     }
 
 

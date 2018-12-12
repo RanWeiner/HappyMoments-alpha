@@ -5,12 +5,10 @@ import android.content.res.Resources;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.ProgressBar;
 
 import com.example.ran.happymoments.R;
@@ -30,9 +28,6 @@ public class DetectionViewImpl implements DetectionView  {
 
     private ProgressBar mProgressBar;
 
-//    private GridViewImageAdapter mAdapter;
-//    private GridView mGridView;
-
     private RecycleViewImageAdapter mAdapter;
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -47,38 +42,17 @@ public class DetectionViewImpl implements DetectionView  {
         mDetectBtn = (Button)getRootView().findViewById(R.id.detect_btn);
         mRecyclerView = (RecyclerView)getRootView().findViewById(R.id.recycler_view);
         mProgressBar = (ProgressBar)getRootView().findViewById(R.id.progress_bar);
-//        mGridView = (GridView) getRootView().findViewById(R.id.grid_view);
 
         initRecyclerView();
-
-//        initGridLayout();
-//        mAdapter = new RecycleViewImageAdapter(mImagesPath , mColumnWidth);
-//        mGridView.setAdapter(mAdapter);
 
         setListeners();
     }
 
 
-//    private void initGridLayout() {
-//        Utils utils = new Utils(getContext());
-//        Resources resources = getResources();
-//
-//        float padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, AppConstants.GRID_PADDING, resources.getDisplayMetrics());
-//
-//        mColumnWidth = (int) ((utils.getScreenWidth() - ((AppConstants.NUM_OF_COLUMNS + 1) * padding)) / AppConstants.NUM_OF_COLUMNS);
-//
-//        mGridView.setNumColumns(AppConstants.NUM_OF_COLUMNS);
-//        mGridView.setColumnWidth(mColumnWidth);
-//        mGridView.setStretchMode(GridView.NO_STRETCH);
-//        mGridView.setPadding((int) padding, (int) padding, (int) padding, (int) padding);
-//        mGridView.setHorizontalSpacing((int) padding);
-//        mGridView.setVerticalSpacing((int) padding);
-//    }
-
     public void initRecyclerView() {
         setColumnWidth();
         mAdapter = new RecycleViewImageAdapter(mPhotos,mColumnWidth);
-        mLayoutManager = new GridLayoutManager(getContext(), AppConstants.NUM_OF_COLUMNS);//Change to CONST
+        mLayoutManager = new GridLayoutManager(getContext(), AppConstants.NUM_OF_COLUMNS);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);

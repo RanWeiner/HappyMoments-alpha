@@ -15,9 +15,8 @@ public class Ranker {
     public void rankPhoto(Photo photo){
         float facesScoreAvg = 0;
         for(int i = 0 ; i< photo.getPersonList().size(); i++)
-        {
-            facesScoreAvg += photo.getFaces().get(i).getFaceScore();
-        }
+            facesScoreAvg += photo.getPersonList().get(i).getFace().getFaceScore();
+
         facesScoreAvg /= photo.getFaces().size();
         photo.setFaceScore(facesScoreAvg);
     }
@@ -32,6 +31,7 @@ public class Ranker {
         face.setFaceScore((float)rank); //casting to float may cause losing data
     }
 
+    //Must be called before rankFace()
     public void rankFaceImportance(List<Face> faces){
         float faceArea;
         float maxArea = findMaxFaceArea(faces);
