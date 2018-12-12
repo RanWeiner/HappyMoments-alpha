@@ -1,16 +1,21 @@
 package com.example.ran.happymoments.generator.series;
 
+import com.example.ran.happymoments.generator.photo.Person;
 import com.example.ran.happymoments.generator.photo.Photo;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PhotoSeries {
 
     private static int idGenerator = 0;
     private int id;
     private List<Photo> photos;
+
+
     private double maxDistanceToFacesCenter;
 
 
@@ -20,6 +25,8 @@ public class PhotoSeries {
         maxDistanceToFacesCenter = 0;
 
     }
+
+
 
     public PhotoSeries(List<Photo> photos) {
         this();
@@ -79,7 +86,47 @@ public class PhotoSeries {
         }
     }
 
+
+
+
     public Photo getHighestRankedPhoto() {
-        return null;
+        return  null;
+    }
+
+
+
+    public void setPersonsImportance() {
+
+        Map<Integer , Double> maxPersonFaceSize = new HashMap<>();
+        double currentSize , maxSize;
+        int key;
+
+        for (Photo photo : this.getPhotos()) {
+
+            for (Person person : photo.getPersons()) {
+                key = person.getId();
+                currentSize = person.getFaceSize();
+
+                if (maxPersonFaceSize.containsKey(key)) {
+                    maxSize = maxPersonFaceSize.get(key);
+
+                    if (person.getFaceSize() > maxSize) {
+                        maxPersonFaceSize.put(key , currentSize);
+                    }
+                } else {
+                    maxPersonFaceSize.put(key , currentSize);
+                }
+            }
+        }
+
+        //now we have each person max face size in a series
+        //need to calculate person importance in each photo
+
+        for (Photo photo : this.getPhotos()) {
+            for (Person person : photo.getPersons()) {
+                double importance = person.getFaceSize() / maxPersonFaceSize.get(person.getId()) ;
+                person.setImportance(importance);
+            }
+        }
     }
 }

@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+
 public class SeriesGenerator {
 
     private List<String> mInput;
@@ -31,6 +33,7 @@ public class SeriesGenerator {
     private FaceExtractor mFaceExtractor;
 
     private Ranker mRanker;
+    private FaceMatcher mMatcher;
 
 
 
@@ -41,6 +44,7 @@ public class SeriesGenerator {
         mFaceExtractor = new FaceExtractorMobileVision();
         mOutput = new ArrayList<>();
         mRanker = new Ranker();
+        mMatcher = new FaceMatcher();
     }
 
 
@@ -56,21 +60,29 @@ public class SeriesGenerator {
         ///////////////////// [NORMALIZE] /////////////////////
         normalizeVectors();
 
-        ///////////////////// [FACE CORRESPONDENCE] /////////////////////
+        ///////////////////// [FACE CORRESPONDENCE & RANKING] /////////////////////
 
-        FaceMatcher matcher = new FaceMatcher();
+
+
         for (PhotoSeries series : mIdenticalSeriesList) {
-            matcher.matchPersons(series);
-        }
 
-        //now each series has list of photos that contains list of person
-        //that each person has a matching person (by id) in another photo
+            mMatcher.matchPersons(series);
 
+            series.setPersonsImportance();
 
-        ///////////////////// [RANK] /////////////////////
+            double highestRank = mRanker.rankPhoto(series.getPhoto(0));
+            double currentRank;
+            int highestRankedPhotoIndex = 0;
 
-        for (PhotoSeries series: mIdenticalSeriesList) {
-            Photo p = series.getHighestRankedPhoto();
+            for (int i = 1 ; i < series.getPhotos().size() ; i++) {
+                currentRank = mRanker.rankPhoto(series.getPhoto(i));
+                if (currentRank > highestRank) {
+                    highestRank = currentRank;
+                    highestRankedPhotoIndex = i;
+                }
+            }
+
+            Photo p = series.getPhoto(highestRankedPhotoIndex);
             mOutput.add(p.getPath());
         }
 
@@ -143,8 +155,6 @@ public class SeriesGenerator {
 
     private void setTotalFacesCenterInPhoto(Photo photo, List<Face> faces) {
         Position centerGravity;
-
-        photo.setFaces(faces);
         centerGravity = calcFacesCenterGravity(faces);
         photo.setTotalFacesCenter(centerGravity);
     }

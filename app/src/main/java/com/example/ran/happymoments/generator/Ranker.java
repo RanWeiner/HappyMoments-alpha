@@ -12,44 +12,67 @@ public class Ranker {
 
     public Ranker(){ }
 
-    public void rankPhoto(Photo photo){
-        float facesScoreAvg = 0;
-        for(int i = 0 ; i< photo.getPersonList().size(); i++)
-            facesScoreAvg += photo.getPersonList().get(i).getFace().getFaceScore();
+    public double rankPhoto(Photo photo){
+        int numOfPersons = photo.getPersonList().size();;
+        double photoRank = 0;
 
-        facesScoreAvg /= photo.getFaces().size();
-        photo.setFaceScore(facesScoreAvg);
+        rankPersons(photo.getPersons());
+
+        for(int i = 0 ; i< numOfPersons ; i++)
+            photoRank += photo.getPersonList().get(i).getRank();
+
+        photoRank /= numOfPersons;
+        photo.setRank(photoRank);
+        return photoRank;
     }
 
+
+    private void rankPersons(List<Person> persons) {
+        for (Person person : persons) {
+            rankPerson(person);
+        }
+    }
+
+    private void rankPerson(Person person) {
+        double faceRank = calcFaceRank(person.getFace());
+        double importance = person.getImportance();
+
+        person.setRank(faceRank * importance);
+    }
+
+
+
     //average between eyesOpen and smile -> multiply the result with the importance percentage
-    public void rankFace(Face face) {
+    public double calcFaceRank(Face face) {
         float eyesScore, smileScore;
+
         eyesScore = face.getEyes().getEyesOpenProbability();
         smileScore = face.getSmile().getSmilingProbability();
         double eyesAndSmileScore = ((eyesScore * AppConstants.EYES_WEIGHT) + (smileScore * AppConstants.SMILE_WEIGHT)) / 2;
-        double rank = eyesAndSmileScore * face.getFaceImportanceScore();
-        face.setFaceScore((float)rank); //casting to float may cause losing data
+
+        return eyesAndSmileScore * face.getFaceImportanceScore();
     }
 
-    //Must be called before rankFace()
-    public void rankFaceImportance(List<Face> faces){
-        float faceArea;
-        float maxArea = findMaxFaceArea(faces);
-        for(int i = 0; i< faces.size(); i++){
-            faceArea = faces.get(i).getHeight() * faces.get(i).getWidth();
-            faces.get(i).setFaceImportanceScore(faceArea / maxArea);
-        }
-    }
 
-    public float findMaxFaceArea(List<Face> faces){
-        float faceArea, maxArea = 0;
-        for(int i = 0; i < faces.size(); i++){
-            faceArea = faces.get(i).getHeight() * faces.get(i).getWidth();
-            if(faceArea > maxArea)
-                maxArea = faceArea;
-        }
-        return maxArea;
-    }
+//    //Must be called before calcFaceRank()
+//    public void rankFacesImportance(List<Face> faces){
+//        float faceArea;
+//        float maxArea = findMaxFaceArea(faces);
+//        for(int i = 0; i< faces.size(); i++){
+//            faceArea = faces.get(i).getHeight() * faces.get(i).getWidth();
+//            faces.get(i).setFaceImportanceScore(faceArea / maxArea);
+//        }
+//    }
+//
+//    public float findMaxFaceArea(List<Face> faces){
+//        float faceArea, maxArea = 0;
+//        for(int i = 0; i < faces.size(); i++){
+//            faceArea = faces.get(i).getHeight() * faces.get(i).getWidth();
+//            if(faceArea > maxArea)
+//                maxArea = faceArea;
+//        }
+//        return maxArea;
+//    }
 
 
 }

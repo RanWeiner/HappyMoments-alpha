@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.media.ExifInterface;
 
-import com.example.ran.happymoments.generator.face.Face;
 import com.example.ran.happymoments.common.Position;
 
 import java.io.FileInputStream;
@@ -19,8 +18,10 @@ public class Photo {
     private ExifInterface exifInterface;
     private Position totalFacesCenter;
     private List<Person> mPersonList;
-   private List<Face> faces; //Can not have Persons list AND list of faces!
-    private float faceScore;
+
+    private double rank;
+
+
 
     private double maxFaceSize , maxFaceDistanceFromCenter;
     private Bitmap bitmap;
@@ -37,7 +38,6 @@ public class Photo {
         setBitmap();
 
         mPersonList = new ArrayList<>();
-        faces = new ArrayList<>();
         totalFacesCenter = new Position();
 
         this.maxFaceSize = 0;
@@ -62,9 +62,6 @@ public class Photo {
     }
 
 
-    public int getNumOfFaces() {
-        return this.faces.size();
-    }
 
     private void setPhotoFeatures() {
         if (hasExifData()){
@@ -110,13 +107,6 @@ public class Photo {
     }
 
 
-    public void setFaces(List<Face> faces) {
-        this.faces = faces;
-    }
-
-    public List<Face> getFaces(){
-        return faces;
-    }
 
     public Bitmap getBitmap() {
         return this.bitmap;
@@ -153,11 +143,13 @@ public class Photo {
 
     public List<Person> getPersonList() { return mPersonList; }
 
-    public float getFaceScore() {
-        return faceScore;
+
+
+    public double getRank() {
+        return rank;
     }
 
-    public void setFaceScore(float faceScore) {
-        this.faceScore = faceScore;
+    public void setRank(double rank) {
+        this.rank = rank;
     }
 }

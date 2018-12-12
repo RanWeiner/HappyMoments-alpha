@@ -11,7 +11,10 @@ public class Person {
     private int id;
     Face face;
     RelativePositionVector vector;
+    double rank;
 
+
+    double importance;
 
 
     public Person(Face face, RelativePositionVector vector){
@@ -55,5 +58,22 @@ public class Person {
         double normAngle = Utils.normalize(this.vector.getAngle(), AppConstants.MAX_ANGLE, 0);
         this.vector.setAngle(normAngle);
         this.vector.setDistance(normDist);
+    }
+
+    public void setRank(double rank) {
+        this.rank = rank;
+    }
+
+    public double getRank() {
+        return rank;
+    }
+
+    public void setImportance(double importance) {
+        this.importance = importance;
+    }
+
+
+    public double getImportance() {
+        return this.importance;
     }
 }
