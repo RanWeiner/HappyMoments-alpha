@@ -30,6 +30,8 @@ public class SeriesGenerator {
     private Context mContext;
     private FaceExtractor mFaceExtractor;
 
+    private Ranker mRanker;
+
 
 
     public SeriesGenerator(Context context , List<String> imagesPath) {
@@ -38,6 +40,7 @@ public class SeriesGenerator {
         mAllPhotos = setPhotos(imagesPath);
         mFaceExtractor = new FaceExtractorMobileVision();
         mOutput = new ArrayList<>();
+        mRanker = new Ranker();
     }
 
 
