@@ -69,8 +69,6 @@ public class SeriesGenerator {
 
 
 
-
-
         for (PhotoSeries series: mIdenticalSeriesList) {
             Photo p = series.getHighestRankedPhoto();
             mOutput.add(p.getPath());

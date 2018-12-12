@@ -7,7 +7,6 @@ import com.example.ran.happymoments.generator.face.Face;
 
 public class Person {
 
-
     private static int idGenerator = 0;
     private int id;
     Face face;
