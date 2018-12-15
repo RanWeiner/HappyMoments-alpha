@@ -53,14 +53,9 @@ public class FaceExtractorMobileVision implements FaceExtractor {
 
         }catch(IOException ex){
             Log.e(TAG, "Failed to get Exif data", ex);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-
-//        try {
-//            stream = new FileInputStream(imagePath);
-//            bitmap = BitmapFactory.decodeStream(stream);
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
 
 
         com.google.android.gms.vision.face.FaceDetector detector = new com.google.android.gms.vision.face.FaceDetector.Builder(context)
@@ -86,12 +81,11 @@ public class FaceExtractorMobileVision implements FaceExtractor {
             float smilingProbability = faces.valueAt(i).getIsSmilingProbability();
             float leftEyeOpenProbability = faces.valueAt(i).getIsLeftEyeOpenProbability();
             float rightEyeOpenProbability = faces.valueAt(i).getIsRightEyeOpenProbability();
-            int id = faces.valueAt(i).getId();
 
             Smile smile = new Smile(smilingProbability);
             Eyes eyes = new Eyes(leftEyeOpenProbability , rightEyeOpenProbability);
 
-            foundFaces.add(new Face(id,facePosition, width, height, smile,eyes));
+            foundFaces.add(new Face(facePosition, width, height, smile,eyes));
         }
 
         return foundFaces;

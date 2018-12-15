@@ -73,40 +73,4 @@ public class PhotoSeries {
         }
         return maxDistance;
     }
-
-
-    public void setPersonsImportance() {
-
-        Map<Integer , Double> maxPersonFaceSize = new HashMap<>();
-        double currentSize , maxSize;
-        int key;
-
-        for (Photo photo : this.getPhotos()) {
-
-            for (Person person : photo.getPersons()) {
-                key = person.getId();
-                currentSize = person.getFaceSize();
-
-                if (maxPersonFaceSize.containsKey(key)) {
-                    maxSize = maxPersonFaceSize.get(key);
-
-                    if (person.getFaceSize() > maxSize) {
-                        maxPersonFaceSize.put(key , currentSize);
-                    }
-                } else {
-                    maxPersonFaceSize.put(key , currentSize);
-                }
-            }
-        }
-
-        //now we have each person max face size in a series
-        //need to calculate person importance in each photo
-
-        for (Photo photo : this.getPhotos()) {
-            for (Person person : photo.getPersons()) {
-                double importance = person.getFaceSize() / maxPersonFaceSize.get(person.getId()) ;
-                person.setImportance(importance);
-            }
-        }
-    }
 }

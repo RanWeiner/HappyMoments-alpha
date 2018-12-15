@@ -124,8 +124,6 @@ public class Photo {
         this.persons.add(person);
     }
 
-    public List<Person> getPersonList() { return persons; }
-
 
 
     public double getRank() {
