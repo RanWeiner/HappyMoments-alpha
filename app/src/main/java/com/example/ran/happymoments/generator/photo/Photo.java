@@ -109,13 +109,18 @@ public class Photo {
         return maxFaceDistanceFromCenter;
     }
 
-    public void setMaxFaceDistanceFromCenter(double maxFaceDistanceFromCenter) {
-        if (maxFaceDistanceFromCenter > this.maxFaceDistanceFromCenter) {
-            this.maxFaceDistanceFromCenter = maxFaceDistanceFromCenter;
-        }
-    }
+//    public void setMaxFaceDistanceFromCenter(double maxFaceDistanceFromCenter) {
+//        if (maxFaceDistanceFromCenter > this.maxFaceDistanceFromCenter) {
+//            this.maxFaceDistanceFromCenter = maxFaceDistanceFromCenter;
+//        }
+//    }
 
     public void addPerson(Person person) {
+        double personDistance = person.getVector().getDistance();
+
+        if (personDistance > maxFaceDistanceFromCenter) {
+            this.maxFaceDistanceFromCenter = personDistance;
+        }
         this.persons.add(person);
     }
 

@@ -16,14 +16,9 @@ public class PhotoSeries {
     private List<Photo> photos;
 
 
-    private double maxDistanceToFacesCenter;
-
-
     public PhotoSeries() {
         this.id = ++idGenerator;
         photos = new ArrayList<>();
-        maxDistanceToFacesCenter = 0;
-
     }
 
 
@@ -67,26 +62,17 @@ public class PhotoSeries {
         this.photos.remove(photo);
     }
 
-    public double getMaxDistanceToFacesCenter() {
-        return maxDistanceToFacesCenter;
-    }
+    public double calcMaxDistanceToFacesCenter() {
 
-    public void setMaxDistanceToFacesCenter(double maxDistanceToFacesCenter) {
-        if (maxDistanceToFacesCenter > this.maxDistanceToFacesCenter) {
-            this.maxDistanceToFacesCenter = maxDistanceToFacesCenter;
-        }
-    }
-
-    public void setFaceMaxDistanceToCenter() {
+        double maxDistance = 0;
 
         for (Photo photo: photos) {
-            if (photo.getMaxFaceDistanceFromCenter() > this.maxDistanceToFacesCenter) {
-                this.maxDistanceToFacesCenter = photo.getMaxFaceDistanceFromCenter();
+            if (photo.getMaxFaceDistanceFromCenter() > maxDistance) {
+                maxDistance = photo.getMaxFaceDistanceFromCenter();
             }
         }
+        return maxDistance;
     }
-
-
 
 
     public void setPersonsImportance() {
