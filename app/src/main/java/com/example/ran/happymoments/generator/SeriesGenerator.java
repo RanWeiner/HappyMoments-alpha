@@ -166,7 +166,7 @@ public class SeriesGenerator {
 
 //            photo.setMaxFaceDistanceFromCenter(dist);
 
-            Log.i("TESTING" , "face "+ face.getId()+ ": center faces= (" + photo.getTotalFacesCenter().getX() +"," + photo.getTotalFacesCenter().getX() +")");
+            Log.i("TESTING" , "face "+ face.getId()+ ": center faces= (" + photo.getTotalFacesCenter().getX() +"," + photo.getTotalFacesCenter().getY() +")");
 
             photo.addPerson(new Person(face , new RelativePositionVector(angle , dist)));
         }
