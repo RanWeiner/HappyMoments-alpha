@@ -13,13 +13,13 @@ public class Ranker {
     public Ranker(){ }
 
     public double rankPhoto(Photo photo){
-        int numOfPersons = photo.getPersonList().size();;
+        int numOfPersons = photo.getPersons().size();
         double photoRank = 0;
 
         rankPersons(photo.getPersons());
 
         for(int i = 0 ; i< numOfPersons ; i++)
-            photoRank += photo.getPersonList().get(i).getRank();
+            photoRank += photo.getPersons().get(i).getRank();
 
         photoRank /= numOfPersons;
         photo.setRank(photoRank);
@@ -50,7 +50,7 @@ public class Ranker {
         smileScore = face.getSmile().getSmilingProbability();
         double eyesAndSmileScore = ((eyesScore * AppConstants.EYES_WEIGHT) + (smileScore * AppConstants.SMILE_WEIGHT)) / 2;
 
-        return eyesAndSmileScore * face.getFaceImportanceScore();
+        return eyesAndSmileScore;
     }
 
 

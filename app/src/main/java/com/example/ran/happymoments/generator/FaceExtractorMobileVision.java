@@ -91,7 +91,7 @@ public class FaceExtractorMobileVision implements FaceExtractor {
             Smile smile = new Smile(smilingProbability);
             Eyes eyes = new Eyes(leftEyeOpenProbability , rightEyeOpenProbability);
 
-            foundFaces.add(new Face(id,facePosition, width, height, smile,eyes));
+            foundFaces.add(new Face(facePosition, width, height, smile,eyes));
         }
 
         return foundFaces;

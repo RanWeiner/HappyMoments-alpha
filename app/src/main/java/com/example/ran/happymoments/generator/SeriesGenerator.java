@@ -22,11 +22,14 @@ public class SeriesGenerator {
     private List<String> mInput;
     private List<String> mOutput;
 
-    //same features
-    private List<PhotoSeries> mSameFeaturesSeriesList;
+    private List<Photo> mPhotosOutput;
 
-    //same faces
-    private List<PhotoSeries> mIdenticalSeriesList;
+
+//    //same features
+//    private List<PhotoSeries> mSameFeaturesSeriesList;
+//
+//    //same faces
+//    private List<PhotoSeries> mIdenticalSeriesList;
 
     private List<Photo> mAllPhotos;
 
@@ -36,6 +39,7 @@ public class SeriesGenerator {
     private Ranker mRanker;
     private FaceMatcher mMatcher;
 
+    private List<PhotoSeries> mAllSeries;
 
 
     public SeriesGenerator(Context context , List<String> imagesPath) {
@@ -46,40 +50,27 @@ public class SeriesGenerator {
         mOutput = new ArrayList<>();
         mRanker = new Ranker();
         mMatcher = new FaceMatcher();
+        mPhotosOutput = new ArrayList<>();
+        mAllSeries = new ArrayList<>();
     }
 
 
     public List<String> detect() {
 
         ///////////////////// [SERIES PART] /////////////////////
-        mSameFeaturesSeriesList = generateSeriesByFeatures();
-        filterAllOnePhotoSeries();
 
-        printSeries(mSameFeaturesSeriesList);
-        
-        ///////////////////// [FACES PART] /////////////////////
-        Log.i("TESTING" , "FACES");
-        mIdenticalSeriesList = generateSeriesByFaces();
+        generateAllSeries();
 
-        printSeries(mIdenticalSeriesList);
+        filterAllOnePhotoSeries(mAllSeries);
 
-
+        printSeries(mAllSeries);
 
         ///////////////////// [NORMALIZE] /////////////////////
-        Log.i("TESTING" , "NORMAELIZING");
 
-        for (PhotoSeries series : mIdenticalSeriesList) {
-            for (Photo photo : series.getPhotos()) {
-                for (Person person : photo.getPersons()) {
-                    Log.i("TESTING" , "NOT normalized angle=" + person.getVector().getAngle());
-                    Log.i("TESTING" , "NOT normalized distance=" + person.getVector().getDistance());
-                }
-            }
-        }
+        normalizeVectors(mAllSeries);
 
 
-        normalizeVectors();
-        for (PhotoSeries series : mIdenticalSeriesList) {
+        for (PhotoSeries series : mAllSeries) {
             for (Photo photo : series.getPhotos()) {
                for (Person person : photo.getPersons()) {
                    Log.i("TESTING" , "normalized angle=" + person.getVector().getAngle());
@@ -88,15 +79,18 @@ public class SeriesGenerator {
             }
         }
 
-
         ///////////////////// [FACE CORRESPONDENCE & RANKING] /////////////////////
         Log.i("TESTING" , "MATCHING");
-        for (PhotoSeries series : mIdenticalSeriesList) {
 
+        for (PhotoSeries series : mAllSeries) {
+
+            //match all persons in the series of photo by their id's
             mMatcher.matchPersons(series);
 
-            series.setPersonsImportance();
+            //in each photo in each series set every person face importance to value between 0-1
+            setImportanceFaces(series);
 
+            //finding the highest ranked photo in series
             double highestRank = mRanker.rankPhoto(series.getPhoto(0));
             double currentRank;
             int highestRankedPhotoIndex = 0;
@@ -111,10 +105,96 @@ public class SeriesGenerator {
 
             Photo p = series.getPhoto(highestRankedPhotoIndex);
             mOutput.add(p.getPath());
+            mPhotosOutput.add(p);
         }
 
         return mOutput;
     }
+
+
+
+
+
+    private void setImportanceFaces(PhotoSeries series) {
+
+        Map<Integer , Double> personMaxFaceSize = new HashMap<>();
+        double currentSize , maxSize;
+        int key;
+
+        for (Photo photo : series.getPhotos()) {
+
+            for (Person person : photo.getPersons()) {
+                key = person.getId();
+                currentSize = person.getFaceSize();
+
+                if (personMaxFaceSize.containsKey(key)) {
+                    maxSize = personMaxFaceSize.get(key);
+
+                    if (person.getFaceSize() > maxSize) {
+                        personMaxFaceSize.put(key , currentSize);
+                    }
+                } else {
+                    personMaxFaceSize.put(key , currentSize);
+                }
+            }
+        }
+
+        //now we have each person max face size in a series
+        //need to calculate person importance in each photo
+
+        for (Photo photo : series.getPhotos()) {
+            for (Person person : photo.getPersons()) {
+                double importance = person.getFaceSize() / personMaxFaceSize.get(person.getId()) ;
+                person.setImportance(importance);
+            }
+        }
+    }
+
+
+    private void generateAllSeries() {
+        Map <Integer , List<Photo>> numOfFacesMap = new HashMap<>();
+        List<Face> faces;
+
+        for (Photo photo : mAllPhotos){
+            faces = mFaceExtractor.detectFaces(mContext, photo.getPath());
+
+            if (!faces.isEmpty()) {
+                saveFacesData(photo , faces);
+                addPhotoToMap(numOfFacesMap , photo , faces.size());
+            }
+        }
+
+
+        for (Map.Entry<Integer, List<Photo>> entry : numOfFacesMap.entrySet()) {
+            if (entry.getValue().size() == 1) {
+                mPhotosOutput.addAll(entry.getValue());
+            } else {
+                mAllSeries.addAll(generateSeriesByFeatures(entry.getValue()));
+            }
+        }
+    }
+
+
+
+    private void saveFacesData(Photo photo, List<Face> faces) {
+
+        if(faces.size() > 1) {
+            setTotalFacesCenterInPhoto(photo, faces);
+
+            for (Face face : faces) {
+                double angle = face.getPosition().calcAngle(photo.getTotalFacesCenter());
+                double dist = face.getPosition().calcEuclidDistance(photo.getTotalFacesCenter());
+
+//            photo.setMaxFaceDistanceFromCenter(dist);
+
+
+                photo.addPerson(new Person(face, new RelativePositionVector(angle, dist)));
+            }
+        } else {
+            photo.addPerson(new Person(faces.get(0), new RelativePositionVector(0,0)));
+        }
+    }
+
 
     private void printSeries(List<PhotoSeries> seriesList) {
         for (PhotoSeries series : seriesList) {
@@ -127,12 +207,13 @@ public class SeriesGenerator {
     }
 
 
-    private void normalizeVectors() {
+    private void normalizeVectors(List<PhotoSeries> allSeries) {
+
         double maxDistance;
 
-        for (PhotoSeries series: mIdenticalSeriesList) {
+        for (PhotoSeries series: allSeries) {
 
-            maxDistance = series.getMaxDistanceToFacesCenter();
+            maxDistance = series.calcMaxDistanceToFacesCenter();
 
             Log.i("TESTING" , "maxDistance=" + maxDistance);
 
@@ -148,62 +229,64 @@ public class SeriesGenerator {
 
 
 
-    private List<PhotoSeries> generateSeriesByFaces() {
-
-        List<PhotoSeries> result = new ArrayList<>();
-
-        List<Face> faces;
-
-        Map<Integer, List<Photo>> sameFacesPhotos = new HashMap<>();
-
-        for (PhotoSeries series : mSameFeaturesSeriesList) {
-
-            sameFacesPhotos.clear();
-
-            for (Photo photo : series.getPhotos()) {
-
-                faces = mFaceExtractor.detectFaces(mContext, photo.getPath());
-
-                Log.i("TESTING" , "faces size= " + faces.size());
-
-
-                if (!faces.isEmpty()) {
-
-                    setTotalFacesCenterInPhoto(photo , faces);
-
-                    Log.i("TESTING" , "photo center faces= (" + photo.getTotalFacesCenter().getX() + "," +  + photo.getTotalFacesCenter().getY() +")");
-
-                    for (Face face : faces) {
-
-                        double angle = face.getPosition().calcAngle(photo.getTotalFacesCenter());
-                        double dist = face.getPosition().calcEuclidDistance(photo.getTotalFacesCenter());
-
-                        Log.i("TESTING" , "face "+ face.getId()+ ": center faces= (" + photo.getTotalFacesCenter().getX() +"," + photo.getTotalFacesCenter().getY() +")");
-
-                        photo.addPerson(new Person(face , new RelativePositionVector(angle , dist)));
-                    }
-
-                    addPhotoToMap(sameFacesPhotos, photo, faces.size());
-                }
-//                if has no faces decide what to do
-//                addPhotoToMap(sameFacesPhotos, photo, faces.size());
-            }
-
-
-            Log.i("TESTING" , "running on map");
-
-            if (sameFacesPhotos.size() == 1) {
-                result.add(series);
-            } else {
-                for (Map.Entry<Integer, List<Photo>> entry : sameFacesPhotos.entrySet()) {
-                    PhotoSeries s = new PhotoSeries(entry.getValue());
-                    s.setFaceMaxDistanceToCenter();
-                    result.add(s);
-                }
-            }
-        }
-        return result;
-    }
+//    private List<PhotoSeries> generateSeriesByFaces() {
+//
+//        List<PhotoSeries> result = new ArrayList<>();
+//
+//        List<Face> faces;
+//
+//        Map<Integer, List<Photo>> sameFacesPhotos = new HashMap<>();
+//
+//        for (PhotoSeries series : mSameFeaturesSeriesList) {
+//
+//            sameFacesPhotos.clear();
+//
+//            for (Photo photo : series.getPhotos()) {
+//
+//                faces = mFaceExtractor.detectFaces(mContext, photo.getPath());
+//
+//                Log.i("TESTING" , "faces size= " + faces.size());
+//
+//
+//                if (!faces.isEmpty()) {
+//
+//                    setTotalFacesCenterInPhoto(photo , faces);
+//
+//                    Log.i("TESTING" , "photo center faces= (" + photo.getTotalFacesCenter().getX() + "," +  + photo.getTotalFacesCenter().getY() +")");
+//
+//                    for (Face face : faces) {
+//
+//                        double angle = face.getPosition().calcAngle(photo.getTotalFacesCenter());
+//                        double dist = face.getPosition().calcEuclidDistance(photo.getTotalFacesCenter());
+//
+//                        photo.setMaxFaceDistanceFromCenter(dist);
+//
+//                        Log.i("TESTING" , "face "+ face.getId()+ ": center faces= (" + photo.getTotalFacesCenter().getX() +"," + photo.getTotalFacesCenter().getX() +")");
+//
+//                        photo.addPerson(new Person(face , new RelativePositionVector(angle , dist)));
+//                    }
+//
+//                    addPhotoToMap(sameFacesPhotos, photo, faces.size());
+//                }
+////                if has no faces decide what to do
+////                addPhotoToMap(sameFacesPhotos, photo, faces.size());
+//            }
+//
+//
+//            Log.i("TESTING" , "running on map");
+//
+//            if (sameFacesPhotos.size() == 1) {
+//                result.add(series);
+//            } else {
+//                for (Map.Entry<Integer, List<Photo>> entry : sameFacesPhotos.entrySet()) {
+//                    PhotoSeries s = new PhotoSeries(entry.getValue());
+//                    s.setFaceMaxDistanceToCenter();
+//                    result.add(s);
+//                }
+//            }
+//        }
+//        return result;
+//    }
 
 
     private void setTotalFacesCenterInPhoto(Photo photo, List<Face> faces) {
@@ -213,14 +296,14 @@ public class SeriesGenerator {
     }
 
 
-    private void addPhotoToMap(Map<Integer,List<Photo>> sameFacesPhotos, Photo photo, int key) {
-        List<Photo> photos = sameFacesPhotos.get(key);
+    private void addPhotoToMap(Map<Integer,List<Photo>> map, Photo photo, int key) {
+        List<Photo> photos = map.get(key);
 
         //not exist in map
         if (photos == null) {
             photos = new ArrayList<Photo>();
             photos.add(photo);
-            sameFacesPhotos.put(key, photos);
+            map.put(key, photos);
         } else {
             //exist in map
             photos.add(photo);
@@ -242,16 +325,19 @@ public class SeriesGenerator {
 
 
     //returning series containing only one photo
-    private void filterAllOnePhotoSeries() {
+    private void filterAllOnePhotoSeries(List<PhotoSeries> allSeries) {
 
         ArrayList <PhotoSeries> photosToBeRemoved = new ArrayList<>();
-        for (int i = 0; i < mSameFeaturesSeriesList.size() ; i++) {
-            if (mSameFeaturesSeriesList.get(i).getNumOfPhotos() == 1) {
-                mOutput.add(mSameFeaturesSeriesList.get(i).getPhoto(0).getPath());
-                photosToBeRemoved.add(mSameFeaturesSeriesList.get(i));
+
+        for (int i = 0; i < allSeries.size() ; i++) {
+
+            if (allSeries.get(i).getPhotos().size() == 1) {
+                mPhotosOutput.add(allSeries.get(i).getPhoto(0));
+//                mOutput.add(allSeries.get(i).getPhoto(0).getPath());
+                photosToBeRemoved.add(allSeries.get(i));
             }
         }
-        mSameFeaturesSeriesList.removeAll(photosToBeRemoved);
+        allSeries.removeAll(photosToBeRemoved);
     }
 
 
@@ -269,34 +355,34 @@ public class SeriesGenerator {
 
 
     //this function create series list from the initial photos
-    public List<PhotoSeries> generateSeriesByFeatures() {
+    public List<PhotoSeries> generateSeriesByFeatures(List<Photo> photos) {
 
         List<PhotoSeries> foundSeries =  new ArrayList<>();;
         boolean hasFoundSeries;
         PhotoSeries photoSeries = new PhotoSeries();
 
-        if (mAllPhotos.isEmpty()) {
+        if (photos.isEmpty()) {
             return null;
         }
 
-        photoSeries.addPhoto(mAllPhotos.get(0));
+        photoSeries.addPhoto(photos.get(0));
         foundSeries.add(photoSeries);
 
-        for (int i = 1 ; i < mAllPhotos.size() ; i++){
+        for (int i = 1 ; i < photos.size() ; i++){
 
             hasFoundSeries = false;
 
             for (int j = 0 ; j < foundSeries.size() ; j++) {
 
-                if (foundSeries.get(j).getPhoto(0).similarTo( mAllPhotos.get(i))){
-                    foundSeries.get(j).addPhoto( mAllPhotos.get(i));
+                if (foundSeries.get(j).getPhoto(0).similarTo( photos.get(i))){
+                    foundSeries.get(j).addPhoto( photos.get(i));
                     hasFoundSeries = true;
                     break;
                 }
             }
             if (!hasFoundSeries){
                 PhotoSeries newPhotoSeries = new PhotoSeries();
-                newPhotoSeries.addPhoto( mAllPhotos.get(i));
+                newPhotoSeries.addPhoto( photos.get(i));
                 foundSeries.add(newPhotoSeries);
             }
         }

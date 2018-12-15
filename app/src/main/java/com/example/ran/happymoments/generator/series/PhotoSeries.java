@@ -16,14 +16,9 @@ public class PhotoSeries {
     private List<Photo> photos;
 
 
-    private double maxDistanceToFacesCenter;
-
-
     public PhotoSeries() {
         this.id = ++idGenerator;
         photos = new ArrayList<>();
-        maxDistanceToFacesCenter = 0;
-
     }
 
 
@@ -67,60 +62,15 @@ public class PhotoSeries {
         this.photos.remove(photo);
     }
 
-    public double getMaxDistanceToFacesCenter() {
-        return maxDistanceToFacesCenter;
-    }
+    public double calcMaxDistanceToFacesCenter() {
 
-    public void setMaxDistanceToFacesCenter(double maxDistanceToFacesCenter) {
-        if (maxDistanceToFacesCenter > this.maxDistanceToFacesCenter) {
-            this.maxDistanceToFacesCenter = maxDistanceToFacesCenter;
-        }
-    }
-
-    public void setFaceMaxDistanceToCenter() {
+        double maxDistance = 0;
 
         for (Photo photo: photos) {
-            if (photo.getMaxFaceDistanceFromCenter() > this.maxDistanceToFacesCenter) {
-                this.maxDistanceToFacesCenter = photo.getMaxFaceDistanceFromCenter();
+            if (photo.getMaxFaceDistanceFromCenter() > maxDistance) {
+                maxDistance = photo.getMaxFaceDistanceFromCenter();
             }
         }
-    }
-
-
-
-
-    public void setPersonsImportance() {
-
-        Map<Integer , Double> maxPersonFaceSize = new HashMap<>();
-        double currentSize , maxSize;
-        int key;
-
-        for (Photo photo : this.getPhotos()) {
-
-            for (Person person : photo.getPersons()) {
-                key = person.getId();
-                currentSize = person.getFaceSize();
-
-                if (maxPersonFaceSize.containsKey(key)) {
-                    maxSize = maxPersonFaceSize.get(key);
-
-                    if (person.getFaceSize() > maxSize) {
-                        maxPersonFaceSize.put(key , currentSize);
-                    }
-                } else {
-                    maxPersonFaceSize.put(key , currentSize);
-                }
-            }
-        }
-
-        //now we have each person max face size in a series
-        //need to calculate person importance in each photo
-
-        for (Photo photo : this.getPhotos()) {
-            for (Person person : photo.getPersons()) {
-                double importance = person.getFaceSize() / maxPersonFaceSize.get(person.getId()) ;
-                person.setImportance(importance);
-            }
-        }
+        return maxDistance;
     }
 }

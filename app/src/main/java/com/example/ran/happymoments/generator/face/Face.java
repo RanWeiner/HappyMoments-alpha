@@ -8,18 +8,15 @@ public class Face {
     private Eyes eyes;
     private Position position;
     private float width, height;
-    private float faceImportanceScore, faceScore;
 
-    //just for debug
-    public int id;
 
     public Face(){
 
     }
 
 
-    public Face(int id , Position position, float width, float height , Smile smile , Eyes eyes) {
-        this.id = id;
+    public Face(Position position, float width, float height , Smile smile , Eyes eyes) {
+
         this.position = position;
         this.width = width;
         this.height = height;
@@ -80,30 +77,4 @@ public class Face {
         return this.width * this.height;
     }
 
-    public float getFaceImportanceScore() {
-        return faceImportanceScore;
-    }
-
-    public void setFaceImportanceScore(float faceImportanceScore) {
-        this.faceImportanceScore = faceImportanceScore;
-    }
-
-    public float getFaceScore() {
-        return faceScore;
-    }
-
-    public void setFaceScore(float faceScore) {
-        this.faceScore = faceScore;
-    }
-
-
-
-/////just for debug
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 }
