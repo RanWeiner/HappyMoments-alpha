@@ -9,25 +9,27 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <activity android:name=".screens.home.controllers.MainActivity">
+        <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".screens.album.controllers.AlbumActivity"
-            android:theme="@android:style/Theme.Holo.NoActionBar"/>
-
-        <activity android:name=".screens.album.FullScreenViewActivity"
+        <activity
+            android:name=".activities.AlbumActivity"
             android:theme="@android:style/Theme.Holo.NoActionBar" />
-
-        <activity android:name=".screens.detection.controllers.DetectionActivity"></activity>
-
+        <activity
+            android:name=".activities.FullScreenViewActivity"
+            android:theme="@android:style/Theme.Holo.NoActionBar" />
+        <activity android:name=".activities.DetectionActivity" />
+        <activity android:name=".activities.ResultsActivity" />
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="face" />
+
+
+
     </application>
 
 </manifest>

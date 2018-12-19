@@ -13,6 +13,8 @@ import android.view.Display;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.example.ran.happymoments.common.AppConstants;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -50,7 +52,7 @@ public class Utils {
         ArrayList<String> filePaths = new ArrayList<String>();
 
         File directory = new File(Environment.getExternalStorageDirectory()
-                        + File.separator + AppConstants.HAPPY_MOMENTS_ALBUM);
+                + File.separator + AppConstants.HAPPY_MOMENTS_ALBUM);
 
         // check for directory
         if (directory.isDirectory()) {
@@ -138,7 +140,7 @@ public class Utils {
 
 
 
-//https://stackoverflow.com/questions/11983654/android-how-to-add-an-image-to-an-album
+    //https://stackoverflow.com/questions/11983654/android-how-to-add-an-image-to-an-album
     public void saveImageToExternal(String imgName, Bitmap bm) throws IOException {
 
         final String appDirectoryName = AppConstants.HAPPY_MOMENTS_ALBUM;

@@ -31,11 +31,18 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    //opencv
     implementation project(':openCVLibrary343')
 
+    //glide
+    implementation 'com.github.bumptech.glide:glide:3.7.0'
+
+    //picker
     implementation 'com.android.support:design:27.1.0'
     implementation 'com.github.myinnos:AwesomeImagePicker:1.0.2'
 
+    //exif
     implementation 'com.android.support:exifinterface:27.1.1'
 
 }

@@ -18,11 +18,18 @@ public class AppConstants {
     //supported file formats
     public static final List<String> SUPPORTED_FILE_EXTENSIONS = Arrays.asList("jpg" , "jpeg" , "png");
 
-    public static final String IMPORTED_IMAGES_PATH = "ImportedImagesPath";
+
+    public static final String POSITION = "POSITION";
+
+    public static final String PHOTOS_PATH = "PHOTOS_PATH";
+
+    public static final String IMPORTED_IMAGES = "INPUT";
+
+    public static final String OUTPUT_PHOTOS = "OUTPUT";
 
     public static final double MAX_ANGLE = 360;
 
-    public static final double EYES_WEIGHT = 0.7;
+    public static final double EYES_WEIGHT = 0.4;
 
-    public static final double SMILE_WEIGHT = 0.5;
+    public static final double SMILE_WEIGHT = 0.6;
 }
