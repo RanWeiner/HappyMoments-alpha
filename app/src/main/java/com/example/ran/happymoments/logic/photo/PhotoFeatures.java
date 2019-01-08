@@ -17,7 +17,7 @@ import java.util.Calendar;
 import static android.support.constraint.Constraints.TAG;
 
 public class PhotoFeatures {
-    private final double HISTOGRAM_THRESHOLD = 70;
+    private final double HISTOGRAM_THRESHOLD = 0.7;
     private final double DISTANCE_THRESHOLD = 0.1;
     private Calendar dateTime;
     private PhotoLocation photoLocation;
@@ -165,9 +165,9 @@ public class PhotoFeatures {
     public boolean compareHist(Mat otherHist){
         //Computes the correlation between the two histograms.
         double res = Imgproc.compareHist(this.histogram, otherHist, Imgproc.CV_COMP_CORREL);
-        Double d = new Double(res * 100);
+//        Double d = new Double(res * 100);
 
-        if (d >= HISTOGRAM_THRESHOLD)
+        if (res >= HISTOGRAM_THRESHOLD)
             return true;
         return false;
     }

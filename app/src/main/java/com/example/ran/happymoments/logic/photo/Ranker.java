@@ -1,6 +1,8 @@
 package com.example.ran.happymoments.logic.photo;
 
 
+import android.util.Log;
+
 import com.example.ran.happymoments.common.AppConstants;
 import com.example.ran.happymoments.logic.face.Face;
 
@@ -13,7 +15,7 @@ public class Ranker {
     public double rankPhoto(Photo photo){
         int numOfPersons = photo.getPersons().size();
         double photoRank = 0;
-
+        Log.i("PersonXXX" , "path=" + photo.getPath());
         rankPersons(photo.getPersons());
 
         for(int i = 0 ; i< numOfPersons ; i++)
@@ -28,6 +30,7 @@ public class Ranker {
     private void rankPersons(List<Person> persons) {
         for (Person person : persons) {
             rankPerson(person);
+            Log.i("PersonXXX" , "person position = "+person.getFace().getPosition() + ", person rank" + person.getRank());
         }
     }
 

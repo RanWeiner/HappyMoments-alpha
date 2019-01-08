@@ -144,6 +144,7 @@ public class SeriesGenerator {
             for (Person person : photo.getPersons()) {
                 double importance = person.getFaceSize() / personMaxFaceSize.get(person.getId()) ;
                 person.setImportance(importance);
+                Log.i("FACEIMPORTANCE" , photo.getPath() + ", person = " + person.getFace().getPosition().toString()+", importance= " + importance);
             }
         }
     }
@@ -179,11 +180,11 @@ public class SeriesGenerator {
 
         if(faces.size() > 1) {
             setTotalFacesCenterInPhoto(photo, faces);
-
+            Log.i("FACE_CENTERXXX" , "path= " + photo.getPath() + ", " + photo.getTotalFacesCenter().toString());
             for (Face face : faces) {
                 double angle = face.getPosition().calcAngle(photo.getTotalFacesCenter());
                 double dist = face.getPosition().calcEuclidDistance(photo.getTotalFacesCenter());
-
+                Log.d("VECTORXXX", "face position = " + face.getPosition() + ", angle = " + angle + ",dist= " + dist +", path= " +photo.getPath());
                 photo.addPerson(new Person(face, new RelativePositionVector(angle, dist)));
             }
         } else {

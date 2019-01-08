@@ -130,5 +130,8 @@ public class Photo {
         this.rank = rank;
     }
 
-
+    @Override
+    public String toString() {
+        return "(" + getTotalFacesCenter().getX() + " , " + getTotalFacesCenter().getY() + ")";
+    }
 }

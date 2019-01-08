@@ -51,4 +51,9 @@ public class Position {
 
         return Math.sqrt(x*x + y*y);
     }
+
+    @Override
+    public String toString() {
+        return "(" + x + "," +y +")";
+    }
 }
