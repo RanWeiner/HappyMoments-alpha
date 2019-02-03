@@ -63,9 +63,6 @@ public class SeriesGenerator {
 
         printSeries(mSeriesList);
 
-        ///////////////////// [NORMALIZE] /////////////////////
-
-        normalizeVectors(mSeriesList);
 
         ///////////////////// [FACE CORRESPONDENCE & RANKING] /////////////////////
 
@@ -82,8 +79,6 @@ public class SeriesGenerator {
             double highestRank = mRanker.rankPhoto(series.getPhoto(highestRankedPhotoIndex));
             double currentRank;
             Log.i("SCORE" , "photo= " +series.getPhoto(0).getPath()+  ", rank= " + highestRank);
-
-
 
             for (int i = 1 ; i < series.getPhotos().size() ; i++) {
                 currentRank = mRanker.rankPhoto(series.getPhoto(i));
@@ -179,16 +174,11 @@ public class SeriesGenerator {
     private void saveFacesData(Photo photo, List<Face> faces) {
 
         if(faces.size() > 1) {
-            setTotalFacesCenterInPhoto(photo, faces);
-            Log.i("FACE_CENTERXXX" , "path= " + photo.getPath() + ", " + photo.getTotalFacesCenter().toString());
-            for (Face face : faces) {
-                double angle = face.getPosition().calcAngle(photo.getTotalFacesCenter());
-                double dist = face.getPosition().calcEuclidDistance(photo.getTotalFacesCenter());
-                Log.d("VECTORXXX", "face position = " + face.getPosition() + ", angle = " + angle + ",dist= " + dist +", path= " +photo.getPath());
-                photo.addPerson(new Person(face, new RelativePositionVector(angle, dist)));
+            for (int i = 0 ; i < faces.size() ; i++) {
+                photo.addPerson(new Person(i, faces.get(i)));
             }
         } else {
-            photo.addPerson(new Person(faces.get(0), new RelativePositionVector(0,0)));
+            photo.addPerson(new Person(0, faces.get(0)));
         }
     }
 
@@ -203,35 +193,6 @@ public class SeriesGenerator {
         }
     }
 
-
-    private void normalizeVectors(List<PhotoSeries> allSeries) {
-
-        double maxDistance;
-
-        for (PhotoSeries series: allSeries) {
-
-            maxDistance = series.calcMaxDistanceToFacesCenter();
-
-            Log.i("TESTING" , "maxDistance=" + maxDistance);
-
-            for (Photo photo: series.getPhotos()) {
-
-                for (Person person: photo.getPersons()) {
-
-                    person.normalizeVector(maxDistance);
-                }
-            }
-        }
-    }
-
-
-
-
-    private void setTotalFacesCenterInPhoto(Photo photo, List<Face> faces) {
-        Position centerGravity;
-        centerGravity = calcFacesCenterGravity(faces);
-        photo.setTotalFacesCenter(centerGravity);
-    }
 
 
     private void addPhotoToMap(Map<Integer,List<Photo>> map, Photo photo, int key) {
@@ -249,20 +210,6 @@ public class SeriesGenerator {
     }
 
 
-
-    private Position calcFacesCenterGravity(List<Face> faces) {
-        double sumX = 0 , sumY = 0;
-        int size = faces.size();
-
-        for (Face face : faces) {
-            sumX += face.getPosition().getX();
-            sumY += face.getPosition().getY();
-        }
-        return new Position(sumX/size , sumY/size);
-    }
-
-
-
     private void filterAllOnePhotoSeries() {
 
         ArrayList <PhotoSeries> photosToBeRemoved = new ArrayList<>();
@@ -278,7 +225,6 @@ public class SeriesGenerator {
     }
 
 
-
     private ArrayList<Photo> setPhotos(ArrayList<String> imagesPath) {
         ArrayList <Photo> rv = new ArrayList<>();
 
@@ -287,7 +233,6 @@ public class SeriesGenerator {
         }
         return rv;
     }
-
 
 
     //this function create series list from the initial photos

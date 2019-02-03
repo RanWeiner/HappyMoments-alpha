@@ -1,6 +1,12 @@
 package com.example.ran.happymoments.activities;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -55,13 +61,55 @@ public class DetectionActivity extends AppCompatActivity {
         mDetectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                detectBtnClicked();
+
+                if (isNetworkAvailable()) {
+                    detectBtnClicked();
+                } else {
+
+                    showNetworkError();
+
+                }
             }
         });
 
     }
 
+    private void showNetworkError() {
 
+        //go to wifi Settings.ACTION_WIRELESS_SETTINGS);
+        //go to page mobile network Settings.ACTION_DATA_ROAMING_SETTINGS));
+        //go to both wifi and mobile network Settings.ACTION_SETTINGS
+
+
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+//                        Intent intent=new Intent(Settings.ACTION_WIRELESS_SETTINGS);
+                        Intent intent=new Intent(Settings.ACTION_SETTINGS);
+                        startActivity(intent);
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        dialog.dismiss();
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(DetectionActivity.this);
+        builder.setTitle("No Internet").setMessage("This App requires Internet connections ")
+                .setPositiveButton("Connect", dialogClickListener).setNegativeButton("Exit", dialogClickListener).show();
+    }
+
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 
 
     public void setUpImageGrid(ArrayList<String> photos){

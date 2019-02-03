@@ -16,23 +16,15 @@ public class Photo {
     private String mPath;
     private PhotoFeatures photoFeatures;
     private ExifInterface exifInterface;
-    private Position totalFacesCenter;
     private List<Person> persons;
     private double rank;
-    private double maxFaceDistanceFromCenter;
-
-//    private Bitmap bitmap;
-
 
 
     public Photo(String path){
         this.mPath = path;
         setExifInterface();
         setPhotoFeatures();
-
         this.persons = new ArrayList<>();
-        this.totalFacesCenter = new Position();
-        this.maxFaceDistanceFromCenter = 0;
         this.rank = 0;
     }
 
@@ -70,13 +62,6 @@ public class Photo {
     }
 
 
-    public Position getTotalFacesCenter() {
-        return totalFacesCenter;
-    }
-
-    public void setTotalFacesCenter(Position totalFacesCenter) {
-        this.totalFacesCenter = totalFacesCenter;
-    }
 
     public boolean similarTo(Photo other){
         return this.getPhotoFeatures().compareFeatures(other.getPhotoFeatures());
@@ -105,18 +90,9 @@ public class Photo {
     }
 
 
-    public double getMaxFaceDistanceFromCenter() {
-        return maxFaceDistanceFromCenter;
-    }
-
 
 
     public void addPerson(Person person) {
-        double personDistance = person.getVector().getDistance();
-
-        if (personDistance > maxFaceDistanceFromCenter) {
-            this.maxFaceDistanceFromCenter = personDistance;
-        }
         this.persons.add(person);
     }
 
@@ -130,8 +106,4 @@ public class Photo {
         this.rank = rank;
     }
 
-    @Override
-    public String toString() {
-        return "(" + getTotalFacesCenter().getX() + " , " + getTotalFacesCenter().getY() + ")";
-    }
 }

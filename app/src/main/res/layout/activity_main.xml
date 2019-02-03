@@ -20,6 +20,12 @@ tools:context=".activities.MainActivity">
         android:layout_height="wrap_content"
         android:text="Album" />
 
+    <Button
+        android:id="@+id/camera_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Camera" />
+
 </LinearLayout>
 
 

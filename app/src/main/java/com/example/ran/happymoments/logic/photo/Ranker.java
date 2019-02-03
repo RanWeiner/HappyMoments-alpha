@@ -53,26 +53,4 @@ public class Ranker {
         return eyesAndSmileScore;
     }
 
-
-//    //Must be called before calcFaceRank()
-//    public void rankFacesImportance(List<Face> faces){
-//        float faceArea;
-//        float maxArea = findMaxFaceArea(faces);
-//        for(int i = 0; i< faces.size(); i++){
-//            faceArea = faces.get(i).getHeight() * faces.get(i).getWidth();
-//            faces.get(i).setFaceImportanceScore(faceArea / maxArea);
-//        }
-//    }
-//
-//    public float findMaxFaceArea(List<Face> faces){
-//        float faceArea, maxArea = 0;
-//        for(int i = 0; i < faces.size(); i++){
-//            faceArea = faces.get(i).getHeight() * faces.get(i).getWidth();
-//            if(faceArea > maxArea)
-//                maxArea = faceArea;
-//        }
-//        return maxArea;
-//    }
-
-
 }

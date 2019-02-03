@@ -7,31 +7,20 @@ import com.example.ran.happymoments.logic.face.Face;
 
 public class Person {
 
-    private static int idGenerator = 0;
+//    private static int idGenerator = 0;
     private int id;
     Face face;
-    RelativePositionVector vector;
     double rank;
-
-
     double importance;
 
 
-    public Person(Face face, RelativePositionVector vector){
-        this.id = ++idGenerator;
-
+    public Person(int id , Face face){
+//        this.id = ++idGenerator;
         this.face = face;
-        this.vector = vector;
+        this.id = id;
     }
 
 
-    public RelativePositionVector getVector() {
-        return vector;
-    }
-
-    public void setVector(RelativePositionVector vector) {
-        this.vector = vector;
-    }
 
     public Face getFace() {
         return face;
@@ -53,12 +42,6 @@ public class Person {
         this.id = id;
     }
 
-    public void normalizeVector(double maxDistance) {
-        double normDist = Utils.normalize(this.vector.getDistance(),maxDistance,0);
-        double normAngle = Utils.normalize(this.vector.getAngle(), AppConstants.MAX_ANGLE, 0);
-        this.vector.setAngle(normAngle);
-        this.vector.setDistance(normDist);
-    }
 
     public void setRank(double rank) {
         this.rank = rank;
@@ -71,7 +54,6 @@ public class Person {
     public void setImportance(double importance) {
         this.importance = importance;
     }
-
 
     public double getImportance() {
         return this.importance;

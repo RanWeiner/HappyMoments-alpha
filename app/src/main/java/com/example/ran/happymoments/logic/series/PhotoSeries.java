@@ -55,19 +55,5 @@ public class PhotoSeries {
         return this.photos.get(index);
     }
 
-    public void removePhoto(Photo photo) {
-        this.photos.remove(photo);
-    }
 
-    public double calcMaxDistanceToFacesCenter() {
-
-        double maxDistance = 0;
-
-        for (Photo photo: photos) {
-            if (photo.getMaxFaceDistanceFromCenter() > maxDistance) {
-                maxDistance = photo.getMaxFaceDistanceFromCenter();
-            }
-        }
-        return maxDistance;
-    }
 }

@@ -32,4 +32,6 @@ public class AppConstants {
     public static final double EYES_WEIGHT = 0.4;
 
     public static final double SMILE_WEIGHT = 0.6;
+
+    public static final int CAMERA_REQUEST_CODE = 888;
 }

@@ -1,10 +1,13 @@
 package com.example.ran.happymoments.logic.face;
 
 
+import com.example.ran.happymoments.common.Position;
 import com.example.ran.happymoments.common.RelativePositionVector;
 import com.example.ran.happymoments.logic.photo.Person;
+import com.example.ran.happymoments.logic.photo.Photo;
 import com.example.ran.happymoments.logic.series.PhotoSeries;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FaceMatcher {
@@ -15,47 +18,42 @@ public class FaceMatcher {
     }
 
     public void matchPersons(PhotoSeries series) {
-
         List<Person> basePersons , anyPersons;
-        int numOfPersons , numOfPhotos , matchingId;
-        double distance , minDistance;
-
-        numOfPhotos = series.getPhotos().size();
         basePersons = series.getPhoto(0).getPersons();
-        numOfPersons = basePersons.size();
 
-
-        for (int photoIdx = 1 ; photoIdx < numOfPhotos ; photoIdx++) {
-
+        for (int photoIdx = 1 ; photoIdx < series.getNumOfPhotos() ; photoIdx++) {
             anyPersons = series.getPhoto(photoIdx).getPersons();
-
-            for (int i =0 ; i < numOfPersons ; i++) {
-
-                minDistance = compareVectors(anyPersons.get(i).getVector() , basePersons.get(0).getVector());
-                matchingId = basePersons.get(0).getId();
-
-                for (int j = 1 ; j < numOfPersons ; j++) {
-
-                    distance = compareVectors(anyPersons.get(i).getVector() , basePersons.get(j).getVector());
-                    if (distance < minDistance) {
-                        minDistance = distance;
-                        matchingId = basePersons.get(j).getId();
-                    }
-                }
-                anyPersons.get(i).setId(matchingId);
-            }
+            findMatch(basePersons , anyPersons);
         }
     }
 
-    private double compareVectors(RelativePositionVector v1, RelativePositionVector v2) {
-        double exponent = 2.0;
-        double a, b, distance;
+    private void findMatch(List<Person> basePersons, List<Person> anyPersons) {
+        List<Person> anyPersonsCopy = new ArrayList<Person>(anyPersons);
 
-        a = (v2.getDistance() * Math.cos(v2.getAngle())) - (v1.getDistance() * Math.cos(v1.getAngle()));
-        b = (v2.getDistance() * Math.sin(v2.getAngle())) - (v1.getDistance() * Math.sin(v1.getAngle()));
-        distance = Math.pow(a,exponent) + Math.pow(b, exponent);
-        return Math.sqrt(distance);
+        for (int i = 0 ; i < basePersons.size() ; i++) {
+            int index = findMinDistance(basePersons.get(i) , anyPersonsCopy);
+            anyPersons.get(index).setId(basePersons.get(i).getId());
+            anyPersonsCopy.remove(index);
+        }
     }
+
+    private int findMinDistance(Person person, List<Person> anyPersons) {
+        double currentDistance , minDistance = Double.MAX_VALUE;
+        Position anyPosition,basePosition = person.getFace().getPosition();
+        int rv = 0;
+
+        for (int i = 0 ; i < anyPersons.size() ; i++) {
+            anyPosition = anyPersons.get(i).getFace().getPosition();
+            currentDistance = Math.sqrt(Math.pow( basePosition.getX() - anyPosition.getX(),2)
+                                    + Math.pow( basePosition.getY() - anyPosition.getY(),2));
+            if (currentDistance < minDistance) {
+                minDistance = currentDistance;
+                rv = i;
+            }
+        }
+        return rv;
+    }
+
 
 
 }
