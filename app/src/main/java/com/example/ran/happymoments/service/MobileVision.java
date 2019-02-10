@@ -1,4 +1,4 @@
-package com.example.ran.happymoments.logic;
+package com.example.ran.happymoments.service;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -11,12 +11,10 @@ import com.example.ran.happymoments.common.Position;
 import com.example.ran.happymoments.logic.face.Eyes;
 import com.example.ran.happymoments.logic.face.Face;
 import com.example.ran.happymoments.logic.face.Smile;
-import com.example.ran.happymoments.logic.photo.Photo;
 import com.google.android.gms.vision.Frame;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 

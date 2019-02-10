@@ -1,4 +1,4 @@
-package com.example.ran.happymoments.logic;
+package com.example.ran.happymoments.service;
 
 import android.content.Context;
 

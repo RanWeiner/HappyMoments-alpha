@@ -1,6 +1,5 @@
 package com.example.ran.happymoments.activities;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -21,13 +20,10 @@ import android.widget.Toast;
 
 import com.example.ran.happymoments.R;
 import com.example.ran.happymoments.common.AppConstants;
-import com.example.ran.happymoments.logic.FaceDetector;
-import com.example.ran.happymoments.logic.MobileVision;
-import com.example.ran.happymoments.logic.PhotoExtractionManager;
+
 
 import com.example.ran.happymoments.adapter.RecycleViewImageAdapter;
-import com.example.ran.happymoments.logic.SeriesGenerator;
-import com.example.ran.happymoments.logic.face.FaceExtractorMobileVision;
+import com.example.ran.happymoments.service.SeriesGenerator;
 
 import java.util.ArrayList;
 import java.util.List;

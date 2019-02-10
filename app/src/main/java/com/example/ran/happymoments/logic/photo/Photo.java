@@ -23,12 +23,23 @@ public class Photo {
     }
 
 
+
+    //just for trying!!!
+    public Photo(String path, PhotoFeatures features, List<Person> persons) {
+        mPath = path;
+        mFeatures = features;
+        mPersons = persons;
+    }
+
+
+
+
     public String getPath() {
         return this.mPath;
     }
 
 
-    private void setPhotoFeatures() {
+    public void setPhotoFeatures() {
         if (mExif != null){
             mFeatures = new PhotoFeatures(mPath , mExif);
         }
