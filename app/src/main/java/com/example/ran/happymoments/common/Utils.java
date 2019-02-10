@@ -13,7 +13,7 @@ import android.view.Display;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.example.ran.happymoments.common.AppConstants;
+
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -261,7 +261,6 @@ public class Utils {
         }
         return null;
     }
-
 
 
 

@@ -2,9 +2,7 @@ package com.example.ran.happymoments.logic.face;
 
 
 import com.example.ran.happymoments.common.Position;
-import com.example.ran.happymoments.common.RelativePositionVector;
 import com.example.ran.happymoments.logic.photo.Person;
-import com.example.ran.happymoments.logic.photo.Photo;
 import com.example.ran.happymoments.logic.series.PhotoSeries;
 
 import java.util.ArrayList;
@@ -17,7 +15,7 @@ public class FaceMatcher {
 
     }
 
-    public void matchPersons(PhotoSeries series) {
+    public static void matchPersons(PhotoSeries series) {
         List<Person> basePersons , anyPersons;
         basePersons = series.getPhoto(0).getPersons();
 
@@ -27,7 +25,7 @@ public class FaceMatcher {
         }
     }
 
-    private void findMatch(List<Person> basePersons, List<Person> anyPersons) {
+    private static void findMatch(List<Person> basePersons, List<Person> anyPersons) {
         List<Person> anyPersonsCopy = new ArrayList<Person>(anyPersons);
 
         for (int i = 0 ; i < basePersons.size() ; i++) {
@@ -37,7 +35,7 @@ public class FaceMatcher {
         }
     }
 
-    private int findMinDistance(Person person, List<Person> anyPersons) {
+    private static int findMinDistance(Person person, List<Person> anyPersons) {
         double currentDistance , minDistance = Double.MAX_VALUE;
         Position anyPosition,basePosition = person.getFace().getPosition();
         int rv = 0;

@@ -12,7 +12,7 @@ public class Ranker {
 
     public Ranker(){ }
 
-    public double rankPhoto(Photo photo){
+    public static double rankPhoto(Photo photo){
         int numOfPersons = photo.getPersons().size();
         double photoRank = 0;
         Log.i("PersonXXX" , "path=" + photo.getPath());
@@ -27,14 +27,14 @@ public class Ranker {
     }
 
 
-    private void rankPersons(List<Person> persons) {
+    private static void rankPersons(List<Person> persons) {
         for (Person person : persons) {
             rankPerson(person);
             Log.i("PersonXXX" , "person position = "+person.getFace().getPosition() + ", person rank" + person.getRank());
         }
     }
 
-    private void rankPerson(Person person) {
+    private static void rankPerson(Person person) {
         double faceRank = calcFaceRank(person.getFace());
         double importance = person.getImportance();
 
@@ -44,7 +44,7 @@ public class Ranker {
 
 
     //average between eyesOpen and smile -> multiply the result with the importance percentage
-    public double calcFaceRank(Face face) {
+    public static double calcFaceRank(Face face) {
         float eyesScore, smileScore;
 
         eyesScore = face.getEyes().getEyesOpenProbability() * 100;

@@ -1,5 +1,6 @@
 package com.example.ran.happymoments.activities;
 
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -31,6 +32,7 @@ public class ResultsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
 
         Bundle bundle = getIntent().getExtras();
         mResultsPhotosPath = bundle.getStringArrayList(AppConstants.OUTPUT_PHOTOS);

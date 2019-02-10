@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.support.media.ExifInterface;
-import android.util.Log;
 import android.util.SparseArray;
 
 import com.example.ran.happymoments.common.Position;
@@ -14,7 +13,6 @@ import com.google.android.gms.vision.Frame;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,7 +67,7 @@ public class FaceExtractorMobileVision  {
     private Bitmap rotateBitmapIfRequired(Photo photo) {
         Bitmap bitmap = null;
         FileInputStream stream = null;
-        String orientationString = photo.getPhotoFeatures().getOrientation();
+        String orientationString = photo.getFeatures().getOrientation();
 
         try {
             stream = new FileInputStream(photo.getPath());

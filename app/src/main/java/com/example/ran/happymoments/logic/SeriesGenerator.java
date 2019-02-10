@@ -1,111 +1,81 @@
 package com.example.ran.happymoments.logic;
 
 import android.content.Context;
+import android.support.media.ExifInterface;
 import android.util.Log;
 
-import com.example.ran.happymoments.common.RelativePositionVector;
-import com.example.ran.happymoments.logic.face.FaceMatcher;
 import com.example.ran.happymoments.logic.face.Face;
-import com.example.ran.happymoments.common.Position;
-import com.example.ran.happymoments.logic.face.FaceExtractorMobileVision;
+import com.example.ran.happymoments.logic.face.FaceMatcher;
 import com.example.ran.happymoments.logic.photo.Person;
 import com.example.ran.happymoments.logic.photo.Photo;
-import com.example.ran.happymoments.logic.series.PhotoSeries;
 import com.example.ran.happymoments.logic.photo.Ranker;
+import com.example.ran.happymoments.logic.series.PhotoSeries;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.regex.Matcher;
 
 
 public class SeriesGenerator {
 
-    private ArrayList<String> mInputPhotosPath;
-    private ArrayList<String> mPhotosOutputPath;
-
-    private ArrayList<Photo> mPhotosInput;
-    private ArrayList<Photo> mPhotosOutput;
-
-    private ArrayList<PhotoSeries> mSeriesList;
     private Context mContext;
-    private FaceExtractorMobileVision mFaceExtractor;
-
-    private Ranker mRanker;
-    private FaceMatcher mMatcher;
-
+    private List<String> mInputPhotosPath;
+    private FaceDetector mFaceDetector;
+    private List<String> mPhotosOutputPath;
 
 
-
-    public SeriesGenerator(Context context , ArrayList<String> inputPhotosPath) {
+    public SeriesGenerator(Context context , List<String> inputPhotosPath) {
         mContext = context;
         mInputPhotosPath = inputPhotosPath;
+        mFaceDetector = new MobileVision(context);
         mPhotosOutputPath = new ArrayList<>();
-
-        mPhotosInput = setPhotos(mInputPhotosPath);
-        mPhotosOutput = new ArrayList<>();
-
-        mFaceExtractor = new FaceExtractorMobileVision();
-        mRanker = new Ranker();
-        mMatcher = new FaceMatcher();
     }
 
 
+    public List<String> detect() {
 
-    public ArrayList<String> detect() {
+        List<PhotoSeries> seriesList = generateAllSeries();
 
-        ///////////////////// [SERIES PART] /////////////////////
-
-        mSeriesList = generateAllSeries();
-
-        filterAllOnePhotoSeries();
-
-        printSeries(mSeriesList);
+        printSeries(seriesList);
 
 
         ///////////////////// [FACE CORRESPONDENCE & RANKING] /////////////////////
 
-        for (PhotoSeries series : mSeriesList) {
+        for (PhotoSeries series : seriesList) {
 
             //match all persons in the series of photo by their id's
-            mMatcher.matchPersons(series);
+            FaceMatcher.matchPersons(series);
 
             //in each photo in each series set every person face importance to value between 0-1
             setImportanceFaces(series);
 
             //finding the highest ranked photo in series
             int highestRankedPhotoIndex = 0;
-            double highestRank = mRanker.rankPhoto(series.getPhoto(highestRankedPhotoIndex));
+            double highestRank = Ranker.rankPhoto(series.getPhoto(highestRankedPhotoIndex));
             double currentRank;
             Log.i("SCORE" , "photo= " +series.getPhoto(0).getPath()+  ", rank= " + highestRank);
 
             for (int i = 1 ; i < series.getPhotos().size() ; i++) {
-                currentRank = mRanker.rankPhoto(series.getPhoto(i));
+                currentRank = Ranker.rankPhoto(series.getPhoto(i));
                 Log.i("SCORE" , "photo= " +series.getPhoto(i).getPath()+  ", rank= " + currentRank);
                 if (currentRank > highestRank) {
                     highestRank = currentRank;
                     highestRankedPhotoIndex = i;
                 }
             }
-
-            Photo p = series.getPhoto(highestRankedPhotoIndex);
-            mPhotosOutput.add(p);
+            mPhotosOutputPath.add(series.getPhoto(highestRankedPhotoIndex).getPath());
         }
 
-        mPhotosOutputPath = setOutputPath();
         return mPhotosOutputPath;
     }
 
 
-    private ArrayList<String> setOutputPath() {
-        ArrayList<String> rv = new ArrayList<>();
 
-        for (Photo p : mPhotosOutput) {
-            rv.add(p.getPath());
-        }
-        return rv;
-    }
+
 
 
     private void setImportanceFaces(PhotoSeries series) {
@@ -145,42 +115,54 @@ public class SeriesGenerator {
     }
 
 
-    private ArrayList<PhotoSeries>  generateAllSeries() {
-        ArrayList<PhotoSeries> rv = new ArrayList<>();
-        Map <Integer , List<Photo>> numOfFacesMap = new HashMap<>();
-        List<Face> faces;
 
-        for (Photo photo : mPhotosInput){
-            faces = mFaceExtractor.detectFaces(mContext, photo);
+    private List<PhotoSeries> generateAllSeries() {
+        List<PhotoSeries> rv = new ArrayList<>();
+        Map <Integer , List<Photo>> map = new HashMap<>();
+        List<Face> faces;
+        ExifInterface exifInterface = null;
+        String orientation = null;
+
+        for (String path : mInputPhotosPath) {
+            try {
+                exifInterface = new ExifInterface(path);
+                orientation = exifInterface.getAttribute(ExifInterface.TAG_ORIENTATION);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            faces = mFaceDetector.detectFaces(mContext, path ,orientation);
 
             if (!faces.isEmpty()) {
-                saveFacesData(photo , faces);
-                addPhotoToMap(numOfFacesMap , photo , faces.size());
+                Person[] persons = new Person[faces.size()];
+
+                for (int i = 0 ; i < faces.size() ; i++) {
+                    persons[i] = new Person(i , faces.get(i));
+                }
+
+                Photo photo = new Photo(path ,exifInterface, Arrays.asList(persons));
+                addPhotoToMap(map , photo , persons.length);
             }
         }
 
-        for (Map.Entry<Integer, List<Photo>> entry : numOfFacesMap.entrySet()) {
+        //release the detector
+        mFaceDetector.release();
+
+        for (Map.Entry<Integer, List<Photo>> entry : map.entrySet()) {
             if (entry.getValue().size() == 1) {
-                mPhotosOutput.addAll(entry.getValue());
+                mPhotosOutputPath.add(entry.getValue().get(0).getPath());
             } else {
                 rv.addAll(generateSeriesByFeatures(entry.getValue()));
             }
         }
+
+        filterAllOnePhotoSeries(rv);
         return rv;
     }
 
 
 
-    private void saveFacesData(Photo photo, List<Face> faces) {
 
-        if(faces.size() > 1) {
-            for (int i = 0 ; i < faces.size() ; i++) {
-                photo.addPerson(new Person(i, faces.get(i)));
-            }
-        } else {
-            photo.addPerson(new Person(0, faces.get(0)));
-        }
-    }
 
 
     private void printSeries(List<PhotoSeries> seriesList) {
@@ -210,32 +192,21 @@ public class SeriesGenerator {
     }
 
 
-    private void filterAllOnePhotoSeries() {
+    private void filterAllOnePhotoSeries(List<PhotoSeries> seriesList) {
 
         ArrayList <PhotoSeries> photosToBeRemoved = new ArrayList<>();
 
-        for (int i = 0; i < mSeriesList.size() ; i++) {
+        for (int i = 0; i < seriesList.size() ; i++) {
 
-            if (mSeriesList.get(i).getPhotos().size() == 1) {
-                mPhotosOutput.add(mSeriesList.get(i).getPhoto(0));
-                photosToBeRemoved.add(mSeriesList.get(i));
+            if (seriesList.get(i).getNumOfPhotos() == 1) {
+                mPhotosOutputPath.add(seriesList.get(i).getPhoto(0).getPath());
+                photosToBeRemoved.add(seriesList.get(i));
             }
         }
-        mSeriesList.removeAll(photosToBeRemoved);
+        seriesList.removeAll(photosToBeRemoved);
     }
 
 
-    private ArrayList<Photo> setPhotos(ArrayList<String> imagesPath) {
-        ArrayList <Photo> rv = new ArrayList<>();
-
-        for (String path : imagesPath) {
-            rv.add( new Photo(path));
-        }
-        return rv;
-    }
-
-
-    //this function create series list from the initial photos
     public List<PhotoSeries> generateSeriesByFeatures(List<Photo> photos) {
 
         List<PhotoSeries> foundSeries =  new ArrayList<>();;

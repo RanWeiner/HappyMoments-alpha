@@ -1,9 +1,11 @@
 package com.example.ran.happymoments.activities;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.provider.Settings;
@@ -19,18 +21,29 @@ import android.widget.Toast;
 
 import com.example.ran.happymoments.R;
 import com.example.ran.happymoments.common.AppConstants;
-import com.example.ran.happymoments.logic.SeriesGenerator;
+import com.example.ran.happymoments.logic.FaceDetector;
+import com.example.ran.happymoments.logic.MobileVision;
+import com.example.ran.happymoments.logic.PhotoExtractionManager;
+
 import com.example.ran.happymoments.adapter.RecycleViewImageAdapter;
+import com.example.ran.happymoments.logic.SeriesGenerator;
+import com.example.ran.happymoments.logic.face.FaceExtractorMobileVision;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DetectionActivity extends AppCompatActivity {
 
-    private ArrayList<String> mInputPhotosPath , mOutputPhotosPath;
+    private List<String> mInputPhotosPath , mOutputPhotosPath;
+
     private SeriesGenerator mSeriesGenerator;
+//    private PhotoExtractionManager manager;
+//    private FaceDetector detector;
+
     private Button mDetectBtn;
     private ProgressBar mProgressBar;
     private RecycleViewImageAdapter adapter;
+
 
 
 
@@ -38,13 +51,21 @@ public class DetectionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detection);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         Bundle bundle = getIntent().getExtras();
         mInputPhotosPath = bundle.getStringArrayList(AppConstants.IMPORTED_IMAGES);
 
         setUpImageGrid(mInputPhotosPath);
 
+//        mSeriesGenerator = new SeriesGenerator(getApplicationContext() , mInputPhotosPath);
+
+
         mSeriesGenerator = new SeriesGenerator(getApplicationContext() , mInputPhotosPath);
+//        detector = new MobileVision();
+//        manager = new PhotoExtractionManager(getApplicationContext() ,mInputPhotosPath, detector );
+
         mOutputPhotosPath = new ArrayList<>();
         initializeViews();
 
@@ -86,7 +107,6 @@ public class DetectionActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 switch (which){
                     case DialogInterface.BUTTON_POSITIVE:
-//                        Intent intent=new Intent(Settings.ACTION_WIRELESS_SETTINGS);
                         Intent intent=new Intent(Settings.ACTION_SETTINGS);
                         startActivity(intent);
                         break;
@@ -112,7 +132,7 @@ public class DetectionActivity extends AppCompatActivity {
     }
 
 
-    public void setUpImageGrid(ArrayList<String> photos){
+    public void setUpImageGrid(List<String> photos){
 
         RecyclerView recyclerView = findViewById(R.id.gallery);
         recyclerView.setHasFixedSize(true);
@@ -150,7 +170,7 @@ public class DetectionActivity extends AppCompatActivity {
     private void goToFullScreenActivity(int position) {
         Intent intent = new Intent(DetectionActivity.this, FullScreenViewActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putStringArrayList(AppConstants.PHOTOS_PATH , mInputPhotosPath);
+        bundle.putStringArrayList(AppConstants.PHOTOS_PATH , (ArrayList<String>) mInputPhotosPath);
         bundle.putInt(AppConstants.POSITION , position);
         intent.putExtras(bundle);
         startActivity(intent);
@@ -160,7 +180,6 @@ public class DetectionActivity extends AppCompatActivity {
     public void detectBtnClicked() {
         disableUserInteraction();
         showUserJobInProgress();
-
 
         Thread t = new Thread(new Runnable() {
             @Override
@@ -202,7 +221,7 @@ public class DetectionActivity extends AppCompatActivity {
     private void goToResultsActivity() {
         Intent intent = new Intent(DetectionActivity.this , ResultsActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putStringArrayList(AppConstants.OUTPUT_PHOTOS , mOutputPhotosPath);
+        bundle.putStringArrayList(AppConstants.OUTPUT_PHOTOS , (ArrayList<String>) mOutputPhotosPath);
         intent.putExtras(bundle);
         startActivity(intent);
         finish();

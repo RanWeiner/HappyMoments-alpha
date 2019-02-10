@@ -1,44 +1,26 @@
 package com.example.ran.happymoments.logic.photo;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.media.ExifInterface;
 
-import com.example.ran.happymoments.common.Position;
-
 import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 
 public class Photo {
     private String mPath;
-    private PhotoFeatures photoFeatures;
-    private ExifInterface exifInterface;
-    private List<Person> persons;
-    private double rank;
+    private PhotoFeatures mFeatures;
+    private ExifInterface mExif;
+    private List<Person> mPersons;
+    private double mRank;
 
 
-    public Photo(String path){
-        this.mPath = path;
-        setExifInterface();
+    public Photo(String path, ExifInterface exifInterface, List<Person> persons){
+        mPath = path;
+        mExif = exifInterface;
+        mPersons = persons;
+        mRank = 0;
         setPhotoFeatures();
-        this.persons = new ArrayList<>();
-        this.rank = 0;
     }
-
-
-//    private void setBitmap() {
-//        this.bitmap = null;
-//        FileInputStream stream;
-//        try {
-//            stream = new FileInputStream(this.mPath);
-//            this.bitmap = BitmapFactory.decodeStream(stream);
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
 
     public String getPath() {
@@ -46,64 +28,45 @@ public class Photo {
     }
 
 
-
     private void setPhotoFeatures() {
-        if (hasExifData()){
-            photoFeatures = new PhotoFeatures(mPath , this.exifInterface);
+        if (mExif != null){
+            mFeatures = new PhotoFeatures(mPath , mExif);
         }
-
     }
-
-    public boolean hasExifData() {
-        if (this.exifInterface != null){
-            return true;
-        }
-        return false;
-    }
-
 
 
     public boolean similarTo(Photo other){
-        return this.getPhotoFeatures().compareFeatures(other.getPhotoFeatures());
+        return mFeatures.compareFeatures(other.getFeatures());
     }
 
-    public PhotoFeatures getPhotoFeatures() {
-        return photoFeatures;
+    public PhotoFeatures getFeatures() {
+        return mFeatures;
     }
 
-    public ExifInterface getExifInterface() {
-        return exifInterface;
+    public ExifInterface getExif() {
+        return mExif;
     }
-
-    public void setExifInterface() {
-        try {
-           this.exifInterface =  new ExifInterface(mPath);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
 
 
     public List<Person> getPersons() {
-        return persons;
+        return mPersons;
     }
-
-
 
 
     public void addPerson(Person person) {
-        this.persons.add(person);
+        this.mPersons.add(person);
     }
-
 
 
     public double getRank() {
-        return rank;
+        return mRank;
     }
 
-    public void setRank(double rank) {
-        this.rank = rank;
+    public void setRank(double mRank) {
+        this.mRank = mRank;
     }
 
+    public int getNumOfPersons() {
+        return mPersons.size();
+    }
 }

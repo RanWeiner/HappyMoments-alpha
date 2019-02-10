@@ -14,6 +14,7 @@ import com.example.ran.happymoments.R;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 public class RecycleViewImageAdapter extends RecyclerView.Adapter<RecycleViewImageAdapter.ViewHolder> {
 
@@ -24,11 +25,11 @@ public class RecycleViewImageAdapter extends RecyclerView.Adapter<RecycleViewIma
 
 
     private Context mContext;
-    private ArrayList<String> galleryList;
+    private List<String> galleryList;
     private final OnItemClickListener listener;
 
 
-    public RecycleViewImageAdapter(Context mContext, ArrayList<String> galleryList, OnItemClickListener listener) {
+    public RecycleViewImageAdapter(Context mContext, List<String> galleryList, OnItemClickListener listener) {
         this.mContext = mContext;
         this.galleryList = galleryList;
         this.listener = listener;
