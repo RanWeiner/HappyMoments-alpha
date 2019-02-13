@@ -1,5 +1,6 @@
 package com.example.ran.happymoments.activities;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -26,7 +28,7 @@ public class ResultsActivity extends AppCompatActivity {
     private ArrayList<String> mResultsPhotosPath;
     private Button mSaveBtn;
     private RecycleViewImageAdapter adapter;
-
+    private ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +46,10 @@ public class ResultsActivity extends AppCompatActivity {
     
     private void initializeViews() {
         mSaveBtn = (Button)findViewById(R.id.save_btn_id);
+        mProgressBar = (ProgressBar)findViewById(R.id.save_progress_bar);
         setUpImageGrid();
         setListeners();
     }
-
 
 
     private void setUpImageGrid() {
@@ -75,14 +77,36 @@ public class ResultsActivity extends AppCompatActivity {
         mSaveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                savePhotosToDevice();
+                disableUserInteraction();
+                Thread t = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        savePhotosToDevice();
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                enableUserInteraction();
+                                goToMainActivity();
+                            }
+                        });
+                    }
+                });
+                t.start();
             }
         });
     }
 
+    private void goToMainActivity() {
+        Intent intent = new Intent(ResultsActivity.this , MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
 
     private void savePhotosToDevice() {
-        showUserJobInProgress();
+
         Utils utils = new Utils(this);
 
         try {
@@ -93,24 +117,33 @@ public class ResultsActivity extends AppCompatActivity {
                 stream = new FileInputStream(path);
                 bitmap = BitmapFactory.decodeStream(stream);
 //                final Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.image);
-                utils.saveImageToExternal(path, bitmap);
+                utils.saveImageToExternal(bitmap);
                 }
         } catch (IOException e) {
             e.printStackTrace();
             }
-            dismissUserJobInProgress();
     }
 
-    private void dismissUserJobInProgress() {
-        mSaveBtn.setEnabled(true);
-        Toast.makeText(this , "saved!" ,Toast.LENGTH_SHORT ).show();
-    }
 
-    private void showUserJobInProgress()
-    {
+
+    private void disableUserInteraction() {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE ,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+        mProgressBar.setVisibility(View.VISIBLE);
         mSaveBtn.setEnabled(false);
-
     }
+
+
+    private void enableUserInteraction() {
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+        mProgressBar.setVisibility(View.INVISIBLE);
+        mSaveBtn.setEnabled(true);
+        Toast.makeText(ResultsActivity.this , "Saved!",Toast.LENGTH_LONG).show();
+    }
+
+
 
 }
 

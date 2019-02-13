@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        if (requestCode == ConstantsCustomGallery.REQUEST_CODE && data != null) {
+        else if (requestCode == ConstantsCustomGallery.REQUEST_CODE && data != null) {
 
             ArrayList<Image> chosenImages = data.getParcelableArrayListExtra(ConstantsCustomGallery.INTENT_EXTRA_IMAGES);
             chosenImagesPath = getImagesPath(chosenImages);
@@ -182,19 +182,17 @@ public class MainActivity extends AppCompatActivity {
 
 
         } else if (requestCode == AppConstants.CAMERA_REQUEST_CODE ) {
-//            Bitmap bitmap = (Bitmap)data.getExtras().get("data");
-
             if(numPicturesTaken < 10) {
-                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(cameraIntent, AppConstants.CAMERA_REQUEST_CODE);
+//                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+//                startActivityForResult(cameraIntent, AppConstants.CAMERA_REQUEST_CODE);
                 numPicturesTaken++;
-
                 chosenImagesPath.add(pathToFile);
+                goToCamera();
+
             } else {
                 Toast.makeText(MainActivity.this , "You can take 10 pictures max each time",Toast.LENGTH_SHORT).show();
             }
             Log.i("counter" , "count = " + numPicturesTaken);
-//            Bitmap bitmap = BitmapFactory.decodeFile(pathToFile);
         }
     }
 

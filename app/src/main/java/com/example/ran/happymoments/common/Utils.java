@@ -143,9 +143,11 @@ public class Utils {
 
 
     //https://stackoverflow.com/questions/11983654/android-how-to-add-an-image-to-an-album
-    public void saveImageToExternal(String imgName, Bitmap bm) throws IOException {
+    public void saveImageToExternal(Bitmap bm) throws IOException {
 
         final String appDirectoryName = AppConstants.HAPPY_MOMENTS_ALBUM;
+
+        File imageFile = getOutputMediaFile();
 
         //Create Path to save Image
         File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES+"/"+ appDirectoryName);
@@ -153,8 +155,6 @@ public class Utils {
         //if there is no directory exist
         if (!path.isDirectory())
             path.mkdirs();
-
-        File imageFile = new File(path, imgName+".png"); // Imagename.png
 
         FileOutputStream out = new FileOutputStream(imageFile);
         try{
@@ -189,38 +189,40 @@ public class Utils {
         return new File(mediaStorageDir.getPath() + File.separator + "IMG_" +timestamp +".jpg");
     }
 
-    public ArrayList<String> getImagesPathFromExternal() {
-        ArrayList<String> filePaths = new ArrayList<String>();
-        final String appDirectoryName = AppConstants.HAPPY_MOMENTS_ALBUM;
-        File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES+"/"+ appDirectoryName);
-        if (!path.isDirectory()) {
-            AlertDialog.Builder alert = new AlertDialog.Builder(mContext);
-            alert.setTitle("Error!").setMessage(AppConstants.HAPPY_MOMENTS_ALBUM + " directory path is not valid!");
-            alert.setPositiveButton("OK", null);
-            alert.show();
-            return null;
-        }
 
-        File[] listFiles = path.listFiles();
-        if (listFiles.length > 0) {
 
-            for (int i = 0; i < listFiles.length; i++) {
-
-                // get file path
-                String filePath = listFiles[i].getAbsolutePath();
-
-                // check for supported file extension
-                if (IsSupportedFile(filePath)) {
-                    // Add image path to array list
-                    filePaths.add(filePath);
-                }
-            }
-        } else {
-            Toast.makeText(mContext, AppConstants.HAPPY_MOMENTS_ALBUM + " is empty.", Toast.LENGTH_LONG).show();
-        }
-
-        return filePaths;
-    }
+//    public ArrayList<String> getImagesPathFromExternal() {
+//        ArrayList<String> filePaths = new ArrayList<String>();
+//        final String appDirectoryName = AppConstants.HAPPY_MOMENTS_ALBUM;
+//        File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES+"/"+ appDirectoryName);
+//        if (!path.isDirectory()) {
+//            AlertDialog.Builder alert = new AlertDialog.Builder(mContext);
+//            alert.setTitle("Error!").setMessage(AppConstants.HAPPY_MOMENTS_ALBUM + " directory path is not valid!");
+//            alert.setPositiveButton("OK", null);
+//            alert.show();
+//            return null;
+//        }
+//
+//        File[] listFiles = path.listFiles();
+//        if (listFiles.length > 0) {
+//
+//            for (int i = 0; i < listFiles.length; i++) {
+//
+//                // get file path
+//                String filePath = listFiles[i].getAbsolutePath();
+//
+//                // check for supported file extension
+//                if (IsSupportedFile(filePath)) {
+//                    // Add image path to array list
+//                    filePaths.add(filePath);
+//                }
+//            }
+//        } else {
+//            Toast.makeText(mContext, AppConstants.HAPPY_MOMENTS_ALBUM + " is empty.", Toast.LENGTH_LONG).show();
+//        }
+//
+//        return filePaths;
+//    }
 
 
     public boolean isExternalStorageWritable(){
@@ -231,14 +233,14 @@ public class Utils {
         return false;
     }
 
-    public boolean isExternalStorageReadable(){
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state) ||
-                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)){
-            return true;
-        }
-        return false;
-    }
+//    public boolean isExternalStorageReadable(){
+//        String state = Environment.getExternalStorageState();
+//        if (Environment.MEDIA_MOUNTED.equals(state) ||
+//                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)){
+//            return true;
+//        }
+//        return false;
+//    }
 
     //Resizing image size
     public static Bitmap decodeFile(String filePath, int width, int height) {

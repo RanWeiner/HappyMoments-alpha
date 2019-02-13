@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -147,20 +148,10 @@ public class DetectionActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
-    public void dismissUserJobInProgress() {
-        mProgressBar.setVisibility(View.INVISIBLE);
-        mDetectBtn.setEnabled(true);
-        Toast.makeText(DetectionActivity.this , "Finished!",Toast.LENGTH_LONG).show();
-
-    }
 
 
-    public void showUserJobInProgress() {
-        Toast.makeText(DetectionActivity.this , "Start Detection...",Toast.LENGTH_LONG).show();
 
-        mProgressBar.setVisibility(View.VISIBLE);
-        mDetectBtn.setEnabled(false);
-    }
+
 
 
     private void goToFullScreenActivity(int position) {
@@ -175,7 +166,7 @@ public class DetectionActivity extends AppCompatActivity {
 
     public void detectBtnClicked() {
         disableUserInteraction();
-        showUserJobInProgress();
+        long startTime = System.nanoTime();
 
         Thread t = new Thread(new Runnable() {
             @Override
@@ -186,10 +177,7 @@ public class DetectionActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(DetectionActivity.this , "Finished!",Toast.LENGTH_SHORT).show();
-                        dismissUserJobInProgress();
                         enableUserInteraction();
-
                         goToResultsActivity();
                     }
                 });
@@ -197,6 +185,9 @@ public class DetectionActivity extends AppCompatActivity {
         });
         t.start();
 
+        long endTime   = System.nanoTime();
+        long totalTime = endTime - startTime;
+        Log.i("DETECTION TIME", "DETECTION TIME= " + totalTime);
 
     }
 
@@ -205,11 +196,19 @@ public class DetectionActivity extends AppCompatActivity {
     private void disableUserInteraction() {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE ,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+        Toast.makeText(DetectionActivity.this , "Start Detection...",Toast.LENGTH_LONG).show();
+        mProgressBar.setVisibility(View.VISIBLE);
+        mDetectBtn.setEnabled(false);
     }
 
 
     private void enableUserInteraction() {
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+        mProgressBar.setVisibility(View.INVISIBLE);
+        mDetectBtn.setEnabled(true);
+        Toast.makeText(DetectionActivity.this , "Finished!",Toast.LENGTH_LONG).show();
     }
 
 

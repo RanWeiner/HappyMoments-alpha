@@ -13,6 +13,7 @@ import com.example.ran.happymoments.logic.series.PhotoSeries;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +46,6 @@ public class SeriesGenerator {
 
         printSeries(seriesList);
 
-        /////////////////// [FACE CORRESPONDENCE & RANKING] /////////////////////
 
         for (PhotoSeries series : seriesList) {
 
@@ -78,6 +78,8 @@ public class SeriesGenerator {
 
 
 
+
+    //set importance of face in each photo between 0-1
     private void setImportanceFaces(PhotoSeries series) {
 
         Map<Integer , Double> personMaxFaceSize = new HashMap<>();
@@ -115,74 +117,9 @@ public class SeriesGenerator {
     }
 
 
-    private List<PhotoSeries> generateAllSeries() {
-        List<PhotoSeries> rv = new ArrayList<>();
-        Map <Integer , List<Photo>> map = new HashMap<>();
-        List<Face> faces;
-        ExifInterface exifInterface = null;
-        String orientation = null;
-
-//tryyyyyyyy
-        int cores = Runtime.getRuntime().availableProcessors();
-        ExecutorService es = Executors.newFixedThreadPool(cores + 1);
-        List<Future<Photo>> result = new ArrayList<>();
-//////////////
 
 
-        for (String path : mInputPhotosPath) {
-            try {
-                exifInterface = new ExifInterface(path);
-                orientation = exifInterface.getAttribute(ExifInterface.TAG_ORIENTATION);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
-            faces = mFaceDetector.detectFaces(mContext, path ,orientation);
-
-            if (!faces.isEmpty()) {
-                //tryyyyyyyy////////////////////////////
-                Callable<Photo> task = new PhotoExtractionTask(path , exifInterface , faces);
-                Future<Photo> current = es.submit(task);
-                result.add(current);
-////////////////////////////////////////
-
-//                Person[] persons = new Person[faces.size()];
-//                for (int i = 0 ; i < faces.size() ; i++) {
-//                    persons[i] = new Person(i , faces.get(i));
-//                }
-//
-//                Photo photo = new Photo(path ,exifInterface, Arrays.asList(persons));
-//                addPhotoToMap(map , photo , persons.length);
-            }
-        }
-
-
-        //release the detector
-        mFaceDetector.release();
-
-/////////////////////
-        es.shutdown();
-////////////////////
-        for (Future<Photo> f : result) {
-            try {
-                addPhotoToMap(map ,   f.get() ,f.get().getNumOfPersons());
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
-        }
-
-
-        for (Map.Entry<Integer, List<Photo>> entry : map.entrySet()) {
-            if (entry.getValue().size() == 1) {
-                mPhotosOutputPath.add(entry.getValue().get(0).getPath());
-            } else {
-                rv.addAll(generateSeriesByFeatures(entry.getValue()));
-            }
-        }
-
-        filterAllOnePhotoSeries(rv);
-        return rv;
-    }
 
 
 //    private List<PhotoSeries> generateAllSeries() {
@@ -191,6 +128,10 @@ public class SeriesGenerator {
 //        List<Face> faces;
 //        ExifInterface exifInterface = null;
 //        String orientation = null;
+
+//        int cores = Runtime.getRuntime().availableProcessors();
+//        ExecutorService es = Executors.newFixedThreadPool(cores + 1);
+//        List<Future<Photo>> result = new ArrayList<>();
 //
 //        for (String path : mInputPhotosPath) {
 //            try {
@@ -203,20 +144,33 @@ public class SeriesGenerator {
 //            faces = mFaceDetector.detectFaces(mContext, path ,orientation);
 //
 //            if (!faces.isEmpty()) {
-//                Person[] persons = new Person[faces.size()];
+//                Callable<Photo> task = new PhotoExtractionTask(path , exifInterface , faces);
+//                Future<Photo> current = es.submit(task);
+//                result.add(current);
 //
-//                for (int i = 0 ; i < faces.size() ; i++) {
-//                    persons[i] = new Person(i , faces.get(i));
-//                }
-//
-//                Photo photo = new Photo(path ,exifInterface, Arrays.asList(persons));
-//                addPhotoToMap(map , photo , persons.length);
+////                Person[] persons = new Person[faces.size()];
+////                for (int i = 0 ; i < faces.size() ; i++) {
+////                    persons[i] = new Person(i , faces.get(i));
+////                }
+////
+////                Photo photo = new Photo(path ,exifInterface, Arrays.asList(persons));
+////                addPhotoToMap(map , photo , persons.length);
 //            }
 //        }
-//
+
 //        //release the detector
 //        mFaceDetector.release();
-//
+
+//        es.shutdown();
+
+//        for (Future<Photo> f : result) {
+//            try {
+//                addPhotoToMap(map ,   f.get() ,f.get().getNumOfPersons());
+//            } catch (InterruptedException | ExecutionException e) {
+//                e.printStackTrace();
+//            }
+//        }
+
 //        for (Map.Entry<Integer, List<Photo>> entry : map.entrySet()) {
 //            if (entry.getValue().size() == 1) {
 //                mPhotosOutputPath.add(entry.getValue().get(0).getPath());
@@ -228,6 +182,52 @@ public class SeriesGenerator {
 //        filterAllOnePhotoSeries(rv);
 //        return rv;
 //    }
+
+
+
+    private List<PhotoSeries> generateAllSeries() {
+        List<PhotoSeries> rv = new ArrayList<>();
+        Map <Integer , List<Photo>> map = new HashMap<>();
+        List<Face> faces;
+        ExifInterface exifInterface = null;
+        String orientation = null;
+
+        for (String path : mInputPhotosPath) {
+            try {
+                exifInterface = new ExifInterface(path);
+                orientation = exifInterface.getAttribute(ExifInterface.TAG_ORIENTATION);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            faces = mFaceDetector.detectFaces(mContext, path ,orientation);
+
+            if (!faces.isEmpty()) {
+                Person[] persons = new Person[faces.size()];
+
+                for (int i = 0 ; i < faces.size() ; i++) {
+                    persons[i] = new Person(i , faces.get(i));
+                }
+
+                Photo photo = new Photo(path ,exifInterface, Arrays.asList(persons));
+                addPhotoToMap(map , photo , persons.length);
+            }
+        }
+
+        //release the detector
+        mFaceDetector.release();
+
+        for (Map.Entry<Integer, List<Photo>> entry : map.entrySet()) {
+            if (entry.getValue().size() == 1) {
+                mPhotosOutputPath.add(entry.getValue().get(0).getPath());
+            } else {
+                rv.addAll(generateSeriesByFeatures(entry.getValue()));
+            }
+        }
+
+        filterAllOnePhotoSeries(rv);
+        return rv;
+    }
 
 
 
