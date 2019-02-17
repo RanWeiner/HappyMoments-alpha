@@ -1,8 +1,6 @@
 package com.example.ran.happymoments.logic.photo;
 
-import com.example.ran.happymoments.common.AppConstants;
-import com.example.ran.happymoments.common.RelativePositionVector;
-import com.example.ran.happymoments.common.Utils;
+
 import com.example.ran.happymoments.logic.face.Face;
 
 public class Person {

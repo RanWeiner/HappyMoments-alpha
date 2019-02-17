@@ -8,15 +8,21 @@ import com.example.ran.happymoments.logic.face.Face;
 import com.example.ran.happymoments.logic.face.FaceMatcher;
 import com.example.ran.happymoments.logic.photo.Person;
 import com.example.ran.happymoments.logic.photo.Photo;
+import com.example.ran.happymoments.logic.photo.PhotoFeatures;
 import com.example.ran.happymoments.logic.photo.Ranker;
 import com.example.ran.happymoments.logic.series.PhotoSeries;
+
+import org.opencv.imgproc.Imgproc;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -44,7 +50,7 @@ public class SeriesGenerator {
 
         List<PhotoSeries> seriesList = generateAllSeries();
 
-        printSeries(seriesList);
+//        printSeries(seriesList);
 
 
         for (PhotoSeries series : seriesList) {
@@ -188,6 +194,7 @@ public class SeriesGenerator {
     private List<PhotoSeries> generateAllSeries() {
         List<PhotoSeries> rv = new ArrayList<>();
         Map <Integer , List<Photo>> map = new HashMap<>();
+
         List<Face> faces;
         ExifInterface exifInterface = null;
         String orientation = null;
@@ -221,7 +228,9 @@ public class SeriesGenerator {
             if (entry.getValue().size() == 1) {
                 mPhotosOutputPath.add(entry.getValue().get(0).getPath());
             } else {
+
                 rv.addAll(generateSeriesByFeatures(entry.getValue()));
+//                rv.addAll(generateSeriesByFeatures(entry.getValue()));
             }
         }
 
@@ -251,7 +260,7 @@ public class SeriesGenerator {
 
         //not exist in map
         if (photos == null) {
-            photos = new ArrayList<Photo>();
+            photos = new ArrayList<>();
             photos.add(photo);
             map.put(key, photos);
         } else {
@@ -274,6 +283,8 @@ public class SeriesGenerator {
         }
         seriesList.removeAll(photosToBeRemoved);
     }
+
+
 
 
     public List<PhotoSeries> generateSeriesByFeatures(List<Photo> photos) {
@@ -309,4 +320,53 @@ public class SeriesGenerator {
         }
         return foundSeries;
     }
+
+
+    public List<PhotoSeries>  generateSeriesByFeatures2(List<Photo> photos) {
+        PhotoSeries photoSeries = new PhotoSeries();
+        ArrayList<PhotoSeries> foundSeries = new ArrayList<>();
+        boolean hasFoundSeries;
+
+        if (photos.isEmpty()) {
+            return null;
+        }
+
+        photoSeries.addPhoto(photos.get(0));
+        foundSeries.add(photoSeries);
+
+        for (int i = 1; i < photos.size(); i++) {
+
+            hasFoundSeries = false;
+
+            for (int j = 0; j < foundSeries.size(); j++) {
+                hasFoundSeries = findSeriesAndAdd(foundSeries.get(j), photos.get(i));
+                if(hasFoundSeries) {
+                    break;
+                }
+            }
+
+            if (!hasFoundSeries) {
+                PhotoSeries newPhotoSeries = new PhotoSeries();
+                newPhotoSeries.addPhoto(photos.get(i));
+                foundSeries.add(newPhotoSeries);
+            }
+        }
+        return foundSeries;
+    }
+
+    private static boolean findSeriesAndAdd(PhotoSeries series, Photo photo) {
+        PhotoFeatures features = photo.getFeatures();
+
+        for(Photo p : series.getPhotos()) {
+            if (!features.compareFeatures(p.getFeatures()))
+//            if(!isSimilar(photo, p))
+                return false;
+        }
+        series.addPhoto(photo);
+        return true;
+    }
+
+
+
+
 }
