@@ -1,18 +1,14 @@
 package com.example.ran.happymoments.activities;
 
 
-import android.app.Activity;
 import android.content.Intent;
 
 import android.content.pm.PackageManager;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.provider.SyncStateContract;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
@@ -23,7 +19,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.ran.happymoments.Manifest;
 import com.example.ran.happymoments.R;
 import com.example.ran.happymoments.common.AppConstants;
 
@@ -48,7 +43,9 @@ import static android.support.constraint.Constraints.TAG;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int READ_STORAGE_PERMISSION = 4000;
+   // private static final int READ_STORAGE_PERMISSION = 4000;
+   private static final int READ_STORAGE_PERMISSION = 1;
+    private static final int CAMERA_PERMISSION = 2;
     private static final int LIMIT = 20;
     private Button mImportBtn , mAlbumBtn , mCameraBtn;
 
@@ -64,14 +61,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initializeViews();
 
-        requestPermissions();
+        checkAndRequestPermissions();
 
     }
 
-    private void requestPermissions() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            requestPermissions(new String[] {android.Manifest.permission.CAMERA ,
-                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE},2);
+    private void checkAndRequestPermissions() {
+        if(Build.VERSION.SDK_INT >= 23) {
+            checkAndRequestCameraPermission();
+            checkAndRequestStoragePermission();
         }
     }
 
@@ -150,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
 //    public void importImages() {
 //        if (Build.VERSION.SDK_INT >= 23) {
 //            if (!checkPermissionForExternalStorage()) {
-//                requestStoragePermission();
+//                checkAndRequestStoragePermission();
 //            } else {
 //                chooseImagesFromDeviceGallery();
 //            }
@@ -266,21 +263,18 @@ public class MainActivity extends AppCompatActivity {
 
     //permissions
 
-    public boolean checkPermissionForExternalStorage() {
-        int result = ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE);
-        if (result == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-
-    public boolean requestStoragePermission() {
-        if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
+    public boolean checkAndRequestStoragePermission() {
+        if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
                 this.requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, READ_STORAGE_PERMISSION);
+        }
+        return false;
+    }
+
+    public boolean checkAndRequestCameraPermission() {
+        if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                this.requestPermissions(new String[]{android.Manifest.permission.CAMERA}, CAMERA_PERMISSION);
         }
         return false;
     }

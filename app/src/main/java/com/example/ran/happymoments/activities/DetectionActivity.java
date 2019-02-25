@@ -224,11 +224,11 @@ public class DetectionActivity extends AppCompatActivity {
 
 
     @Override
-    public void onBackPressed() {
-        Intent intent = new Intent(DetectionActivity.this , MainActivity.class);
+   public void onBackPressed() {
+       Intent intent = new Intent(DetectionActivity.this , MainActivity.class);
         startActivity(intent);
         finish();
-    }
+   }
 
 
 }

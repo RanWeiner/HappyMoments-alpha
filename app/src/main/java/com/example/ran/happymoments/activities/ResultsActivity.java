@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -11,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -21,12 +23,15 @@ import com.example.ran.happymoments.common.Utils;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 
 public class ResultsActivity extends AppCompatActivity {
 
     private ArrayList<String> mResultsPhotosPath;
     private Button mSaveBtn;
+    private Button mBackToManuBtn;
+
     private RecycleViewImageAdapter adapter;
     private ProgressBar mProgressBar;
 
@@ -39,14 +44,32 @@ public class ResultsActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         mResultsPhotosPath = bundle.getStringArrayList(AppConstants.OUTPUT_PHOTOS);
 
-        initializeViews();
+        initContentView();
 
     }
 
-    
+    public void initContentView() {
+        if(mResultsPhotosPath.size() == 0) {
+            //show message to user - No faces found
+            setContentView(R.layout.activity_no_results);
+            mBackToManuBtn = (Button)findViewById(R.id.back_to_menu);
+            mBackToManuBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    goToMainActivity();
+                }
+            });
+        }
+        else {
+            initializeViews();
+        }
+    }
+
+
     private void initializeViews() {
         mSaveBtn = (Button)findViewById(R.id.save_btn_id);
         mProgressBar = (ProgressBar)findViewById(R.id.save_progress_bar);
+
         setUpImageGrid();
         setListeners();
     }
@@ -64,6 +87,10 @@ public class ResultsActivity extends AppCompatActivity {
             @Override
             public void onItemClick(int position) {
                 Toast.makeText(ResultsActivity.this , "" + mResultsPhotosPath.get(position) , Toast.LENGTH_SHORT).show();
+                Intent intent= new Intent(ResultsActivity.this,FullScreenViewActivity.class);
+                intent.putExtra(AppConstants.PHOTOS_PATH, mResultsPhotosPath);
+                intent.putExtra(AppConstants.POSITION, position);
+                startActivity(intent);
             }
         });
 
@@ -96,6 +123,8 @@ public class ResultsActivity extends AppCompatActivity {
                 t.start();
             }
         });
+
+
     }
 
     private void goToMainActivity() {
@@ -141,6 +170,11 @@ public class ResultsActivity extends AppCompatActivity {
         mProgressBar.setVisibility(View.INVISIBLE);
         mSaveBtn.setEnabled(true);
         Toast.makeText(ResultsActivity.this , "Saved!",Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        goToMainActivity();
     }
 
 

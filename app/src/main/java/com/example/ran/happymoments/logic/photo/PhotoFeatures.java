@@ -18,11 +18,12 @@ import static android.support.constraint.Constraints.TAG;
 
 public class PhotoFeatures {
     private final double HISTOGRAM_THRESHOLD = 0.7;
-    private final double DISTANCE_THRESHOLD = 0.1;
+    //private final double DISTANCE_THRESHOLD = 0.1;
+    private final double DISTANCE_THRESHOLD = 100;
 
     public final int MAX_DISTANCE_DIFF = 500;
     public final int MAX_SECONDS_DIFF = 600;
-    public final double SIMILARITY_THRESHOLD = 0.25;
+    public final double SIMILARITY_THRESHOLD = 0.3;
 
     private Calendar dateTime;
     private PhotoLocation photoLocation;
@@ -176,6 +177,7 @@ public class PhotoFeatures {
                 return 1;
             }
             double diff = Math.abs(this.getDateTime().getTimeInMillis() - other.getDateTime().getTimeInMillis());
+            diff = (diff /1000) % 60;
             return (diff >= MAX_SECONDS_DIFF) ? 1 : diff / MAX_SECONDS_DIFF;
         }
 
