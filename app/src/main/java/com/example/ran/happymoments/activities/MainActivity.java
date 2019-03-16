@@ -224,9 +224,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void goToAlbumActivity() {
-        Intent intent = new Intent(MainActivity.this , AlbumActivity.class);
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setType("image/*");
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
-        finish();
     }
 
 

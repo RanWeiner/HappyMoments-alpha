@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -22,6 +24,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
     public interface OnClickListener {
         void onCloseBtnClick();
+        void onShareClicked(int position);
     }
 
 
@@ -48,15 +51,17 @@ public class FullScreenImageAdapter extends PagerAdapter {
     }
 
     @Override
-    public Object instantiateItem(ViewGroup container, int position) {
+    public Object instantiateItem(ViewGroup container, final int position) {
 //        TouchImageView imgDisplay;
         ImageView imgDisplay;
         Button btnClose;
+        ImageButton shareBtn;
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View viewLayout = inflater.inflate(R.layout.layout_fullscreen_image, container, false);
 
         imgDisplay = (ImageView) viewLayout.findViewById(R.id.imgDisplay);
         btnClose = (Button) viewLayout.findViewById(R.id.btnClose);
+        shareBtn = (ImageButton)viewLayout.findViewById(R.id.share_btn);
 
 
         Uri uri = Uri.fromFile(new File(mImagesPath.get(position)));
@@ -68,6 +73,13 @@ public class FullScreenImageAdapter extends PagerAdapter {
             @Override
             public void onClick(View v) {
                 listener.onCloseBtnClick();
+            }
+        });
+
+        shareBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+              listener.onShareClicked(position);
             }
         });
 
