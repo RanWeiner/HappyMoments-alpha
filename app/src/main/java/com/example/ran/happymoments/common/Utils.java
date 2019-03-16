@@ -20,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -262,6 +263,37 @@ public class Utils {
             e.printStackTrace();
         }
         return null;
+    }
+
+
+    public void copyFile(File srcFile , File destFile) {
+        if (!srcFile.exists()) {
+            return;
+        }
+
+        FileChannel src = null;
+        FileChannel dest = null;
+
+        try {
+            src = new FileInputStream(srcFile).getChannel();
+
+        dest = new FileOutputStream(destFile).getChannel();
+
+        if (dest != null && src != null) {
+            dest.transferFrom(src , 0, src.size());
+        }
+        if (src != null) {
+            src.close();
+        }
+        if(dest != null) {
+            dest.close();
+        }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
