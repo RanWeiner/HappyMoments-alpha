@@ -29,7 +29,7 @@ import com.example.ran.happymoments.service.SeriesGenerator;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DetectionActivity extends AppCompatActivity {
+public class DetectionActivity_take2 extends AppCompatActivity {
 
     private List<String> mInputPhotosPath , mOutputPhotosPath;
 
@@ -40,14 +40,12 @@ public class DetectionActivity extends AppCompatActivity {
     private Button mDetectBtn;
     private ProgressBar mProgressBar;
     private RecycleViewImageAdapter adapter;
-
-
-
+    private Button mAddBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detection);
+        setContentView(R.layout.activity_detection_take2);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -70,12 +68,22 @@ public class DetectionActivity extends AppCompatActivity {
 
     private void initializeViews() {
         mDetectBtn = (Button)findViewById(R.id.detect_btn_id);
+        mAddBtn = (Button) findViewById(R.id.add_more_btn);
         mProgressBar = (ProgressBar)findViewById(R.id.progress_bar);
 
         setListeners();
     }
 
     private void setListeners() {
+
+        mAddBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+
         mDetectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,7 +123,7 @@ public class DetectionActivity extends AppCompatActivity {
             }
         };
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(DetectionActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(DetectionActivity_take2.this);
         builder.setTitle("No Internet").setMessage("This App requires Internet connections ")
                 .setPositiveButton("Connect", dialogClickListener).setNegativeButton("Exit", dialogClickListener).show();
     }
@@ -141,11 +149,14 @@ public class DetectionActivity extends AppCompatActivity {
             @Override
             public void onItemClick(int position) {
                 goToFullScreenActivity(position);
+                Toast.makeText(DetectionActivity_take2.this, "" + position +", size = " +mInputPhotosPath.size() , Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onItemDelete(int position) {
-
+                Toast.makeText(DetectionActivity_take2.this, "" + position +", size = " +mInputPhotosPath.size() , Toast.LENGTH_SHORT).show();
+                mInputPhotosPath.remove(position);
+                adapter.notifyDataSetChanged();
             }
         });
 
@@ -160,13 +171,12 @@ public class DetectionActivity extends AppCompatActivity {
 
 
     private void goToFullScreenActivity(int position) {
-        Intent intent = new Intent(DetectionActivity.this, FullScreenViewActivity.class);
+        Intent intent = new Intent(DetectionActivity_take2.this, FullScreenViewActivity.class);
         Bundle bundle = new Bundle();
         bundle.putStringArrayList(AppConstants.PHOTOS_PATH , (ArrayList<String>) mInputPhotosPath);
         bundle.putInt(AppConstants.POSITION , position);
         intent.putExtras(bundle);
         startActivity(intent);
-        finish();
     }
 
     public void detectBtnClicked() {
@@ -202,7 +212,7 @@ public class DetectionActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE ,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
-        Toast.makeText(DetectionActivity.this , "Start Detection...",Toast.LENGTH_LONG).show();
+        Toast.makeText(DetectionActivity_take2.this , "Start Detection...",Toast.LENGTH_LONG).show();
         mProgressBar.setVisibility(View.VISIBLE);
         mDetectBtn.setEnabled(false);
     }
@@ -213,13 +223,13 @@ public class DetectionActivity extends AppCompatActivity {
 
         mProgressBar.setVisibility(View.INVISIBLE);
         mDetectBtn.setEnabled(true);
-        Toast.makeText(DetectionActivity.this , "Finished!",Toast.LENGTH_LONG).show();
+        Toast.makeText(DetectionActivity_take2.this , "Finished!",Toast.LENGTH_LONG).show();
     }
 
 
 
     private void goToResultsActivity() {
-        Intent intent = new Intent(DetectionActivity.this , ResultsActivity.class);
+        Intent intent = new Intent(DetectionActivity_take2.this , ResultsActivity.class);
         Bundle bundle = new Bundle();
         bundle.putStringArrayList(AppConstants.OUTPUT_PHOTOS , (ArrayList<String>) mOutputPhotosPath);
         intent.putExtras(bundle);
@@ -229,11 +239,11 @@ public class DetectionActivity extends AppCompatActivity {
 
 
     @Override
-   public void onBackPressed() {
-       Intent intent = new Intent(DetectionActivity.this , MainActivity.class);
+    public void onBackPressed() {
+        Intent intent = new Intent(DetectionActivity_take2.this , MainActivity.class);
         startActivity(intent);
         finish();
-   }
+    }
 
 
 }

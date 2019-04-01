@@ -48,7 +48,7 @@ public class FullScreenViewActivity extends Activity implements FullScreenImageA
 
     @Override
     public void onBackPressed() {
-        goToResultActivity();
+        super.onBackPressed();
     }
 
     private void goToResultActivity() {
@@ -65,7 +65,7 @@ public class FullScreenViewActivity extends Activity implements FullScreenImageA
 
     @Override
     public void onCloseBtnClick() {
-        goToResultActivity();
+        finish();
     }
 
     @Override

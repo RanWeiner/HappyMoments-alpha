@@ -86,11 +86,16 @@ public class ResultsActivity extends AppCompatActivity {
         adapter = new RecycleViewImageAdapter(getApplicationContext(), mResultsPhotosPath, new RecycleViewImageAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                Toast.makeText(ResultsActivity.this , "" + mResultsPhotosPath.get(position) , Toast.LENGTH_SHORT).show();
+//                Toast.makeText(ResultsActivity.this , "" + mResultsPhotosPath.get(position) , Toast.LENGTH_SHORT).show();
                 Intent intent= new Intent(ResultsActivity.this,FullScreenViewActivity.class);
                 intent.putExtra(AppConstants.PHOTOS_PATH, mResultsPhotosPath);
                 intent.putExtra(AppConstants.POSITION, position);
                 startActivity(intent);
+            }
+
+            @Override
+            public void onItemDelete(int position) {
+
             }
         });
 

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.ran.happymoments">
-    
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
@@ -33,22 +33,18 @@
             android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="face" />
 
-
         <provider
-            android:authorities="com.example.ran.happymoments.fileprovider"
             android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.example.ran.happymoments.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
-        <meta-data
-            android:name="android.support.FILE_PROVIDER_PATHS"
-            android:resource="@xml/file_paths" />
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
             />
         </provider>
 
-
+        <activity android:name=".activities.DetectionActivity_take2"></activity>
     </application>
-
-
-    
 
 </manifest>

@@ -48,4 +48,6 @@ dependencies {
     //gif image
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.16'
 
+
+    implementation 'com.android.support:cardview-v7:27.1.1'
 }
