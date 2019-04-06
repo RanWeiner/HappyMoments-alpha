@@ -21,6 +21,7 @@ import com.example.ran.happymoments.adapter.RecycleViewImageAdapter;
 import com.example.ran.happymoments.common.AppConstants;
 import com.example.ran.happymoments.common.Utils;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
@@ -114,8 +115,10 @@ public class ResultsActivity extends AppCompatActivity {
                     @Override
                     public void run() {
 
-                        savePhotosToDevice();
-
+//                        savePhotosToDevice();
+                        
+                        copyPhotosToAlbum();
+                        
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -130,6 +133,12 @@ public class ResultsActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    private void copyPhotosToAlbum() {
+        for (String path : mResultsPhotosPath) {
+            Utils.copyFile(new File(path) ,Utils.getOutputMediaFile());
+        }
     }
 
     private void goToMainActivity() {

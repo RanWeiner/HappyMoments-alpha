@@ -266,7 +266,7 @@ public class Utils {
     }
 
 
-    public void copyFile(File srcFile , File destFile) {
+    public static void copyFile(File srcFile , File destFile) {
         if (!srcFile.exists()) {
             return;
         }

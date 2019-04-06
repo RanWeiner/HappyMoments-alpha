@@ -55,9 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
 
    // private static final int READ_STORAGE_PERMISSION = 4000;
-    private static final int READ_STORAGE_PERMISSION = 1;
-    private static final int CAMERA_PERMISSION = 2;
-    private static final int LIMIT = 20;
+
     private Button mImportBtn , mAlbumBtn , mCameraBtn;
 
     ArrayList<String> chosenImagesPath = new ArrayList<>();
@@ -274,7 +272,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void chooseImagesFromDeviceGallery() {
         Intent intent = new Intent(MainActivity.this, AlbumSelectActivity.class);
-        intent.putExtra(ConstantsCustomGallery.INTENT_EXTRA_LIMIT, LIMIT);
+        intent.putExtra(ConstantsCustomGallery.INTENT_EXTRA_LIMIT, AppConstants.NUM_IMAGE_CHOSEN_LIMIT);
         startActivityForResult(intent, ConstantsCustomGallery.REQUEST_CODE);
     }
 
@@ -330,7 +328,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean checkAndRequestStoragePermission() {
         if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                this.requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, READ_STORAGE_PERMISSION);
+                this.requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, AppConstants.READ_STORAGE_PERMISSION);
         }
         return false;
     }
@@ -338,7 +336,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean checkAndRequestCameraPermission() {
         if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                this.requestPermissions(new String[]{android.Manifest.permission.CAMERA}, CAMERA_PERMISSION);
+                this.requestPermissions(new String[]{android.Manifest.permission.CAMERA}, AppConstants.CAMERA_PERMISSION);
         }
         return false;
     }

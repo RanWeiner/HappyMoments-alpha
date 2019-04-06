@@ -21,17 +21,14 @@ import java.util.List;
 
 public class RecycleViewImageAdapter extends RecyclerView.Adapter<RecycleViewImageAdapter.ViewHolder> {
 
-
     public interface OnItemClickListener {
         void onItemClick(int position);
         void onItemDelete(int position);
     }
 
-
     private Context mContext;
     private List<String> galleryList;
     private final OnItemClickListener listener;
-
 
     public RecycleViewImageAdapter(Context mContext, List<String> galleryList, OnItemClickListener listener) {
         this.mContext = mContext;
@@ -75,7 +72,6 @@ public class RecycleViewImageAdapter extends RecyclerView.Adapter<RecycleViewIma
             super(itemView);
             imageView = (ImageView) itemView.findViewById(R.id.iv);
             mRemoveButton = (ImageButton) itemView.findViewById(R.id.ib_remove);
-            mRemoveButton.bringToFront();
         }
 
 

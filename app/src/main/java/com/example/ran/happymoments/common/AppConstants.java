@@ -34,4 +34,8 @@ public class AppConstants {
     public static final double SMILE_WEIGHT = 0.6;
 
     public static final int CAMERA_REQUEST_CODE = 888;
+
+    public static final int READ_STORAGE_PERMISSION = 1;
+    public static final int CAMERA_PERMISSION = 2;
+    public static final int NUM_IMAGE_CHOSEN_LIMIT = 20;
 }

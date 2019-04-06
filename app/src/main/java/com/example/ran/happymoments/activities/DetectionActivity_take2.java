@@ -28,6 +28,11 @@ import com.example.ran.happymoments.service.SeriesGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+import in.myinnos.awesomeimagepicker.activities.AlbumSelectActivity;
+import in.myinnos.awesomeimagepicker.helpers.ConstantsCustomGallery;
+import in.myinnos.awesomeimagepicker.models.Image;
 
 public class DetectionActivity_take2 extends AppCompatActivity {
 
@@ -39,7 +44,7 @@ public class DetectionActivity_take2 extends AppCompatActivity {
 
     private Button mDetectBtn;
     private ProgressBar mProgressBar;
-    private RecycleViewImageAdapter adapter;
+    private RecycleViewImageAdapter mAdapter;
     private Button mAddBtn;
 
     @Override
@@ -79,7 +84,7 @@ public class DetectionActivity_take2 extends AppCompatActivity {
         mAddBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                chooseImagesFromDeviceGallery();
             }
         });
 
@@ -99,6 +104,32 @@ public class DetectionActivity_take2 extends AppCompatActivity {
         });
 
     }
+
+
+    private void chooseImagesFromDeviceGallery() {
+        Intent intent = new Intent(DetectionActivity_take2.this, AlbumSelectActivity.class);
+        intent.putExtra(ConstantsCustomGallery.INTENT_EXTRA_LIMIT, AppConstants.NUM_IMAGE_CHOSEN_LIMIT);
+        startActivityForResult(intent, ConstantsCustomGallery.REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != RESULT_OK ) {
+            return;
+        }
+        if (requestCode == ConstantsCustomGallery.REQUEST_CODE && data != null) {
+            ArrayList<Image> chosenImages = data.getParcelableArrayListExtra(ConstantsCustomGallery.INTENT_EXTRA_IMAGES);
+            for (Image i : chosenImages) {
+                if (!mInputPhotosPath.contains(i.path)) {
+                    mInputPhotosPath.add(i.path);
+                }
+            }
+            mAdapter.notifyDataSetChanged();
+        }
+
+    }
+
 
     private void showNetworkError() {
 
@@ -145,7 +176,7 @@ public class DetectionActivity_take2 extends AppCompatActivity {
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(), 3);
         recyclerView.setLayoutManager(layoutManager);
 
-        adapter = new RecycleViewImageAdapter(getApplicationContext(), photos, new RecycleViewImageAdapter.OnItemClickListener() {
+        mAdapter = new RecycleViewImageAdapter(getApplicationContext(), photos, new RecycleViewImageAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
                 goToFullScreenActivity(position);
@@ -156,17 +187,13 @@ public class DetectionActivity_take2 extends AppCompatActivity {
             public void onItemDelete(int position) {
                 Toast.makeText(DetectionActivity_take2.this, "" + position +", size = " +mInputPhotosPath.size() , Toast.LENGTH_SHORT).show();
                 mInputPhotosPath.remove(position);
-                adapter.notifyDataSetChanged();
+                mAdapter.notifyDataSetChanged();
             }
         });
 
-        recyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+        recyclerView.setAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged();
     }
-
-
-
-
 
 
 
