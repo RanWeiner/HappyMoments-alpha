@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true" />
+
+        <com.viewpagerindicator.CirclePageIndicator
+            android:id="@+id/indicator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:gravity="bottom"
+            android:padding="10dip"
+            app:centered="true"
+            app:fillColor="#e8e8ec"
+            app:pageColor="#000"
+            app:snap="false" />
+
+
+        <com.getbase.floatingactionbutton.FloatingActionsMenu
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            app:fab_addButtonColorNormal="@color/colorNormal"
+            app:fab_addButtonColorPressed="@color/colorPressed"
+            app:fab_addButtonPlusIconColor="@color/white"
+            app:fab_labelStyle="@style/fab_style"
+            >
+
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:id="@+id/save_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:fab_colorNormal="@color/white"
+                app:fab_size="mini"
+                app:fab_icon="@drawable/ic_save"
+                app:fab_title="Save Image"
+                />
+
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:id="@+id/share_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:fab_colorNormal="@color/white"
+                app:fab_size="mini"
+                app:fab_icon="@drawable/ic_share"
+                app:fab_title="Share"
+
+                />
+
+
+        </com.getbase.floatingactionbutton.FloatingActionsMenu>
+
+
+    </RelativeLayout>
+
+</LinearLayout>

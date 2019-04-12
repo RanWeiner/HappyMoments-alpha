@@ -24,7 +24,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
     public interface OnClickListener {
         void onCloseBtnClick();
-        void onShareClicked(int position);
     }
 
 
@@ -61,7 +60,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
         imgDisplay = (ImageView) viewLayout.findViewById(R.id.imgDisplay);
         btnClose = (Button) viewLayout.findViewById(R.id.btnClose);
-        shareBtn = (ImageButton)viewLayout.findViewById(R.id.share_btn);
 
 
         Uri uri = Uri.fromFile(new File(mImagesPath.get(position)));
@@ -73,13 +71,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
             @Override
             public void onClick(View v) {
                 listener.onCloseBtnClick();
-            }
-        });
-
-        shareBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-              listener.onShareClicked(position);
             }
         });
 

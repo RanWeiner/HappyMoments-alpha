@@ -29,6 +29,7 @@ import com.example.ran.happymoments.service.SeriesGenerator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import in.myinnos.awesomeimagepicker.activities.AlbumSelectActivity;
 import in.myinnos.awesomeimagepicker.helpers.ConstantsCustomGallery;
@@ -110,6 +111,7 @@ public class DetectionActivity_take2 extends AppCompatActivity {
         Intent intent = new Intent(DetectionActivity_take2.this, AlbumSelectActivity.class);
         intent.putExtra(ConstantsCustomGallery.INTENT_EXTRA_LIMIT, AppConstants.NUM_IMAGE_CHOSEN_LIMIT);
         startActivityForResult(intent, ConstantsCustomGallery.REQUEST_CODE);
+
     }
 
     @Override
@@ -221,6 +223,7 @@ public class DetectionActivity_take2 extends AppCompatActivity {
                     public void run() {
                         enableUserInteraction();
                         goToResultsActivity();
+
                     }
                 });
             }
@@ -254,15 +257,25 @@ public class DetectionActivity_take2 extends AppCompatActivity {
     }
 
 
+//
+//    private void goToResultsActivity() {
+//        Intent intent = new Intent(DetectionActivity_take2.this , ResultsActivity.class);
+//        Bundle bundle = new Bundle();
+//        bundle.putStringArrayList(AppConstants.OUTPUT_PHOTOS , (ArrayList<String>) mOutputPhotosPath);
+//        intent.putExtras(bundle);
+//        startActivity(intent);
+//        finish();
+//    }
 
     private void goToResultsActivity() {
-        Intent intent = new Intent(DetectionActivity_take2.this , ResultsActivity.class);
+        Intent intent = new Intent(DetectionActivity_take2.this , ResultActivity_take2.class);
         Bundle bundle = new Bundle();
         bundle.putStringArrayList(AppConstants.OUTPUT_PHOTOS , (ArrayList<String>) mOutputPhotosPath);
         intent.putExtras(bundle);
         startActivity(intent);
         finish();
     }
+
 
 
     @Override

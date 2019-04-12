@@ -68,14 +68,4 @@ public class FullScreenViewActivity extends Activity implements FullScreenImageA
         finish();
     }
 
-    @Override
-    public void onShareClicked(int position) {
-        final String path = mPhotosPath.get(position);
-        final Uri uriToImage = Uri.parse(path);
-        Intent shareIntent = new Intent();
-        shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.putExtra(Intent.EXTRA_STREAM, uriToImage);
-        shareIntent.setType("image/jpeg");
-        startActivity(Intent.createChooser(shareIntent, "Share image using"));
-    }
 }

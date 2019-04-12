@@ -135,9 +135,13 @@ public class ResultsActivity extends AppCompatActivity {
 
     }
 
+    private void copyPhotoToAlbum(String path){
+        Utils.copyFile(new File(path) ,Utils.getOutputMediaFile());
+    }
+
     private void copyPhotosToAlbum() {
         for (String path : mResultsPhotosPath) {
-            Utils.copyFile(new File(path) ,Utils.getOutputMediaFile());
+            copyPhotoToAlbum(path);
         }
     }
 
